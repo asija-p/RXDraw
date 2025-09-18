@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
-import { selectStrokeColor } from '../../store/drawing.selectors';
+import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
+import { selectStrokeColor, selectStrokeSize } from '../../store/drawing.selectors';
 
 @Component({
   selector: 'app-canvas',
@@ -17,10 +17,15 @@ export class Canvas implements AfterViewInit {
 
   private cx: CanvasRenderingContext2D | undefined;
   strokeColor = '#000000';
+  strokeSize: number = 5;
 
   constructor(private store: Store) {
-    this.store.select(selectStrokeColor).subscribe((color) => {
+    combineLatest([
+      this.store.select(selectStrokeColor),
+      this.store.select(selectStrokeSize),
+    ]).subscribe(([color, size]) => {
       this.strokeColor = color;
+      this.strokeSize = size;
     });
   }
 
@@ -44,7 +49,6 @@ export class Canvas implements AfterViewInit {
     canvasEl.width = this.width;
     canvasEl.height = this.height;
 
-    this.cx.lineWidth = 3;
     this.cx.lineCap = 'round';
     this.cx.strokeStyle = '#000';
     this.cx.fillStyle = '#ffffff';
@@ -117,9 +121,7 @@ export class Canvas implements AfterViewInit {
 
       this.cx.lineTo(currentPos.x, currentPos.y);
 
-      const baseWidth = 5;
-      this.cx.lineWidth = baseWidth * currentPos.pressure;
-
+      this.cx.lineWidth = this.strokeSize * currentPos.pressure;
       this.cx.strokeStyle = this.strokeColor;
       this.cx.stroke();
     }

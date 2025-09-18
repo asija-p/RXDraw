@@ -1,3 +1,25 @@
 <color-chrome [color]="strokeColor" (onChangeComplete)="onColorChange($event)"> </color-chrome>
 
 <p>Selected: {{ strokeColor }}</p>
+
+<div class="size-picker">
+  <div class="size-container" *ngFor="let size of sizes" (click)="selectSize(size)">
+    <div
+      class="size-circle"
+      [class.selected]="size === strokeSize"
+      [style.width.px]="size / 5"
+      [style.height.px]="size / 5"
+    ></div>
+    <p>{{ size }}</p>
+  </div>
+</div>
+
+<div class="size-input-picker">
+  <label> Size </label>
+  <input
+    type="number"
+    class="size-input"
+    [placeholder]="strokeSize"
+    (change)="selectSize($any($event.target).valueAsNumber)"
+  />
+</div>

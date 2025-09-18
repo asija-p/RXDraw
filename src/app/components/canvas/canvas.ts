@@ -1,7 +1,11 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
-import { selectStrokeColor, selectStrokeSize } from '../../store/drawing.selectors';
+import {
+  selectStrokeColor,
+  selectStrokeSize,
+  selectStrokeTool,
+} from '../../store/drawing.selectors';
 
 @Component({
   selector: 'app-canvas',
@@ -23,8 +27,9 @@ export class Canvas implements AfterViewInit {
     combineLatest([
       this.store.select(selectStrokeColor),
       this.store.select(selectStrokeSize),
-    ]).subscribe(([color, size]) => {
-      this.strokeColor = color;
+      this.store.select(selectStrokeTool),
+    ]).subscribe(([color, size, tool]) => {
+      this.strokeColor = tool === 'eraser' ? '#ffffff' : color;
       this.strokeSize = size;
     });
   }

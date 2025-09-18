@@ -6,3 +6,5 @@ export const selectStrokeState = createFeatureSelector<StrokeState>('stroke');
 export const selectStrokeColor = createSelector(selectStrokeState, (state) => state.color);
 
 export const selectStrokeSize = createSelector(selectStrokeState, (state) => state.size);
+
+export const selectStrokeTool = createSelector(selectStrokeState, (state) => state.tool);

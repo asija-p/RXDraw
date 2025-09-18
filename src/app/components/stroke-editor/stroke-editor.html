@@ -2,6 +2,16 @@
 
 <p>Selected: {{ strokeColor }}</p>
 
+<div class="tool-picker">
+  <button
+    *ngFor="let tool of tools"
+    [class.selected]="tool.name === activeTool"
+    (click)="selectTool(tool.name)"
+  >
+    <span class="icon">{{ tool.icon }}</span>
+  </button>
+</div>
+
 <div class="size-picker">
   <div class="size-container" *ngFor="let size of sizes" (click)="selectSize(size)">
     <div
@@ -19,7 +29,7 @@
   <input
     type="number"
     class="size-input"
-    [placeholder]="strokeSize"
+    [value]="strokeSize"
     (change)="selectSize($any($event.target).valueAsNumber)"
   />
 </div>

@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
+import { selectStrokeColor } from '../../store/drawing.selectors';
 
 @Component({
   selector: 'app-canvas',
@@ -14,6 +16,13 @@ export class Canvas implements AfterViewInit {
   @Input() public height = 700;
 
   private cx: CanvasRenderingContext2D | undefined;
+  strokeColor = '#000000';
+
+  constructor(private store: Store) {
+    this.store.select(selectStrokeColor).subscribe((color) => {
+      this.strokeColor = color;
+    });
+  }
 
   public ngAfterViewInit(): void {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
@@ -111,6 +120,7 @@ export class Canvas implements AfterViewInit {
       const baseWidth = 5;
       this.cx.lineWidth = baseWidth * currentPos.pressure;
 
+      this.cx.strokeStyle = this.strokeColor;
       this.cx.stroke();
     }
   }

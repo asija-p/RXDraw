@@ -65,14 +65,14 @@ export class Canvas implements AfterViewInit {
     mouseDown
       .pipe(
         switchMap((e) => {
-          const rect = canvasEl.getBoundingClientRect();
-          this.handleDraw(e, rect);
           return mouseMove.pipe(takeUntil(mouseUp), pairwise());
         })
       )
       .subscribe(([prev, curr]: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
-        this.handleDrawPair(prev, curr, rect);
+        const prevPos = this.getPos(prev, rect);
+        const currPos = this.getPos(curr, rect);
+        this.drawOnCanvas(prevPos, currPos);
       });
   }
 
@@ -113,20 +113,5 @@ export class Canvas implements AfterViewInit {
 
       this.cx.stroke();
     }
-  }
-
-  private handleDraw(ev: MouseEvent | TouchEvent, rect: DOMRect) {
-    const pos = this.getPos(ev, rect);
-    this.drawOnCanvas(pos, pos);
-  }
-
-  private handleDrawPair(
-    prev: MouseEvent | TouchEvent,
-    curr: MouseEvent | TouchEvent,
-    rect: DOMRect
-  ) {
-    const prevPos = this.getPos(prev, rect);
-    const currPos = this.getPos(curr, rect);
-    this.drawOnCanvas(prevPos, currPos);
   }
 }

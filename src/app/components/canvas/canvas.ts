@@ -18,28 +18,6 @@ export class Canvas implements AfterViewInit {
   public ngAfterViewInit(): void {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
 
-    // log *all* pointer-related events
-    ['pointerdown', 'pointermove', 'pointerup', 'pointerleave', 'pointercancel'].forEach(
-      (evName) => {
-        canvasEl.addEventListener(evName, (e) => {
-          console.log('EVENT:', evName, e);
-        });
-      }
-    );
-
-    // optional: also log mouse/touch if you want to compare
-    ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach((evName) => {
-      canvasEl.addEventListener(evName, (e) => {
-        console.log('MOUSE:', evName, e);
-      });
-    });
-
-    ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach((evName) => {
-      canvasEl.addEventListener(evName, (e) => {
-        console.log('TOUCH:', evName, e);
-      });
-    });
-
     this.cx = canvasEl.getContext('2d')!;
 
     if (!this.cx) {

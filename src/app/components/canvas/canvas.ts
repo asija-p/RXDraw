@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
-import { fromEvent, pairwise, switchMap, takeUntil } from 'rxjs';
+import { fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-canvas',
@@ -17,6 +17,29 @@ export class Canvas implements AfterViewInit {
 
   public ngAfterViewInit(): void {
     const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
+
+    // log *all* pointer-related events
+    ['pointerdown', 'pointermove', 'pointerup', 'pointerleave', 'pointercancel'].forEach(
+      (evName) => {
+        canvasEl.addEventListener(evName, (e) => {
+          console.log('EVENT:', evName, e);
+        });
+      }
+    );
+
+    // optional: also log mouse/touch if you want to compare
+    ['mousedown', 'mousemove', 'mouseup', 'mouseleave'].forEach((evName) => {
+      canvasEl.addEventListener(evName, (e) => {
+        console.log('MOUSE:', evName, e);
+      });
+    });
+
+    ['touchstart', 'touchmove', 'touchend', 'touchcancel'].forEach((evName) => {
+      canvasEl.addEventListener(evName, (e) => {
+        console.log('TOUCH:', evName, e);
+      });
+    });
+
     this.cx = canvasEl.getContext('2d')!;
 
     if (!this.cx) {
@@ -34,31 +57,51 @@ export class Canvas implements AfterViewInit {
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
-    fromEvent<MouseEvent>(canvasEl, 'mousedown')
+    const mouseDown = merge(
+      fromEvent<MouseEvent>(canvasEl, 'mousedown'),
+      fromEvent<TouchEvent>(canvasEl, 'touchstart')
+    );
+
+    const mouseUp = merge(
+      fromEvent<MouseEvent>(window, 'mouseup'),
+      fromEvent<TouchEvent>(window, 'touchend'),
+      fromEvent<TouchEvent>(window, 'touchcancel')
+    );
+
+    const mouseMove = merge(
+      fromEvent<MouseEvent>(window, 'mousemove'),
+      fromEvent<TouchEvent>(window, 'touchmove')
+    );
+
+    mouseDown
       .pipe(
         switchMap((e) => {
-          return fromEvent<MouseEvent>(canvasEl, 'mousemove').pipe(
-            takeUntil(fromEvent(canvasEl, 'mouseup')),
-            takeUntil(fromEvent(canvasEl, 'mouseleave')),
-            pairwise()
-          );
+          return mouseMove.pipe(takeUntil(mouseUp), pairwise());
         })
       )
-      .subscribe((res: [MouseEvent, MouseEvent]) => {
+      .subscribe((res: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) => {
         const rect = canvasEl.getBoundingClientRect();
 
-        const prevPos = {
-          x: res[0].clientX - rect.left,
-          y: res[0].clientY - rect.top,
-        };
-
-        const currentPos = {
-          x: res[1].clientX - rect.left,
-          y: res[1].clientY - rect.top,
-        };
+        const prevPos = this.getPos(res[0], rect);
+        const currentPos = this.getPos(res[1], rect);
 
         this.drawOnCanvas(prevPos, currentPos);
       });
+  }
+
+  private getPos(ev: MouseEvent | TouchEvent, rect: DOMRect) {
+    if (ev instanceof MouseEvent) {
+      return {
+        x: ev.clientX - rect.left,
+        y: ev.clientY - rect.top,
+      };
+    } else {
+      const touch = ev.changedTouches[0];
+      return {
+        x: touch.clientX - rect.left,
+        y: touch.clientY - rect.top,
+      };
+    }
   }
 
   private drawOnCanvas(prevPos: { x: number; y: number }, currentPos: { x: number; y: number }) {

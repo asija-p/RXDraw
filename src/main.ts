@@ -1,7 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { App } from './app/app';
-import { snapshotReducer, strokeReducer } from './app/store/drawing.reducer';
+import { layersReducer, snapshotReducer, strokeReducer } from './app/store/drawing.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 bootstrapApplication(App, {
@@ -9,6 +9,7 @@ bootstrapApplication(App, {
     provideStore({
       stroke: strokeReducer,
       snapshots: snapshotReducer,
+      layers: layersReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
   ],

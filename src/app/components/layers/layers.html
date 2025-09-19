@@ -1,0 +1,9 @@
+<div>
+  <button (click)="addNewLayer()">Add Layer</button>
+
+  <ul>
+    <li *ngFor="let layer of layers$ | async">
+      {{ layer.name }}
+    </li>
+  </ul>
+</div>

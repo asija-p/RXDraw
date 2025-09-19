@@ -1,5 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { ToolId } from '../models/tool';
+import { Layer } from '../models/layer';
+import { Update } from '@ngrx/entity';
 
 export const setStrokeColor = createAction(
   '[Stroke] Set Color',
@@ -12,3 +14,5 @@ export const addSnapshot = createAction('[Canvas] Add Snapshot', props<{ snapsho
 
 export const undoSnapshot = createAction('[Canvas] Undo Snapshot');
 export const redoSnapshot = createAction('[Canvas] Redo Snapshot');
+
+export const addLayer = createAction('[Layers] Add Layer', props<{ layer: Layer }>());

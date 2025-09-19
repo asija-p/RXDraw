@@ -52,9 +52,10 @@ aside {
   border-right: 1px solid #ccc;
 }
 
-aside.navigator {
+aside.manager {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
 
 main.canvas-area {

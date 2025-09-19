@@ -30,6 +30,12 @@ export class Canvas implements AfterViewInit {
     tool: 'brush',
   };
 
+  private currentSnapshot: string | null = null;
+  private scale = 1;
+  private zoomStep = 0.1;
+  private minZoom = 0.5;
+  private maxZoom = 3;
+
   constructor(private store: Store) {
     combineLatest([
       this.store.select(selectStrokeColor),
@@ -45,9 +51,10 @@ export class Canvas implements AfterViewInit {
     });
 
     this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
+      this.currentSnapshot = snapshot;
       if (snapshot && this.cx) {
         const img = new Image();
-        img.src = snapshot; // snapshot is base64 string
+        img.src = snapshot;
         img.onload = () => {
           this.cx!.clearRect(0, 0, this.width, this.height);
           this.cx!.drawImage(img, 0, 0, this.width, this.height);

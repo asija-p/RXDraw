@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+  addLayer,
   addSnapshot,
   redoSnapshot,
   setStrokeColor,
@@ -8,6 +9,8 @@ import {
   undoSnapshot,
 } from './drawing.actions';
 import { ToolId } from '../models/tool';
+import { Layer } from '../models/layer';
+import { createEntityAdapter, EntityState } from '@ngrx/entity';
 
 export interface StrokeState {
   color: { r: number; g: number; b: number; a: number };
@@ -30,6 +33,16 @@ export const initialSnapshotState: SnapshotState = {
   snapshots: [],
   index: -1,
 };
+
+export interface LayersState extends EntityState<Layer> {
+  selectedLayerId: string | null;
+}
+
+export const adapter = createEntityAdapter<Layer>();
+
+export const initialLayersState: LayersState = adapter.getInitialState({
+  selectedLayerId: null,
+});
 
 export const strokeReducer = createReducer(
   initialState,
@@ -57,4 +70,9 @@ export const snapshotReducer = createReducer(
     ...state,
     index: Math.min(state.snapshots.length - 1, state.index + 1),
   }))
+);
+
+export const layersReducer = createReducer(
+  initialLayersState,
+  on(addLayer, (state, { layer }) => adapter.addOne(layer, state))
 );

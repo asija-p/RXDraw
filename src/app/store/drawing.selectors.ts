@@ -1,5 +1,6 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import { SnapshotState, StrokeState } from './drawing.reducer';
+import { adapter, LayersState, SnapshotState, StrokeState } from './drawing.reducer';
+import { createEntityAdapter, EntityState } from '@ngrx/entity';
 
 export const selectStrokeState = createFeatureSelector<StrokeState>('stroke');
 
@@ -20,3 +21,9 @@ export const selectCurrentSnapshot = createSelector(
   selectSnapshotIndex,
   (snaps, index) => snaps[index] ?? null
 );
+
+export const selectLayersState = createFeatureSelector<LayersState>('layers');
+
+const { selectAll } = adapter.getSelectors();
+
+export const selectAllLayers = createSelector(selectLayersState, selectAll);

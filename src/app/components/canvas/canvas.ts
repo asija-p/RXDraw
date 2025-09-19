@@ -22,7 +22,12 @@ export class Canvas implements AfterViewInit {
 
   private cx: CanvasRenderingContext2D | undefined;
 
-  currentStroke: Stroke = {
+  private snapshots: ImageData[] = [];
+  private snapshotIndex = -1;
+  private maxSnapshots = 20;
+  private isDrawing = false;
+
+  private currentStroke: Stroke = {
     color: 'rgba(0,0,0,1)',
     size: 5,
     tool: 'brush',
@@ -51,6 +56,7 @@ export class Canvas implements AfterViewInit {
       throw new Error('Could not get canvas context');
     }
 
+    /*
     ['touchstart', 'touchmove', 'touchend', 'pointerdown', 'pointermove', 'pointerup'].forEach(
       (ev) => {
         canvasEl.addEventListener(ev, (e) => {
@@ -58,6 +64,7 @@ export class Canvas implements AfterViewInit {
         });
       }
     );
+    */
 
     canvasEl.width = this.width;
     canvasEl.height = this.height;
@@ -66,6 +73,7 @@ export class Canvas implements AfterViewInit {
     this.cx.strokeStyle = '#000';
     this.cx.fillStyle = '#ffffff';
     this.cx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    this.saveSnapshot();
 
     this.captureEvents(canvasEl);
   }
@@ -90,16 +98,24 @@ export class Canvas implements AfterViewInit {
 
     mouseDown
       .pipe(
-        switchMap((e) => {
+        switchMap(() => {
+          this.isDrawing = true;
           return mouseMove.pipe(takeUntil(mouseUp), pairwise());
         })
       )
-      .subscribe(([prev, curr]: [MouseEvent | TouchEvent, MouseEvent | TouchEvent]) => {
+      .subscribe(([prev, curr]) => {
         const rect = canvasEl.getBoundingClientRect();
         const prevPos = this.getPos(prev, rect);
         const currPos = this.getPos(curr, rect);
         this.drawOnCanvas(prevPos, currPos);
       });
+
+    mouseUp.subscribe(() => {
+      if (this.isDrawing) {
+        this.saveSnapshot();
+        this.isDrawing = false;
+      }
+    });
   }
 
   private getPos(ev: MouseEvent | TouchEvent, rect: DOMRect) {
@@ -132,5 +148,45 @@ export class Canvas implements AfterViewInit {
     this.cx.lineWidth = this.currentStroke.size * currentPos.pressure;
     this.cx.strokeStyle = this.currentStroke.color;
     this.cx.stroke();
+  }
+
+  private saveSnapshot() {
+    if (!this.cx) return;
+
+    const data = this.cx.getImageData(0, 0, this.width, this.height);
+
+    this.snapshots = this.snapshots.slice(0, this.snapshotIndex + 1);
+
+    if (this.snapshots.length >= this.maxSnapshots) {
+      this.snapshots.shift();
+      this.snapshotIndex--;
+    }
+
+    this.snapshots.push(data);
+    this.snapshotIndex++;
+
+    console.log('Saved snapshot', this.snapshotIndex, 'total:', this.snapshots.length);
+  }
+
+  undo() {
+    if (!this.cx) return;
+    console.log('Undo clicked', this.snapshotIndex, this.snapshots.length);
+
+    if (this.snapshotIndex > 0) {
+      this.snapshotIndex--;
+      console.log('Reverting to', this.snapshotIndex);
+      this.cx.putImageData(this.snapshots[this.snapshotIndex], 0, 0);
+    }
+  }
+
+  redo() {
+    if (!this.cx) return;
+    console.log('Redo clicked', this.snapshotIndex, this.snapshots.length);
+
+    if (this.snapshotIndex < this.snapshots.length - 1) {
+      this.snapshotIndex++;
+      console.log('Advancing to', this.snapshotIndex);
+      this.cx.putImageData(this.snapshots[this.snapshotIndex], 0, 0);
+    }
   }
 }

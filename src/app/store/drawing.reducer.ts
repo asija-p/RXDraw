@@ -1,5 +1,12 @@
 import { createReducer, on } from '@ngrx/store';
-import { setStrokeColor, setStrokeSize, setStrokeTool } from './drawing.actions';
+import {
+  addSnapshot,
+  redoSnapshot,
+  setStrokeColor,
+  setStrokeSize,
+  setStrokeTool,
+  undoSnapshot,
+} from './drawing.actions';
 import { ToolId } from '../models/tool';
 
 export interface StrokeState {
@@ -14,9 +21,40 @@ export const initialState: StrokeState = {
   tool: 'brush',
 };
 
+export interface SnapshotState {
+  snapshots: string[];
+  index: number;
+}
+
+export const initialSnapshotState: SnapshotState = {
+  snapshots: [],
+  index: -1,
+};
+
 export const strokeReducer = createReducer(
   initialState,
   on(setStrokeColor, (state, { color }) => ({ ...state, color })),
   on(setStrokeSize, (state, { size }) => ({ ...state, size })),
   on(setStrokeTool, (state, { tool }) => ({ ...state, tool }))
+);
+
+export const snapshotReducer = createReducer(
+  initialSnapshotState,
+  on(addSnapshot, (state, { snapshot }) => {
+    const truncated = state.snapshots.slice(0, state.index + 1);
+    const newSnapshots = [...truncated, snapshot];
+
+    return {
+      snapshots: newSnapshots,
+      index: newSnapshots.length - 1,
+    };
+  }),
+  on(undoSnapshot, (state) => ({
+    ...state,
+    index: Math.max(0, state.index - 1),
+  })),
+  on(redoSnapshot, (state) => ({
+    ...state,
+    index: Math.min(state.snapshots.length - 1, state.index + 1),
+  }))
 );

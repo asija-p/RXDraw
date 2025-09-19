@@ -45,11 +45,16 @@ body {
   height: 100vh;
 }
 
-aside.stroke-editor {
+aside {
   width: 250px;
   background: #f4f4f4;
   padding: 2rem;
   border-right: 1px solid #ccc;
+}
+
+aside.navigator {
+  display: flex;
+  justify-content: center;
 }
 
 main.canvas-area {

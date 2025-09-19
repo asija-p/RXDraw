@@ -2,11 +2,13 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 import { Store } from '@ngrx/store';
 import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
 import {
+  selectCurrentSnapshot,
   selectStrokeColor,
   selectStrokeSize,
   selectStrokeTool,
 } from '../../store/drawing.selectors';
 import { Stroke } from '../../models/stroke';
+import { addSnapshot, redoSnapshot, undoSnapshot } from '../../store/drawing.actions';
 
 @Component({
   selector: 'app-canvas',
@@ -16,15 +18,10 @@ import { Stroke } from '../../models/stroke';
 })
 export class Canvas implements AfterViewInit {
   @ViewChild('canvas') public canvas!: ElementRef<HTMLCanvasElement>;
-
   @Input() public width = 700;
   @Input() public height = 700;
 
-  private cx: CanvasRenderingContext2D | undefined;
-
-  private snapshots: ImageData[] = [];
-  private snapshotIndex = -1;
-  private maxSnapshots = 20;
+  private cx?: CanvasRenderingContext2D;
   private isDrawing = false;
 
   private currentStroke: Stroke = {
@@ -44,35 +41,33 @@ export class Canvas implements AfterViewInit {
         size,
         tool,
       };
+      console.log(this.currentStroke.color);
+    });
+
+    this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
+      if (snapshot && this.cx) {
+        const img = new Image();
+        img.src = snapshot; // snapshot is base64 string
+        img.onload = () => {
+          this.cx!.clearRect(0, 0, this.width, this.height);
+          this.cx!.drawImage(img, 0, 0, this.width, this.height);
+        };
+      }
     });
   }
 
   public ngAfterViewInit(): void {
-    const canvasEl: HTMLCanvasElement = this.canvas.nativeElement;
-
+    const canvasEl = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d')!;
-
-    if (!this.cx) {
-      throw new Error('Could not get canvas context');
-    }
-
-    /*
-    ['touchstart', 'touchmove', 'touchend', 'pointerdown', 'pointermove', 'pointerup'].forEach(
-      (ev) => {
-        canvasEl.addEventListener(ev, (e) => {
-          console.log(ev, e);
-        });
-      }
-    );
-    */
+    if (!this.cx) throw new Error('Could not get canvas context');
 
     canvasEl.width = this.width;
     canvasEl.height = this.height;
 
     this.cx.lineCap = 'round';
-    this.cx.strokeStyle = '#000';
     this.cx.fillStyle = '#ffffff';
-    this.cx.fillRect(0, 0, canvasEl.width, canvasEl.height);
+    this.cx.fillRect(0, 0, this.width, this.height);
+
     this.saveSnapshot();
 
     this.captureEvents(canvasEl);
@@ -135,16 +130,11 @@ export class Canvas implements AfterViewInit {
     }
   }
 
-  private drawOnCanvas(
-    prevPos: { x: number; y: number; pressure: number },
-    currentPos: { x: number; y: number; pressure: number }
-  ) {
+  private drawOnCanvas(prevPos: any, currentPos: any) {
     if (!this.cx) return;
-
     this.cx.beginPath();
     this.cx.moveTo(prevPos.x, prevPos.y);
     this.cx.lineTo(currentPos.x, currentPos.y);
-
     this.cx.lineWidth = this.currentStroke.size * currentPos.pressure;
     this.cx.strokeStyle = this.currentStroke.color;
     this.cx.stroke();
@@ -152,41 +142,16 @@ export class Canvas implements AfterViewInit {
 
   private saveSnapshot() {
     if (!this.cx) return;
-
-    const data = this.cx.getImageData(0, 0, this.width, this.height);
-
-    this.snapshots = this.snapshots.slice(0, this.snapshotIndex + 1);
-
-    if (this.snapshots.length >= this.maxSnapshots) {
-      this.snapshots.shift();
-      this.snapshotIndex--;
-    }
-
-    this.snapshots.push(data);
-    this.snapshotIndex++;
-
-    console.log('Saved snapshot', this.snapshotIndex, 'total:', this.snapshots.length);
+    const canvas = this.canvas.nativeElement;
+    const dataUrl = canvas.toDataURL(); // base64
+    this.store.dispatch(addSnapshot({ snapshot: dataUrl }));
   }
 
   undo() {
-    if (!this.cx) return;
-    console.log('Undo clicked', this.snapshotIndex, this.snapshots.length);
-
-    if (this.snapshotIndex > 0) {
-      this.snapshotIndex--;
-      console.log('Reverting to', this.snapshotIndex);
-      this.cx.putImageData(this.snapshots[this.snapshotIndex], 0, 0);
-    }
+    this.store.dispatch(undoSnapshot());
   }
 
   redo() {
-    if (!this.cx) return;
-    console.log('Redo clicked', this.snapshotIndex, this.snapshots.length);
-
-    if (this.snapshotIndex < this.snapshots.length - 1) {
-      this.snapshotIndex++;
-      console.log('Advancing to', this.snapshotIndex);
-      this.cx.putImageData(this.snapshots[this.snapshotIndex], 0, 0);
-    }
+    this.store.dispatch(redoSnapshot());
   }
 }

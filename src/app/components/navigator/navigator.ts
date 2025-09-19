@@ -1,4 +1,6 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { selectCurrentSnapshot } from '../../store/drawing.selectors';
 
 @Component({
   selector: 'app-navigator',
@@ -6,17 +8,25 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
   templateUrl: './navigator.html',
   styleUrl: './navigator.scss',
 })
-export class Navigator {
-  @ViewChild('previewCanvas') previewCanvas!: ElementRef<HTMLCanvasElement>;
+export class Navigator implements AfterViewInit {
+  @ViewChild('previewCanvas', { static: true })
+  previewCanvas!: ElementRef<HTMLCanvasElement>;
+
+  constructor(private store: Store) {}
 
   ngAfterViewInit() {
-    const ctx = this.previewCanvas.nativeElement.getContext('2d')!;
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(
-      0,
-      0,
-      this.previewCanvas.nativeElement.width,
-      this.previewCanvas.nativeElement.height
-    );
+    const canvas = this.previewCanvas.nativeElement;
+    const ctx = canvas.getContext('2d')!;
+
+    this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
+      if (snapshot) {
+        const img = new Image();
+        img.src = snapshot;
+        img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+      }
+    });
   }
 }

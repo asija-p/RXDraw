@@ -1,35 +1,46 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ColorChromeModule } from 'ngx-color/chrome';
-import { setStrokeColor, setStrokeSize, setTool } from '../../store/drawing.actions';
+import { setStrokeColor, setStrokeSize, setStrokeTool } from '../../store/drawing.actions';
 import { MatSliderModule } from '@angular/material/slider';
 import { CommonModule } from '@angular/common';
+import { Tool, ToolId } from '../../models/tool';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faPaintBrush,
+  faEraser,
+  faFillDrip,
+  faHighlighter,
+  faFeather,
+} from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-stroke-editor',
-  imports: [ColorChromeModule, MatSliderModule, CommonModule],
+  imports: [ColorChromeModule, MatSliderModule, CommonModule, FontAwesomeModule],
   templateUrl: './stroke-editor.html',
   styleUrl: './stroke-editor.scss',
 })
 export class StrokeEditor {
   strokeColor = '#000000';
+  strokeOpacity = '1';
   strokeSize = 5;
-  activeTool: string = 'brush';
+  activeTool = 'brush';
 
   sizes = [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 200];
 
-  tools: { name: 'brush' | 'eraser'; icon: string }[] = [
-    { name: 'brush', icon: '🖌️' },
-    { name: 'eraser', icon: '🧽' },
+  tools: Tool[] = [
+    { id: 'brush', icon: faPaintBrush },
+    { id: 'eraser', icon: faEraser },
+    { id: 'bucket', icon: faFillDrip },
+    { id: 'marker', icon: faHighlighter },
+    { id: 'quill', icon: faFeather },
   ];
 
   constructor(private store: Store) {}
 
   onColorChange(event: any) {
-    const color = event.color.hex;
-    this.strokeColor = color;
-    this.store.dispatch(setStrokeColor({ color }));
-    console.log();
+    const rgba = event.color.rgb;
+    this.store.dispatch(setStrokeColor({ color: rgba }));
   }
 
   selectSize(size: number) {
@@ -37,8 +48,8 @@ export class StrokeEditor {
     this.store.dispatch(setStrokeSize({ size }));
   }
 
-  selectTool(tool: 'brush' | 'eraser') {
-    this.activeTool = tool;
-    this.store.dispatch(setTool({ tool }));
+  selectTool(toolId: ToolId) {
+    this.activeTool = toolId;
+    this.store.dispatch(setStrokeTool({ tool: toolId }));
   }
 }

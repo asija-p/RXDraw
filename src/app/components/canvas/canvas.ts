@@ -6,6 +6,7 @@ import {
   selectStrokeSize,
   selectStrokeTool,
 } from '../../store/drawing.selectors';
+import { Stroke } from '../../models/stroke';
 
 @Component({
   selector: 'app-canvas',
@@ -20,8 +21,12 @@ export class Canvas implements AfterViewInit {
   @Input() public height = 700;
 
   private cx: CanvasRenderingContext2D | undefined;
-  strokeColor = '#000000';
-  strokeSize: number = 5;
+
+  currentStroke: Stroke = {
+    color: 'rgba(0,0,0,1)',
+    size: 5,
+    tool: 'brush',
+  };
 
   constructor(private store: Store) {
     combineLatest([
@@ -29,8 +34,11 @@ export class Canvas implements AfterViewInit {
       this.store.select(selectStrokeSize),
       this.store.select(selectStrokeTool),
     ]).subscribe(([color, size, tool]) => {
-      this.strokeColor = tool === 'eraser' ? '#ffffff' : color;
-      this.strokeSize = size;
+      this.currentStroke = {
+        color: `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`,
+        size,
+        tool,
+      };
     });
   }
 
@@ -115,20 +123,14 @@ export class Canvas implements AfterViewInit {
     prevPos: { x: number; y: number; pressure: number },
     currentPos: { x: number; y: number; pressure: number }
   ) {
-    if (!this.cx) {
-      return;
-    }
+    if (!this.cx) return;
 
     this.cx.beginPath();
+    this.cx.moveTo(prevPos.x, prevPos.y);
+    this.cx.lineTo(currentPos.x, currentPos.y);
 
-    if (prevPos) {
-      this.cx.moveTo(prevPos.x, prevPos.y);
-
-      this.cx.lineTo(currentPos.x, currentPos.y);
-
-      this.cx.lineWidth = this.strokeSize * currentPos.pressure;
-      this.cx.strokeStyle = this.strokeColor;
-      this.cx.stroke();
-    }
+    this.cx.lineWidth = this.currentStroke.size * currentPos.pressure;
+    this.cx.strokeStyle = this.currentStroke.color;
+    this.cx.stroke();
   }
 }

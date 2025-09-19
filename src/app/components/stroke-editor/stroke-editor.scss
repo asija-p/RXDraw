@@ -38,12 +38,13 @@
 
   justify-content: flex-start;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 .tool-picker {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 button {

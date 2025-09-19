@@ -5,10 +5,11 @@
 <div class="tool-picker">
   <button
     *ngFor="let tool of tools"
-    [class.selected]="tool.name === activeTool"
-    (click)="selectTool(tool.name)"
+    [class.selected]="tool.id === activeTool"
+    (click)="selectTool(tool.id)"
   >
-    <span class="icon">{{ tool.icon }}</span>
+    <fa-icon [icon]="tool.icon"></fa-icon>
+    {{ tool.id }}
   </button>
 </div>
 

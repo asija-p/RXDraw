@@ -1,0 +1,44 @@
+.layers {
+  width: 220px;
+  font: 13px system-ui, sans-serif;
+  background-color: var(--app-bg);
+  height: 90%;
+  overflow: auto;
+}
+
+.add {
+  width: 30%;
+  padding: 6px 8px;
+  margin-bottom: 8px;
+}
+
+.layer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.layer.active {
+  border-color: #4f7cff;
+  background: #f0f5ff;
+}
+
+.thumb {
+  width: 32px;
+  height: 24px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-size: cover;
+  background-position: center;
+}
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

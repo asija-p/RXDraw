@@ -3,6 +3,7 @@ import {
   addLayer,
   addSnapshot,
   redoSnapshot,
+  setActiveLayer,
   setStrokeColor,
   setStrokeSize,
   setStrokeTool,
@@ -24,6 +25,13 @@ export const initialState: StrokeState = {
   tool: 'brush',
 };
 
+export const strokeReducer = createReducer(
+  initialState,
+  on(setStrokeColor, (state, { color }) => ({ ...state, color })),
+  on(setStrokeSize, (state, { size }) => ({ ...state, size })),
+  on(setStrokeTool, (state, { tool }) => ({ ...state, tool }))
+);
+
 export interface SnapshotState {
   snapshots: string[];
   index: number;
@@ -33,23 +41,6 @@ export const initialSnapshotState: SnapshotState = {
   snapshots: [],
   index: -1,
 };
-
-export interface LayersState extends EntityState<Layer> {
-  selectedLayerId: string | null;
-}
-
-export const adapter = createEntityAdapter<Layer>();
-
-export const initialLayersState: LayersState = adapter.getInitialState({
-  selectedLayerId: null,
-});
-
-export const strokeReducer = createReducer(
-  initialState,
-  on(setStrokeColor, (state, { color }) => ({ ...state, color })),
-  on(setStrokeSize, (state, { size }) => ({ ...state, size })),
-  on(setStrokeTool, (state, { tool }) => ({ ...state, tool }))
-);
 
 export const snapshotReducer = createReducer(
   initialSnapshotState,
@@ -72,7 +63,40 @@ export const snapshotReducer = createReducer(
   }))
 );
 
+export interface LayersState extends EntityState<Layer> {
+  selectedLayerId: string | null;
+}
+
+export const adapter = createEntityAdapter<Layer>();
+
+//change
+const WHITE_PIXEL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgMBApYbW4sAAAAASUVORK5CYII=';
+
+const backgroundLayer: Layer = {
+  id: 'background',
+  name: 'Background',
+  visible: true,
+  opacity: 1,
+  zIndex: 0,
+  canvasData: WHITE_PIXEL,
+};
+
+const base = adapter.getInitialState<LayersState>({
+  selectedLayerId: 'background',
+});
+
+export const initialLayersState: LayersState = adapter.addOne(backgroundLayer, base);
+
+//change
+
 export const layersReducer = createReducer(
   initialLayersState,
-  on(addLayer, (state, { layer }) => adapter.addOne(layer, state))
+  on(addLayer, (state, { layer }) => adapter.addOne(layer, state)),
+  on(setActiveLayer, (state, { selectedLayerId }) => {
+    return {
+      ...state,
+      selectedLayerId,
+    };
+  })
 );

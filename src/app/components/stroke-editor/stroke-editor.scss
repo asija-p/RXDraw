@@ -46,16 +46,3 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
-
-button {
-  background: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.5rem;
-  cursor: pointer;
-}
-
-button.selected {
-  border-color: #000;
-  background: #eee;
-}

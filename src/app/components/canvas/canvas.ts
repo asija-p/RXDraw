@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 import { Store } from '@ngrx/store';
 import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
 import {
+  selectAllLayers,
   selectCurrentSnapshot,
   selectStrokeColor,
   selectStrokeSize,
@@ -9,10 +10,12 @@ import {
 } from '../../store/drawing.selectors';
 import { Stroke } from '../../models/stroke';
 import { addSnapshot, redoSnapshot, undoSnapshot } from '../../store/drawing.actions';
+import { CommonModule } from '@angular/common';
+import { Layers } from '../layers/layers';
 
 @Component({
   selector: 'app-canvas',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './canvas.html',
   styleUrl: './canvas.scss',
 })
@@ -20,6 +23,13 @@ export class Canvas implements AfterViewInit {
   @ViewChild('canvas') public canvas!: ElementRef<HTMLCanvasElement>;
   @Input() public width = 700;
   @Input() public height = 700;
+
+  @Input() layerId!: string;
+  @Input() visible = true;
+  @Input() opacity = 1;
+  @Input() zIndex = 0;
+  @Input() canvasData: string = '';
+  @Input() active = false;
 
   private cx?: CanvasRenderingContext2D;
   private isDrawing = false;
@@ -29,12 +39,6 @@ export class Canvas implements AfterViewInit {
     size: 5,
     tool: 'brush',
   };
-
-  private currentSnapshot: string | null = null;
-  private scale = 1;
-  private zoomStep = 0.1;
-  private minZoom = 0.5;
-  private maxZoom = 3;
 
   constructor(private store: Store) {
     combineLatest([
@@ -51,7 +55,6 @@ export class Canvas implements AfterViewInit {
     });
 
     this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
-      this.currentSnapshot = snapshot;
       if (snapshot && this.cx) {
         const img = new Image();
         img.src = snapshot;
@@ -67,17 +70,21 @@ export class Canvas implements AfterViewInit {
     const canvasEl = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d')!;
     if (!this.cx) throw new Error('Could not get canvas context');
-
     canvasEl.width = this.width;
     canvasEl.height = this.height;
-
     this.cx.lineCap = 'round';
+
+    /*    this.cx.lineCap = 'round';
     this.cx.fillStyle = '#ffffff';
     this.cx.fillRect(0, 0, this.width, this.height);
 
-    this.saveSnapshot();
+    this.saveSnapshot();*/
 
-    this.captureEvents(canvasEl);
+    this.paintFromDataUrl();
+
+    if (this.active) {
+      this.captureEvents(canvasEl); // your existing drawing logic
+    }
   }
 
   private captureEvents(canvasEl: HTMLCanvasElement) {
@@ -160,5 +167,15 @@ export class Canvas implements AfterViewInit {
 
   redo() {
     this.store.dispatch(redoSnapshot());
+  }
+
+  private paintFromDataUrl() {
+    if (!this.cx || !this.canvasData) return;
+    const img = new Image();
+    img.src = this.canvasData;
+    img.onload = () => {
+      this.cx!.clearRect(0, 0, this.width, this.height);
+      this.cx!.drawImage(img, 0, 0, this.width, this.height);
+    };
   }
 }

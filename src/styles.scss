@@ -1,43 +1,11 @@
 @use '@angular/material' as mat;
 
 :root {
-  @include mat.slider-overrides(
-    (
-      active-track-color: rgb(0, 0, 0),
-      active-track-shape: 150px,
-    )
-  );
-}
-
-html {
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+  --app-bg: #909090; /* rgb(144,144,144) */
 }
 
 body {
-  color-scheme: light;
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-  margin: 0;
-}
-
-html,
-body {
-  height: 100%;
-  margin: 0;
-}
-
-body {
-  background-color: rgb(144, 144, 144);
+  background-color: var(--app-bg);
 }
 
 .app-layout {
@@ -53,9 +21,8 @@ aside {
 }
 
 aside.manager {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: 30% 70%;
 }
 
 main.canvas-area {
@@ -74,4 +41,17 @@ body {
 body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+button {
+  background: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+button.selected {
+  border-color: #000;
+  background: #eee;
 }

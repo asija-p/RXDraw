@@ -1,0 +1,10 @@
+.stack {
+  position: relative;
+  overflow: hidden;
+}
+
+app-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+}

@@ -11,8 +11,11 @@ export const setStrokeSize = createAction('[Stroke] Set Size', props<{ size: num
 export const setStrokeTool = createAction('[Stroke] Set Tool', props<{ tool: ToolId }>());
 
 export const addSnapshot = createAction('[Canvas] Add Snapshot', props<{ snapshot: string }>());
-
 export const undoSnapshot = createAction('[Canvas] Undo Snapshot');
 export const redoSnapshot = createAction('[Canvas] Redo Snapshot');
 
 export const addLayer = createAction('[Layers] Add Layer', props<{ layer: Layer }>());
+export const setActiveLayer = createAction(
+  '[Layers] Set Active Layer',
+  props<{ selectedLayerId: string }>()
+);

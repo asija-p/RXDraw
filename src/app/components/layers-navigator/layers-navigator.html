@@ -1,0 +1,11 @@
+<button class="add" (click)="addNewLayer()">+ Layer</button>
+<div class="layers">
+  <div
+    class="layer"
+    *ngFor="let l of layers$ | async; trackBy: trackById"
+    (click)="select(l.id)"
+    [class.active]="l.id === (activeId$ | async)"
+  >
+    <span class="name">{{ l.name }}</span>
+  </div>
+</div>

@@ -27,3 +27,8 @@ export const selectLayersState = createFeatureSelector<LayersState>('layers');
 const { selectAll } = adapter.getSelectors();
 
 export const selectAllLayers = createSelector(selectLayersState, selectAll);
+
+export const selectActiveLayer = createSelector(
+  selectLayersState,
+  (s) => s.selectedLayerId ?? null
+);

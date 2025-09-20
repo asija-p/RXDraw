@@ -3,6 +3,7 @@ import {
   addLayer,
   addSnapshot,
   redoSnapshot,
+  removeLayer,
   setActiveLayer,
   setStrokeColor,
   setStrokeSize,
@@ -98,5 +99,9 @@ export const layersReducer = createReducer(
       ...state,
       selectedLayerId,
     };
+  }),
+  on(removeLayer, (state, { layerId }) => {
+    const next = adapter.removeOne(layerId, state);
+    return next.selectedLayerId === layerId ? { ...next, selectedLayerId: null } : next;
   })
 );

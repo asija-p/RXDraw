@@ -15,6 +15,7 @@ export const undoSnapshot = createAction('[Canvas] Undo Snapshot');
 export const redoSnapshot = createAction('[Canvas] Redo Snapshot');
 
 export const addLayer = createAction('[Layers] Add Layer', props<{ layer: Layer }>());
+export const removeLayer = createAction('[Layers] Remove Layer', props<{ layerId: string }>());
 export const setActiveLayer = createAction(
   '[Layers] Set Active Layer',
   props<{ selectedLayerId: string }>()

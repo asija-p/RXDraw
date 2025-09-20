@@ -6,20 +6,11 @@
   overflow: auto;
 }
 
-.add {
-  width: 30%;
-  padding: 6px 8px;
-  margin-bottom: 8px;
-}
-
 .layer {
   display: flex;
   align-items: center;
-  gap: 8px;
   padding: 6px;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  margin-bottom: 6px;
   cursor: pointer;
   background: #fff;
 }
@@ -41,4 +32,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.layer-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.layer-btn {
+  width: 15%;
 }

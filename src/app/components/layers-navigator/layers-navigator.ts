@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
+import { Observable, take, zip } from 'rxjs';
 import { selectActiveLayer, selectAllLayers } from '../../store/drawing.selectors';
-import { addLayer, setActiveLayer } from '../../store/drawing.actions';
+import { addLayer, setActiveLayer, removeLayer } from '../../store/drawing.actions';
 import { Layer } from '../../models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule } from '@angular/common';
@@ -15,32 +15,44 @@ import { CommonModule } from '@angular/common';
 })
 export class LayersNavigator {
   layers$: Observable<Layer[]>;
-  trackById = (_: number, l: Layer) => l.id;
   activeId$: Observable<string | null>;
+  zIndex = 1;
+  trackById = (_: number, l: Layer) => l.id;
 
   constructor(private store: Store) {
     this.layers$ = this.store.select(selectAllLayers);
-    this.activeId$ = this.store.select(selectActiveLayer);
+    this.activeId$ = this.store.select(selectActiveLayer); // <- ID selector
   }
 
   addNewLayer() {
     const color = this.randomColor();
     const newLayer: Layer = {
-      id: uuid(),
-      name: `Layer ${Date.now()}`,
+      id: String(this.zIndex), // or uuid()
+      name: `Layer ${this.zIndex}`,
       visible: true,
       opacity: 1,
-      zIndex: Date.now(), // or layers.length
+      zIndex: this.zIndex,
       canvasData: this.blankCanvas(color),
     };
-
+    this.zIndex++;
     this.store.dispatch(addLayer({ layer: newLayer }));
   }
 
-  randomColor() {
+  // Delete the currently selected layer
+  removeSelected() {
+    this.activeId$.pipe(take(1)).subscribe((id) => {
+      if (id) this.store.dispatch(removeLayer({ layerId: id }));
+    });
+  }
+
+  select(id: string) {
+    this.store.dispatch(setActiveLayer({ selectedLayerId: id }));
+  }
+
+  private randomColor() {
     const h = Math.floor(Math.random() * 360);
-    const s = 60 + Math.floor(Math.random() * 20); // 60–80%
-    const l = 75 + Math.floor(Math.random() * 10); // 75–85%
+    const s = 60 + Math.floor(Math.random() * 20);
+    const l = 75 + Math.floor(Math.random() * 10);
     return `hsl(${h} ${s}% ${l}%)`;
   }
 
@@ -52,9 +64,5 @@ export class LayersNavigator {
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     return canvas.toDataURL();
-  }
-
-  select(id: string) {
-    this.store.dispatch(setActiveLayer({ selectedLayerId: id }));
   }
 }

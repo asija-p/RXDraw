@@ -88,11 +88,9 @@ export class LayersNavigator {
     this.store.dispatch(setLayerVisibility({ layerId: id, visible: !currentlyVisible }));
   }
 
-  /*
-  onOpacityInput(id: string, value: string) {
-    this.opacityLive$.next({ id, opacity: +value }); // live preview
+  changeOpacity(id: string, ev: Event) {
+    const value = Number((ev.target as HTMLInputElement).value); // 0..100
+    const opacity = Math.max(0, Math.min(1, value / 100)); // clamp to 0..1
+    this.store.dispatch(setLayerOpacity({ layerId: id, opacity }));
   }
-  onOpacityChange(id: string, value: string) {
-    this.store.dispatch(setLayerOpacity({ layerId: id, opacity: +value })); // final commit
-  }*/
 }

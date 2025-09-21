@@ -19,17 +19,17 @@
     </button>
   </div>
 
-  <div *ngIf="activeLayer$ | async as active">
-    <div
-      class="opacity-wrap"
-      role="progressbar"
-      [attr.aria-valuemin]="0"
-      [attr.aria-valuemax]="100"
-      [attr.aria-valuenow]="active.opacity * 100"
-    >
-      <div class="opacity-fill" [style.width.%]="active.opacity * 100"></div>
-    </div>
-    <div class="opacity-label">Opacity: {{ active.opacity * 100 }}%</div>
+  <div class="opacity-wrap" *ngIf="activeLayer$ | async as active">
+    <input
+      type="range"
+      min="0"
+      max="100"
+      [value]="active.opacity * 100"
+      aria-label="Layer opacity"
+      (input)="changeOpacity(active.id, $event)"
+    />
+
+    <div class="opacity-label">Opacity: {{ active.opacity * 100 | number : '1.0-0' }}%</div>
   </div>
 
   <div class="layers">

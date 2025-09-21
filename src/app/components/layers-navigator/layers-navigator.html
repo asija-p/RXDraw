@@ -1,38 +1,54 @@
-<div class="layer-buttons">
-  <button class="button layer-btn" (click)="addNewLayer()">+</button>
-  <button class="button layer-btn" (click)="removeSelected()">
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <path
-        d="M6 7h12l-1 14H7L6 7Zm2-3h8l1 2H7l1-2Zm3 5v9m4-9v9"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-      />
-    </svg>
-  </button>
-</div>
-
-<ng-container *ngIf="selectedLayer$ | async as sel">
-  <span class="opacity-label"> Opacity: {{ sel.opacity * 100 | number : '1.0-0' }}% </span>
-</ng-container>
-
-<div class="layers">
-  <div
-    class="layer"
-    *ngFor="let l of layers$ | async; trackBy: trackById"
-    (click)="select(l.id)"
-    [class.active]="l.id === (activeId$ | async)"
-  >
-    <span class="name">{{ l.name }}</span>
+<div class="container">
+  <div class="layer-buttons">
     <button
-      type="button"
-      class="icon-btn"
-      (click)="onToggleVisible(l.id, l.visible); $event.stopPropagation()"
-      [attr.aria-pressed]="l.visible"
-      [title]="l.visible ? 'Hide layer' : 'Show layer'"
+      class="button layer-btn"
+      (click)="addNewLayer()"
+      aria-label="Add layer"
+      title="Add layer"
     >
-      <fa-icon [icon]="l.visible ? faEye : faEyeSlash"></fa-icon>
+      +
     </button>
+
+    <button
+      class="button layer-btn"
+      (click)="removeSelected()"
+      aria-label="Delete layer"
+      title="Delete layer"
+    >
+      <fa-icon [icon]="faTrash" size="lg"></fa-icon>
+    </button>
+  </div>
+
+  <div *ngIf="activeLayer$ | async as active">
+    <div
+      class="opacity-wrap"
+      role="progressbar"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="100"
+      [attr.aria-valuenow]="active.opacity * 100"
+    >
+      <div class="opacity-fill" [style.width.%]="active.opacity * 100"></div>
+    </div>
+    <div class="opacity-label">Opacity: {{ active.opacity * 100 }}%</div>
+  </div>
+
+  <div class="layers">
+    <div
+      class="layer"
+      *ngFor="let l of layers$ | async; trackBy: trackById"
+      (click)="selectLayer(l.id)"
+      [class.active]="l.id === (activeLayer$ | async)?.id"
+    >
+      <span class="name">{{ l.name }}</span>
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="onToggleVisible(l.id, l.visible); $event.stopPropagation()"
+        [attr.aria-pressed]="l.visible"
+        [title]="l.visible ? 'Hide layer' : 'Show layer'"
+      >
+        <fa-icon [icon]="l.visible ? faEye : faEyeSlash"></fa-icon>
+      </button>
+    </div>
   </div>
 </div>

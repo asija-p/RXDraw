@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { auditTime, combineLatest, map, Observable, Subject, take, tap, zip } from 'rxjs';
-import { selectActiveLayerId, selectLayers } from '../../store/drawing.selectors';
+import {
+  selectActiveLayer,
+  selectActiveLayerId,
+  selectLayers,
+} from '../../store/drawing.selectors';
 import {
   addLayer,
   setActiveLayer,
@@ -13,7 +17,7 @@ import { Layer } from '../../models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-layers-navigator',
@@ -22,28 +26,17 @@ import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
   styleUrl: './layers-navigator.scss',
 })
 export class LayersNavigator {
+  faTrash = faTrash;
+
   layers$: Observable<Layer[]>;
-  activeId$: Observable<string | null>;
-  selectedLayer$: Observable<Layer | null>;
-  private opacityLive$ = new Subject<{ id: string; opacity: number }>();
+  activeLayer$: Observable<Layer | undefined>;
 
   zIndex = 1;
   trackById = (_: number, l: Layer) => l.id;
 
   constructor(private store: Store) {
     this.layers$ = this.store.select(selectLayers);
-    this.activeId$ = this.store.select(selectActiveLayerId);
-
-    this.selectedLayer$ = combineLatest([this.layers$, this.activeId$]).pipe(
-      map(([layers, id]) => layers.find((l) => l.id === id) ?? null)
-    );
-
-    // debounced live updates while dragging the slider (smooth UI, fewer actions)
-    this.opacityLive$
-      .pipe(auditTime(16)) // ~1 frame; tweak if you want
-      .subscribe(({ id, opacity }) =>
-        this.store.dispatch(setLayerOpacity({ layerId: id, opacity }))
-      );
+    this.activeLayer$ = this.store.select(selectActiveLayer);
   }
 
   addNewLayer() {
@@ -62,12 +55,12 @@ export class LayersNavigator {
   }
 
   removeSelected() {
-    this.activeId$.pipe(take(1)).subscribe((id) => {
-      if (id) this.store.dispatch(removeLayer({ layerId: id }));
+    this.activeLayer$.pipe(take(1)).subscribe((layer) => {
+      if (layer) this.store.dispatch(removeLayer({ layerId: layer.id }));
     });
   }
 
-  select(id: string) {
+  selectLayer(id: string) {
     this.store.dispatch(setActiveLayer({ selectedLayerId: id }));
   }
 
@@ -95,11 +88,11 @@ export class LayersNavigator {
     this.store.dispatch(setLayerVisibility({ layerId: id, visible: !currentlyVisible }));
   }
 
-  // opacity handlers
+  /*
   onOpacityInput(id: string, value: string) {
     this.opacityLive$.next({ id, opacity: +value }); // live preview
   }
   onOpacityChange(id: string, value: string) {
     this.store.dispatch(setLayerOpacity({ layerId: id, opacity: +value })); // final commit
-  }
+  }*/
 }

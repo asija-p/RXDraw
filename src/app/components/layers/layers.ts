@@ -22,7 +22,6 @@ export class Layers {
 
   constructor(private store: Store) {
     this.layers$ = this.store.select(selectAllLayers);
-    console.log(this.layers$);
     this.selectedLayerId$ = this.store.select(selectActiveLayer);
   }
 }

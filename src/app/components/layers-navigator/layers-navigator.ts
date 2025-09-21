@@ -36,6 +36,7 @@ export class LayersNavigator {
     };
     this.zIndex++;
     this.store.dispatch(addLayer({ layer: newLayer }));
+    this.store.dispatch(setActiveLayer({ selectedLayerId: newLayer.id }));
   }
 
   // Delete the currently selected layer

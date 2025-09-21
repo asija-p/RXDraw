@@ -75,7 +75,7 @@ const WHITE_PIXEL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgMBApYbW4sAAAAASUVORK5CYII=';
 
 const backgroundLayer: Layer = {
-  id: 'background',
+  id: '0',
   name: 'Background',
   visible: true,
   opacity: 1,
@@ -84,7 +84,7 @@ const backgroundLayer: Layer = {
 };
 
 const base = adapter.getInitialState<LayersState>({
-  selectedLayerId: 'background',
+  selectedLayerId: '0',
 });
 
 export const initialLayersState: LayersState = adapter.addOne(backgroundLayer, base);
@@ -102,6 +102,23 @@ export const layersReducer = createReducer(
   }),
   on(removeLayer, (state, { layerId }) => {
     const next = adapter.removeOne(layerId, state);
-    return next.selectedLayerId === layerId ? { ...next, selectedLayerId: null } : next;
+
+    const ids = next.ids as string[];
+    const { entities } = next;
+
+    let best: string | null = null;
+
+    for (const id of ids) {
+      const currentZ = entities[id]?.zIndex ?? 0;
+      const bestZ = best ? entities[best]?.zIndex ?? 0 : -Infinity;
+
+      if (best === null || currentZ > bestZ) {
+        best = id;
+      }
+    }
+
+    const fallbackId = best;
+
+    return { ...next, selectedLayerId: fallbackId };
   })
 );

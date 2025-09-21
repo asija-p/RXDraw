@@ -54,6 +54,7 @@ export class Canvas implements AfterViewInit {
       console.log(this.currentStroke.color);
     });
 
+    /*
     this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
       if (snapshot && this.cx) {
         const img = new Image();
@@ -64,6 +65,7 @@ export class Canvas implements AfterViewInit {
         };
       }
     });
+    */
   }
 
   public ngAfterViewInit(): void {

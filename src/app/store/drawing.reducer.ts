@@ -126,8 +126,10 @@ export const layersReducer = createReducer(
   on(setLayerVisibility, (state, { layerId, visible }) =>
     adapter.updateOne({ id: layerId, changes: { visible } }, state)
   ),
-  on(setLayerOpacity, (state, { id, opacity }) => {
-    const clamped = Math.max(0, Math.min(1, opacity));
-    return adapter.updateOne({ id, changes: { opacity: clamped } }, state);
-  })
+  on(setLayerOpacity, (state, { layerId, opacity }) =>
+    adapter.updateOne(
+      { id: layerId, changes: { opacity: Math.max(0, Math.min(1, opacity)) } },
+      state
+    )
+  )
 );

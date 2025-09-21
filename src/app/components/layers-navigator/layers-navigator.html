@@ -13,6 +13,10 @@
   </button>
 </div>
 
+<ng-container *ngIf="selectedLayer$ | async as sel">
+  <span class="opacity-label"> Opacity: {{ sel.opacity * 100 | number : '1.0-0' }}% </span>
+</ng-container>
+
 <div class="layers">
   <div
     class="layer"

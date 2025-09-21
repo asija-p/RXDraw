@@ -24,8 +24,7 @@ export const setLayerVisibility = createAction(
   '[Layers] Set Layer Visibility',
   props<{ layerId: string; visible: boolean }>()
 );
-
 export const setLayerOpacity = createAction(
   '[Layers] Set Opacity',
-  props<{ id: string; opacity: number }>()
+  props<{ layerId: string; opacity: number }>() // 0..1
 );

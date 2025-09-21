@@ -1,6 +1,8 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
 import { adapter, LayersState, SnapshotState, StrokeState } from './drawing.reducer';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
+import { layer } from '@fortawesome/fontawesome-svg-core';
+import { Layer } from '../models/layer';
 
 export const selectStrokeState = createFeatureSelector<StrokeState>('stroke');
 
@@ -24,17 +26,17 @@ export const selectCurrentSnapshot = createSelector(
 
 export const selectLayersState = createFeatureSelector<LayersState>('layers');
 
-const { selectAll } = adapter.getSelectors();
+export const selectLayers = createSelector(selectLayersState, (layers) =>
+  layers.ids
+    .map((id) => layers.entities[id])
+    .filter((layers) => layers != null)
+    .map((layer) => <Layer>layer)
+);
 
-export const selectAllLayers = createSelector(selectLayersState, selectAll);
+export const selectActiveLayerId = createSelector(selectLayersState, (s) => s.selectedLayerId);
 
 export const selectActiveLayer = createSelector(
   selectLayersState,
-  (s) => s.selectedLayerId ?? null
+  selectActiveLayerId,
+  (layers, id) => layers.entities[id!]
 );
-
-//maybe
-export const selectRenderableLayers = createSelector(selectAllLayers, (layers) =>
-  layers.filter((l) => l.visible).sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
-);
-//maybe

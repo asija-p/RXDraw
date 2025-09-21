@@ -2,7 +2,6 @@ import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular
 import { Store } from '@ngrx/store';
 import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
 import {
-  selectAllLayers,
   selectCurrentSnapshot,
   selectStrokeColor,
   selectStrokeSize,

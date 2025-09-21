@@ -20,3 +20,12 @@ export const setActiveLayer = createAction(
   '[Layers] Set Active Layer',
   props<{ selectedLayerId: string }>()
 );
+export const setLayerVisibility = createAction(
+  '[Layers] Set Layer Visibility',
+  props<{ layerId: string; visible: boolean }>()
+);
+
+export const setLayerOpacity = createAction(
+  '[Layers] Set Opacity',
+  props<{ id: string; opacity: number }>()
+);

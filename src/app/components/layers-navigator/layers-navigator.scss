@@ -13,6 +13,7 @@
   border: 1px solid #ddd;
   cursor: pointer;
   background: #fff;
+  justify-content: space-between;
 }
 
 .layer.active {
@@ -32,6 +33,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  white-space: nowrap;
 }
 
 .layer-buttons {
@@ -43,4 +46,22 @@
 
 .layer-btn {
   width: 15%;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.icon-btn fa-icon {
+  font-size: 18px;
+  display: block;
 }

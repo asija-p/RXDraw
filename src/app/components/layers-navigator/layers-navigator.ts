@@ -2,14 +2,21 @@ import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, take, zip } from 'rxjs';
 import { selectActiveLayer, selectAllLayers } from '../../store/drawing.selectors';
-import { addLayer, setActiveLayer, removeLayer } from '../../store/drawing.actions';
+import {
+  addLayer,
+  setActiveLayer,
+  removeLayer,
+  setLayerVisibility,
+} from '../../store/drawing.actions';
 import { Layer } from '../../models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule } from '@angular/common';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-layers-navigator',
-  imports: [CommonModule],
+  imports: [CommonModule, FontAwesomeModule],
   templateUrl: './layers-navigator.html',
   styleUrl: './layers-navigator.scss',
 })
@@ -65,5 +72,12 @@ export class LayersNavigator {
     ctx.fillStyle = color;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     return canvas.toDataURL();
+  }
+
+  faEye = faEye;
+  faEyeSlash = faEyeSlash;
+
+  onToggleVisible(id: string, currentlyVisible: boolean) {
+    this.store.dispatch(setLayerVisibility({ layerId: id, visible: !currentlyVisible }));
   }
 }

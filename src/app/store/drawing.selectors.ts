@@ -32,3 +32,9 @@ export const selectActiveLayer = createSelector(
   selectLayersState,
   (s) => s.selectedLayerId ?? null
 );
+
+//maybe
+export const selectRenderableLayers = createSelector(selectAllLayers, (layers) =>
+  layers.filter((l) => l.visible).sort((a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0))
+);
+//maybe

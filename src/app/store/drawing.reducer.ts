@@ -5,6 +5,8 @@ import {
   redoSnapshot,
   removeLayer,
   setActiveLayer,
+  setLayerOpacity,
+  setLayerVisibility,
   setStrokeColor,
   setStrokeSize,
   setStrokeTool,
@@ -120,5 +122,12 @@ export const layersReducer = createReducer(
     const fallbackId = best;
 
     return { ...next, selectedLayerId: fallbackId };
+  }),
+  on(setLayerVisibility, (state, { layerId, visible }) =>
+    adapter.updateOne({ id: layerId, changes: { visible } }, state)
+  ),
+  on(setLayerOpacity, (state, { id, opacity }) => {
+    const clamped = Math.max(0, Math.min(1, opacity));
+    return adapter.updateOne({ id, changes: { opacity: clamped } }, state);
   })
 );

@@ -5,6 +5,7 @@ import {
   redoSnapshot,
   removeLayer,
   reorderLayers,
+  saveLayer,
   setActiveLayer,
   setLayerOpacity,
   setLayerVisibility,
@@ -16,6 +17,7 @@ import {
 import { ToolId } from '../models/tool';
 import { Layer } from '../models/layer';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
+import { Snapshot } from '../models/snapshot';
 
 export interface StrokeState {
   color: { r: number; g: number; b: number; a: number };
@@ -37,7 +39,7 @@ export const strokeReducer = createReducer(
 );
 
 export interface SnapshotState {
-  snapshots: string[];
+  snapshots: Snapshot[];
   index: number;
 }
 
@@ -136,10 +138,14 @@ export const layersReducer = createReducer(
     )
   ),
   on(reorderLayers, (state, { orderedIds }) => {
+    const n = orderedIds.length;
     const updates = orderedIds.map((id, idx) => ({
       id,
-      changes: { zIndex: idx },
+      changes: { zIndex: n - 1 - idx },
     }));
     return adapter.updateMany(updates, state);
-  })
+  }),
+  on(saveLayer, (state, { layerId, canvasData }) =>
+    adapter.updateOne({ id: layerId, changes: { canvasData: canvasData } }, state)
+  )
 );

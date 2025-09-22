@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { ToolId } from '../models/tool';
 import { Layer } from '../models/layer';
 import { Update } from '@ngrx/entity';
+import { Snapshot } from '../models/snapshot';
 
 export const setStrokeColor = createAction(
   '[Stroke] Set Color',
@@ -10,7 +11,7 @@ export const setStrokeColor = createAction(
 export const setStrokeSize = createAction('[Stroke] Set Size', props<{ size: number }>());
 export const setStrokeTool = createAction('[Stroke] Set Tool', props<{ tool: ToolId }>());
 
-export const addSnapshot = createAction('[Canvas] Add Snapshot', props<{ snapshot: string }>());
+export const addSnapshot = createAction('[Canvas] Add Snapshot', props<{ snapshot: Snapshot }>());
 export const undoSnapshot = createAction('[Canvas] Undo Snapshot');
 export const redoSnapshot = createAction('[Canvas] Redo Snapshot');
 
@@ -28,4 +29,12 @@ export const setLayerOpacity = createAction(
   '[Layers] Set Opacity',
   props<{ layerId: string; opacity: number }>() // 0..1
 );
-export const reorderLayers = createAction('[Layers] Reorder', props<{ orderedIds: string[] }>());
+export const reorderLayers = createAction(
+  '[Layers] Reorder Layers',
+  props<{ orderedIds: string[] }>()
+);
+
+export const saveLayer = createAction(
+  '[Layers] Save Layer',
+  props<{ layerId: string; canvasData: string }>()
+);

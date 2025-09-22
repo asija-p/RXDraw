@@ -1,6 +1,8 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectCurrentSnapshot } from '../../store/drawing.selectors';
+import { selectCurrentSnapshot, selectLayers } from '../../store/drawing.selectors';
+import { Observable } from 'rxjs';
+import { Layer } from '../../models/layer';
 
 @Component({
   selector: 'app-navigator',
@@ -11,8 +13,11 @@ import { selectCurrentSnapshot } from '../../store/drawing.selectors';
 export class Navigator implements AfterViewInit {
   @ViewChild('previewCanvas', { static: true })
   previewCanvas!: ElementRef<HTMLCanvasElement>;
+  layers$: Observable<Layer[]>;
 
-  constructor(private store: Store) {}
+  constructor(private store: Store) {
+    this.layers$ = store.select(selectLayers);
+  }
 
   ngAfterViewInit() {
     const canvas = this.previewCanvas.nativeElement;
@@ -21,7 +26,7 @@ export class Navigator implements AfterViewInit {
     this.store.select(selectCurrentSnapshot).subscribe((snapshot) => {
       if (snapshot) {
         const img = new Image();
-        img.src = snapshot;
+        img.src = snapshot.canvasData;
         img.onload = () => {
           ctx.clearRect(0, 0, canvas.width, canvas.height);
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);

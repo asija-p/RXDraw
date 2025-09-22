@@ -8,7 +8,8 @@ import {
   selectStrokeTool,
 } from '../../store/drawing.selectors';
 import { Stroke } from '../../models/stroke';
-import { addSnapshot, redoSnapshot, undoSnapshot } from '../../store/drawing.actions';
+import { Snapshot } from '../../models/snapshot';
+import { addSnapshot, redoSnapshot, saveLayer, undoSnapshot } from '../../store/drawing.actions';
 import { CommonModule } from '@angular/common';
 import { Layers } from '../layers/layers';
 
@@ -122,7 +123,7 @@ export class Canvas implements AfterViewInit {
 
     mouseUp.subscribe(() => {
       if (this.isDrawing) {
-        this.saveSnapshot();
+        this.saveLayer();
         this.isDrawing = false;
       }
     });
@@ -155,11 +156,20 @@ export class Canvas implements AfterViewInit {
     this.cx.stroke();
   }
 
-  private saveSnapshot() {
+  private saveLayer() {
     if (!this.cx) return;
+
     const canvas = this.canvas.nativeElement;
-    const dataUrl = canvas.toDataURL(); // base64
-    this.store.dispatch(addSnapshot({ snapshot: dataUrl }));
+    const dataUrl = this.canvas.nativeElement.toDataURL('image/png');
+
+    /*
+    const snapshot: Snapshot = {
+      canvasData: dataUrl,
+      opacity: this.opacity,
+    };
+    */
+
+    this.store.dispatch(saveLayer({ layerId: this.layerId, canvasData: dataUrl }));
   }
 
   undo() {

@@ -4,6 +4,7 @@ import {
   addSnapshot,
   redoSnapshot,
   removeLayer,
+  reorderLayers,
   setActiveLayer,
   setLayerOpacity,
   setLayerVisibility,
@@ -70,7 +71,9 @@ export interface LayersState extends EntityState<Layer> {
   selectedLayerId: string | null;
 }
 
-export const adapter = createEntityAdapter<Layer>();
+export const adapter = createEntityAdapter<Layer>({
+  sortComparer: (a, b) => a.zIndex - b.zIndex, // use b.zIndex - a.zIndex if “top first”
+});
 
 //change
 const WHITE_PIXEL =
@@ -131,5 +134,12 @@ export const layersReducer = createReducer(
       { id: layerId, changes: { opacity: Math.max(0, Math.min(1, opacity)) } },
       state
     )
-  )
+  ),
+  on(reorderLayers, (state, { orderedIds }) => {
+    const updates = orderedIds.map((id, idx) => ({
+      id,
+      changes: { zIndex: idx },
+    }));
+    return adapter.updateMany(updates, state);
+  })
 );

@@ -32,14 +32,20 @@
     <div class="opacity-label">Opacity: {{ active.opacity * 100 | number : '1.0-0' }}%</div>
   </div>
 
-  <div class="layers">
+  <div class="layers" cdkDropList [cdkDropListData]="layers" (cdkDropListDropped)="onDrop($event)">
     <div
       class="layer"
-      *ngFor="let l of layers$ | async; trackBy: trackById"
+      *ngFor="let l of layers; trackBy: trackById"
+      cdkDrag
+      cdkDragLockAxis="y"
       (click)="selectLayer(l.id)"
       [class.active]="l.id === (activeLayer$ | async)?.id"
     >
+      <!-- optional handle so user drags only by the grip -->
+      <span class="drag-handle" cdkDragHandle aria-label="Drag layer">⋮⋮</span>
+
       <span class="name">{{ l.name }}</span>
+
       <button
         type="button"
         class="icon-btn"

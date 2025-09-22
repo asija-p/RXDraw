@@ -39,6 +39,7 @@
   white-space: nowrap;
   flex: 1;
   white-space: nowrap;
+  margin-left: 5px;
 }
 
 .layer-buttons {
@@ -81,4 +82,10 @@
   color: #111;
   white-space: nowrap;
   margin-bottom: 20px;
+}
+
+.opacity-wrap input[type='range'] {
+  width: 100%;
+  accent-color: #000;
+  height: 6px;
 }

@@ -28,3 +28,4 @@ export const setLayerOpacity = createAction(
   '[Layers] Set Opacity',
   props<{ layerId: string; opacity: number }>() // 0..1
 );
+export const reorderLayers = createAction('[Layers] Reorder', props<{ orderedIds: string[] }>());

@@ -1,6 +1,16 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { auditTime, combineLatest, map, Observable, Subject, take, tap, zip } from 'rxjs';
+import {
+  auditTime,
+  combineLatest,
+  map,
+  Observable,
+  Subject,
+  Subscription,
+  take,
+  tap,
+  zip,
+} from 'rxjs';
 import {
   selectActiveLayer,
   selectActiveLayerId,
@@ -12,16 +22,18 @@ import {
   removeLayer,
   setLayerVisibility,
   setLayerOpacity,
+  reorderLayers,
 } from '../../store/drawing.actions';
 import { Layer } from '../../models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-layers-navigator',
-  imports: [CommonModule, FontAwesomeModule],
+  imports: [CommonModule, FontAwesomeModule, DragDropModule],
   templateUrl: './layers-navigator.html',
   styleUrl: './layers-navigator.scss',
 })
@@ -31,12 +43,32 @@ export class LayersNavigator {
   layers$: Observable<Layer[]>;
   activeLayer$: Observable<Layer | undefined>;
 
+  layers: Layer[] = [];
+  sub?: Subscription;
+
   zIndex = 1;
   trackById = (_: number, l: Layer) => l.id;
 
   constructor(private store: Store) {
     this.layers$ = this.store.select(selectLayers);
     this.activeLayer$ = this.store.select(selectActiveLayer);
+  }
+
+  ngOnInit() {
+    this.sub = this.layers$.subscribe((ls) => {
+      this.layers = [...ls];
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
+  }
+
+  onDrop(event: CdkDragDrop<Layer[]>) {
+    if (event.previousIndex === event.currentIndex) return;
+    moveItemInArray(this.layers, event.previousIndex, event.currentIndex);
+
+    this.store.dispatch(reorderLayers({ orderedIds: this.layers.map((l) => l.id) }));
   }
 
   addNewLayer() {

@@ -12,6 +12,8 @@
     [style.display]="l.visible ? 'block' : 'none'"
     [style.opacity]="l.opacity"
     [style.zIndex]="l.zIndex"
+    [style.pointer-events]="l.id === (selectedLayerId$ | async) ? 'auto' : 'none'"
   >
+    >
   </app-canvas>
 </div>

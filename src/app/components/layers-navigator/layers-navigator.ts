@@ -72,14 +72,13 @@ export class LayersNavigator {
   }
 
   addNewLayer() {
-    const color = this.randomColor();
     const newLayer: Layer = {
       id: String(this.zIndex), // or uuid()
       name: `Layer ${this.zIndex}`,
       visible: true,
-      opacity: 1 / 5,
+      opacity: 1,
       zIndex: this.zIndex,
-      canvasData: this.blankCanvas(color),
+      canvasData: this.blankCanvas(),
     };
     this.zIndex++;
     this.store.dispatch(addLayer({ layer: newLayer }));
@@ -103,14 +102,12 @@ export class LayersNavigator {
     return `hsl(${h} ${s}% ${l}%)`;
   }
 
-  private blankCanvas(color: string): string {
+  private blankCanvas(): string {
     const canvas = document.createElement('canvas');
     canvas.width = 700;
     canvas.height = 700;
     const ctx = canvas.getContext('2d')!;
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL();
+    return canvas.toDataURL('image/png');
   }
 
   faEye = faEye;

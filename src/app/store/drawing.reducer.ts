@@ -72,7 +72,7 @@ export interface LayersState extends EntityState<Layer> {
 }
 
 export const adapter = createEntityAdapter<Layer>({
-  sortComparer: (a, b) => a.zIndex - b.zIndex, // use b.zIndex - a.zIndex if “top first”
+  sortComparer: (a, b) => b.zIndex - a.zIndex,
 });
 
 //change

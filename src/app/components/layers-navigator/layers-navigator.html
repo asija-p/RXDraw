@@ -41,7 +41,6 @@
       (click)="selectLayer(l.id)"
       [class.active]="l.id === (activeLayer$ | async)?.id"
     >
-      <!-- optional handle so user drags only by the grip -->
       <span class="drag-handle" cdkDragHandle aria-label="Drag layer">⋮⋮</span>
 
       <span class="name">{{ l.name }}</span>

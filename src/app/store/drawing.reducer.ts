@@ -1,10 +1,11 @@
 import { createReducer, on } from '@ngrx/store';
 import {
   addLayer,
-  addSnapshot,
-  redoSnapshot,
+  commitHistoryStep,
+  redoHistoryStep,
   removeLayer,
   reorderLayers,
+  reverseLayer,
   saveLayer,
   setActiveLayer,
   setLayerOpacity,
@@ -12,12 +13,15 @@ import {
   setStrokeColor,
   setStrokeSize,
   setStrokeTool,
-  undoSnapshot,
+  undoHistoryStep,
 } from './drawing.actions';
 import { ToolId } from '../models/tool';
 import { Layer } from '../models/layer';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
-import { Snapshot } from '../models/snapshot';
+import { HistoryStep } from '../models/history-step';
+
+const WHITE_PIXEL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgMBApYbW4sAAAAASUVORK5CYII=';
 
 export interface StrokeState {
   color: { r: number; g: number; b: number; a: number };
@@ -38,35 +42,24 @@ export const strokeReducer = createReducer(
   on(setStrokeTool, (state, { tool }) => ({ ...state, tool }))
 );
 
-export interface SnapshotState {
-  snapshots: Snapshot[];
-  index: number;
+export interface HistoryState {
+  steps: HistoryStep[];
+  cursor: number;
 }
 
-export const initialSnapshotState: SnapshotState = {
-  snapshots: [],
-  index: -1,
+export const initialHistoryState: HistoryState = {
+  steps: [],
+  cursor: -1,
 };
 
-export const snapshotReducer = createReducer(
-  initialSnapshotState,
-  on(addSnapshot, (state, { snapshot }) => {
-    const truncated = state.snapshots.slice(0, state.index + 1);
-    const newSnapshots = [...truncated, snapshot];
-
-    return {
-      snapshots: newSnapshots,
-      index: newSnapshots.length - 1,
-    };
+export const historyReducer = createReducer(
+  initialHistoryState,
+  on(commitHistoryStep, (state, { step }) => {
+    const steps = state.steps.slice(0, state.cursor + 1).concat(step);
+    return { steps, cursor: steps.length - 1 };
   }),
-  on(undoSnapshot, (state) => ({
-    ...state,
-    index: Math.max(0, state.index - 1),
-  })),
-  on(redoSnapshot, (state) => ({
-    ...state,
-    index: Math.min(state.snapshots.length - 1, state.index + 1),
-  }))
+  on(undoHistoryStep, (s) => (s.cursor >= 0 ? { ...s, cursor: s.cursor - 1 } : s)),
+  on(redoHistoryStep, (s) => (s.cursor < s.steps.length - 1 ? { ...s, cursor: s.cursor + 1 } : s))
 );
 
 export interface LayersState extends EntityState<Layer> {
@@ -78,8 +71,6 @@ export const adapter = createEntityAdapter<Layer>({
 });
 
 //change
-const WHITE_PIXEL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgMBApYbW4sAAAAASUVORK5CYII=';
 
 const backgroundLayer: Layer = {
   id: '0',
@@ -147,5 +138,8 @@ export const layersReducer = createReducer(
   }),
   on(saveLayer, (state, { layerId, canvasData }) =>
     adapter.updateOne({ id: layerId, changes: { canvasData: canvasData } }, state)
+  ),
+  on(reverseLayer, (state, { layerId, canvasData }) =>
+    adapter.updateOne({ id: layerId, changes: { canvasData } }, state)
   )
 );

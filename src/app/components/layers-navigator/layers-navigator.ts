@@ -33,7 +33,7 @@ import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-
 
 @Component({
   selector: 'app-layers-navigator',
-  imports: [CommonModule, FontAwesomeModule, DragDropModule],
+  imports: [FontAwesomeModule, DragDropModule, CommonModule],
   templateUrl: './layers-navigator.html',
   styleUrl: './layers-navigator.scss',
 })

@@ -1,7 +1,13 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { ColorChromeModule } from 'ngx-color/chrome';
-import { setStrokeColor, setStrokeSize, setStrokeTool } from '../../store/drawing.actions';
+import {
+  redoHistoryStep,
+  setStrokeColor,
+  setStrokeSize,
+  setStrokeTool,
+  undoHistoryStep,
+} from '../../store/drawing.actions';
 import { MatSliderModule } from '@angular/material/slider';
 import { CommonModule } from '@angular/common';
 import { Tool, ToolId } from '../../models/tool';
@@ -51,5 +57,13 @@ export class StrokeEditor {
   selectTool(toolId: ToolId) {
     this.activeTool = toolId;
     this.store.dispatch(setStrokeTool({ tool: toolId }));
+  }
+
+  undo() {
+    this.store.dispatch(undoHistoryStep());
+  }
+
+  redo() {
+    this.store.dispatch(redoHistoryStep());
   }
 }

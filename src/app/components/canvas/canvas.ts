@@ -1,15 +1,20 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  Input,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { Store } from '@ngrx/store';
 import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
 import {
-  selectCurrentSnapshot,
   selectStrokeColor,
   selectStrokeSize,
   selectStrokeTool,
 } from '../../store/drawing.selectors';
 import { Stroke } from '../../models/stroke';
-import { Snapshot } from '../../models/snapshot';
-import { addSnapshot, redoSnapshot, saveLayer, undoSnapshot } from '../../store/drawing.actions';
+import { commitHistoryStep, saveLayer } from '../../store/drawing.actions';
 import { CommonModule } from '@angular/common';
 import { Layers } from '../layers/layers';
 
@@ -33,6 +38,7 @@ export class Canvas implements AfterViewInit {
 
   private cx?: CanvasRenderingContext2D;
   private isDrawing = false;
+  private preStrokeData?: string;
 
   private currentStroke: Stroke = {
     color: 'rgba(0,0,0,1)',
@@ -68,6 +74,13 @@ export class Canvas implements AfterViewInit {
     */
   }
 
+  ngOnChanges(ch: SimpleChanges) {
+    if (!this.cx) return;
+    if (ch['canvasData']?.currentValue) {
+      this.paintFromDataUrl();
+    }
+  }
+
   public ngAfterViewInit(): void {
     const canvasEl = this.canvas.nativeElement;
     this.cx = canvasEl.getContext('2d')!;
@@ -85,7 +98,7 @@ export class Canvas implements AfterViewInit {
     this.paintFromDataUrl();
 
     if (this.active) {
-      this.captureEvents(canvasEl); // your existing drawing logic
+      this.captureEvents(canvasEl);
     }
   }
 
@@ -110,6 +123,7 @@ export class Canvas implements AfterViewInit {
     mouseDown
       .pipe(
         switchMap(() => {
+          this.preStrokeData = this.canvas.nativeElement.toDataURL('image/png');
           this.isDrawing = true;
           return mouseMove.pipe(takeUntil(mouseUp), pairwise());
         })
@@ -123,8 +137,23 @@ export class Canvas implements AfterViewInit {
 
     mouseUp.subscribe(() => {
       if (this.isDrawing) {
-        this.saveLayer();
+        if (!this.isDrawing) return;
         this.isDrawing = false;
+
+        const after = this.canvas.nativeElement.toDataURL('image/png');
+        const before = this.preStrokeData ?? this.canvasData;
+        this.preStrokeData = undefined;
+
+        this.store.dispatch(saveLayer({ layerId: this.layerId, canvasData: after }));
+
+        if (before && after && before !== after) {
+          console.log('evo me');
+          this.store.dispatch(
+            commitHistoryStep({
+              step: { layerId: this.layerId, before, after },
+            })
+          );
+        }
       }
     });
   }
@@ -159,25 +188,9 @@ export class Canvas implements AfterViewInit {
   private saveLayer() {
     if (!this.cx) return;
 
-    const canvas = this.canvas.nativeElement;
     const dataUrl = this.canvas.nativeElement.toDataURL('image/png');
 
-    /*
-    const snapshot: Snapshot = {
-      canvasData: dataUrl,
-      opacity: this.opacity,
-    };
-    */
-
     this.store.dispatch(saveLayer({ layerId: this.layerId, canvasData: dataUrl }));
-  }
-
-  undo() {
-    this.store.dispatch(undoSnapshot());
-  }
-
-  redo() {
-    this.store.dispatch(redoSnapshot());
   }
 
   private paintFromDataUrl() {

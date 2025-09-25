@@ -2,7 +2,7 @@ import { createAction, props } from '@ngrx/store';
 import { ToolId } from '../models/tool';
 import { Layer } from '../models/layer';
 import { Update } from '@ngrx/entity';
-import { Snapshot } from '../models/snapshot';
+import { HistoryStep } from '../models/history-step';
 
 export const setStrokeColor = createAction(
   '[Stroke] Set Color',
@@ -11,9 +11,12 @@ export const setStrokeColor = createAction(
 export const setStrokeSize = createAction('[Stroke] Set Size', props<{ size: number }>());
 export const setStrokeTool = createAction('[Stroke] Set Tool', props<{ tool: ToolId }>());
 
-export const addSnapshot = createAction('[Canvas] Add Snapshot', props<{ snapshot: Snapshot }>());
-export const undoSnapshot = createAction('[Canvas] Undo Snapshot');
-export const redoSnapshot = createAction('[Canvas] Redo Snapshot');
+export const commitHistoryStep = createAction(
+  '[Canvas] Commit Step',
+  props<{ step: HistoryStep }>()
+);
+export const undoHistoryStep = createAction('[Canvas] Undo Step');
+export const redoHistoryStep = createAction('[Canvas] Redo Step');
 
 export const addLayer = createAction('[Layers] Add Layer', props<{ layer: Layer }>());
 export const removeLayer = createAction('[Layers] Remove Layer', props<{ layerId: string }>());
@@ -33,8 +36,11 @@ export const reorderLayers = createAction(
   '[Layers] Reorder Layers',
   props<{ orderedIds: string[] }>()
 );
-
 export const saveLayer = createAction(
   '[Layers] Save Layer',
+  props<{ layerId: string; canvasData: string }>()
+);
+export const reverseLayer = createAction(
+  '[Layers] Reverse Layer',
   props<{ layerId: string; canvasData: string }>()
 );

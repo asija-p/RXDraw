@@ -1,40 +1,27 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import { adapter, LayersState, SnapshotState, StrokeState } from './drawing.reducer';
+import { adapter, HistoryState, LayersState, StrokeState } from './drawing.reducer';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { layer } from '@fortawesome/fontawesome-svg-core';
 import { Layer } from '../models/layer';
 
 export const selectStrokeState = createFeatureSelector<StrokeState>('stroke');
-
 export const selectStrokeColor = createSelector(selectStrokeState, (state) => state.color);
-
 export const selectStrokeSize = createSelector(selectStrokeState, (state) => state.size);
-
 export const selectStrokeTool = createSelector(selectStrokeState, (state) => state.tool);
 
-export const selectSnapshotState = createFeatureSelector<SnapshotState>('snapshots');
-
-export const selectSnapshots = createSelector(selectSnapshotState, (state) => state.snapshots);
-
-export const selectSnapshotIndex = createSelector(selectSnapshotState, (state) => state.index);
-
-export const selectCurrentSnapshot = createSelector(
-  selectSnapshots,
-  selectSnapshotIndex,
-  (snaps, index) => snaps[index] ?? null
-);
+export const selectHistoryState = createFeatureSelector<HistoryState>('history');
+export const selectSteps = createSelector(selectHistoryState, (s) => s.steps);
+export const selectCursor = createSelector(selectHistoryState, (s) => s.cursor);
 
 export const selectLayersState = createFeatureSelector<LayersState>('layers');
-
 export const selectLayers = createSelector(selectLayersState, (layers) =>
   layers.ids
     .map((id) => layers.entities[id])
     .filter((layers) => layers != null)
     .map((layer) => <Layer>layer)
 );
-
+export const selectLayerEntities = createSelector(selectLayersState, (s) => s.entities);
 export const selectActiveLayerId = createSelector(selectLayersState, (s) => s.selectedLayerId);
-
 export const selectActiveLayer = createSelector(
   selectLayersState,
   selectActiveLayerId,

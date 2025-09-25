@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectCurrentSnapshot, selectLayers } from '../../store/drawing.selectors';
+import { selectLayers } from '../../store/drawing.selectors';
 import { Observable } from 'rxjs';
 import { Layer } from '../../models/layer';
 import { CommonModule } from '@angular/common';

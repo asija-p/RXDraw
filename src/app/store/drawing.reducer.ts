@@ -52,11 +52,19 @@ export const initialHistoryState: HistoryState = {
   cursor: -1,
 };
 
+const MAX_HISTORY = 20;
+
 export const historyReducer = createReducer(
   initialHistoryState,
   on(commitHistoryStep, (state, { step }) => {
-    const steps = state.steps.slice(0, state.cursor + 1).concat(step);
-    return { steps, cursor: steps.length - 1 };
+    let steps = state.steps.slice(0, state.cursor + 1).concat(step);
+    let cursor = steps.length - 1;
+    if (steps.length > MAX_HISTORY) {
+      const overflow = steps.length - MAX_HISTORY;
+      steps = steps.slice(overflow);
+      cursor = cursor - overflow;
+    }
+    return { ...state, steps, cursor };
   }),
   on(undoHistoryStep, (s) => (s.cursor >= 0 ? { ...s, cursor: s.cursor - 1 } : s)),
   on(redoHistoryStep, (s) => (s.cursor < s.steps.length - 1 ? { ...s, cursor: s.cursor + 1 } : s))

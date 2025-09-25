@@ -7,7 +7,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, fromEvent, merge, pairwise, switchMap, takeUntil } from 'rxjs';
+import {
+  combineLatest,
+  fromEvent,
+  merge,
+  pairwise,
+  Subscription,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import {
   selectStrokeColor,
   selectStrokeSize,
@@ -45,6 +53,7 @@ export class Canvas implements AfterViewInit {
     size: 5,
     tool: 'brush',
   };
+  private drawSub?: Subscription;
 
   constructor(private store: Store) {
     combineLatest([
@@ -74,10 +83,27 @@ export class Canvas implements AfterViewInit {
     */
   }
 
+  ngOnDestroy() {
+    this.drawSub?.unsubscribe();
+  }
+
   ngOnChanges(ch: SimpleChanges) {
     if (!this.cx) return;
     if (ch['canvasData']?.currentValue) {
       this.paintFromDataUrl();
+    }
+
+    if (ch['active'] && this.cx) {
+      // active turned on -> start capturing
+      if (this.active && !this.drawSub) {
+        this.drawSub = this.captureEvents(this.canvas.nativeElement);
+      }
+      // active turned off -> stop capturing
+      if (!this.active && this.drawSub) {
+        this.drawSub.unsubscribe();
+        this.drawSub = undefined;
+        this.isDrawing = false;
+      }
     }
   }
 
@@ -98,7 +124,7 @@ export class Canvas implements AfterViewInit {
     this.paintFromDataUrl();
 
     if (this.active) {
-      this.captureEvents(canvasEl);
+      this.drawSub = this.captureEvents(canvasEl);
     }
   }
 
@@ -120,7 +146,7 @@ export class Canvas implements AfterViewInit {
       fromEvent<TouchEvent>(window, 'touchmove')
     );
 
-    mouseDown
+    const draw$ = mouseDown
       .pipe(
         switchMap(() => {
           this.preStrokeData = this.canvas.nativeElement.toDataURL('image/png');
@@ -135,7 +161,7 @@ export class Canvas implements AfterViewInit {
         this.drawOnCanvas(prevPos, currPos);
       });
 
-    mouseUp.subscribe(() => {
+    const up$ = mouseUp.subscribe(() => {
       if (this.isDrawing) {
         if (!this.isDrawing) return;
         this.isDrawing = false;
@@ -150,11 +176,16 @@ export class Canvas implements AfterViewInit {
           console.log('evo me');
           this.store.dispatch(
             commitHistoryStep({
-              step: { layerId: this.layerId, before, after },
+              step: { layerId: this.layerId, op: 'paint', before, after },
             })
           );
         }
       }
+    });
+
+    return new Subscription(() => {
+      draw$.unsubscribe();
+      up$.unsubscribe();
     });
   }
 

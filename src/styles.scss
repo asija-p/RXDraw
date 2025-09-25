@@ -14,10 +14,12 @@ body {
 }
 
 aside {
-  width: 250px;
+  width: 350px;
   background: #f4f4f4;
   padding: 2rem;
   border-right: 1px solid #ccc;
+  overflow: auto;
+  box-sizing: border-box;
 }
 
 aside.manager {

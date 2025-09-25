@@ -9,7 +9,7 @@ import {
   undoHistoryStep,
 } from '../../store/drawing.actions';
 import { MatSliderModule } from '@angular/material/slider';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgFor } from '@angular/common';
 import { Tool, ToolId } from '../../models/tool';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
@@ -22,7 +22,7 @@ import {
 
 @Component({
   selector: 'app-stroke-editor',
-  imports: [ColorChromeModule, MatSliderModule, CommonModule, FontAwesomeModule],
+  imports: [ColorChromeModule, MatSliderModule, NgFor, FontAwesomeModule],
   templateUrl: './stroke-editor.html',
   styleUrl: './stroke-editor.scss',
 })

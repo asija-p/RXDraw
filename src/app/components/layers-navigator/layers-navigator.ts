@@ -23,17 +23,18 @@ import {
   setLayerVisibility,
   setLayerOpacity,
   reorderLayers,
+  commitHistoryStep,
 } from '../../store/drawing.actions';
 import { Layer } from '../../models/layer';
 import { v4 as uuid } from 'uuid';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-layers-navigator',
-  imports: [FontAwesomeModule, DragDropModule, CommonModule],
+  imports: [FontAwesomeModule, DragDropModule, NgIf, CommonModule],
   templateUrl: './layers-navigator.html',
   styleUrl: './layers-navigator.scss',
 })
@@ -72,8 +73,10 @@ export class LayersNavigator {
   }
 
   addNewLayer() {
+    const id = String(this.zIndex);
+
     const newLayer: Layer = {
-      id: String(this.zIndex), // or uuid()
+      id: id, // or uuid()
       name: `Layer ${this.zIndex}`,
       visible: true,
       opacity: 1,
@@ -82,12 +85,24 @@ export class LayersNavigator {
     };
     this.zIndex++;
     this.store.dispatch(addLayer({ layer: newLayer }));
+    this.store.dispatch(
+      commitHistoryStep({
+        step: { op: 'createLayer', layerId: id, layer: newLayer },
+      })
+    );
     this.store.dispatch(setActiveLayer({ selectedLayerId: newLayer.id }));
   }
 
   removeSelected() {
     this.activeLayer$.pipe(take(1)).subscribe((layer) => {
-      if (layer) this.store.dispatch(removeLayer({ layerId: layer.id }));
+      if (layer) {
+        this.store.dispatch(removeLayer({ layerId: layer.id }));
+        this.store.dispatch(
+          commitHistoryStep({
+            step: { op: 'deleteLayer', layerId: layer.id, layer: layer },
+          })
+        );
+      }
     });
   }
 

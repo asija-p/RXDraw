@@ -3,10 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { withLatestFrom, map, filter, concatMap, take } from 'rxjs/operators';
 import {
+  addLayer,
   commitHistoryStep,
   redoHistoryStep,
+  removeLayer,
+  reorderLayers,
   reverseLayer,
   saveLayer,
+  setLayerOpacity,
   undoHistoryStep,
 } from './drawing.actions';
 import { selectCursor, selectLayerEntities, selectLayers, selectSteps } from './drawing.selectors';
@@ -22,8 +26,19 @@ export class HistoryEffects {
       ofType(undoHistoryStep),
       withLatestFrom(this.store.select(selectSteps), this.store.select(selectCursor)),
       map(([, steps, cursor]) => steps[cursor + 1]),
-      filter((step): step is HistoryStep => !!step),
-      map((step) => reverseLayer({ layerId: step.layerId, canvasData: step.before }))
+      filter((s): s is HistoryStep => !!s),
+      concatMap((s) => {
+        switch (s.op) {
+          case 'paint':
+            return [reverseLayer({ layerId: s.layerId, canvasData: s.before! })];
+          case 'createLayer':
+            return [removeLayer({ layerId: s.layerId })];
+          case 'deleteLayer':
+            return s.layer ? [addLayer({ layer: s.layer })] : [];
+          default:
+            return [];
+        }
+      })
     )
   );
 
@@ -32,8 +47,19 @@ export class HistoryEffects {
       ofType(redoHistoryStep),
       withLatestFrom(this.store.select(selectSteps), this.store.select(selectCursor)),
       map(([, steps, cursor]) => steps[cursor]),
-      filter((step): step is HistoryStep => !!step),
-      map((step) => reverseLayer({ layerId: step.layerId, canvasData: step.after }))
+      filter((s): s is HistoryStep => !!s),
+      concatMap((s) => {
+        switch (s.op) {
+          case 'paint':
+            return [reverseLayer({ layerId: s.layerId, canvasData: s.after! })];
+          case 'createLayer':
+            return s.layer ? [addLayer({ layer: s.layer })] : [];
+          case 'deleteLayer':
+            return [removeLayer({ layerId: s.layerId })];
+          default:
+            return [];
+        }
+      })
     )
   );
 }

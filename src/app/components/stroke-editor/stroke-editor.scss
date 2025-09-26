@@ -46,3 +46,41 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
+
+.palette {
+  display: grid;
+  grid-template-columns: repeat(8, 24px);
+  gap: 8px;
+  padding: 8px 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.swatch {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: var(--light-grey);
+}
+
+.ctx-menu {
+  position: fixed;
+  background: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-radius: 6px;
+  padding: 4px;
+  z-index: 1000;
+}
+.ctx-menu button {
+  display: block;
+  width: 160px;
+  padding: 6px 10px;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+}
+.ctx-menu button:hover {
+  background: #f2f2f2;
+}

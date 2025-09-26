@@ -30,7 +30,7 @@ export interface StrokeState {
 }
 
 export const initialState: StrokeState = {
-  color: { r: 0, g: 0, b: 0, a: 1 },
+  color: { r: 255, g: 255, b: 0, a: 1 },
   size: 5,
   tool: 'brush',
 };

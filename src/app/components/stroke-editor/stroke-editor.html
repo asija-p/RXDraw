@@ -1,11 +1,36 @@
-<color-chrome [color]="strokeColor" (onChangeComplete)="onColorChange($event)"> </color-chrome>
+<color-chrome
+  [color]="(strokeColor$ | async) ?? { r: 0, g: 0, b: 0, a: 1 }"
+  (onChangeComplete)="onColorChange($event)"
+>
+</color-chrome>
 
-<p>Selected: {{ strokeColor }}</p>
+<div class="palette">
+  <div
+    class="swatch"
+    *ngFor="let swatch of swatchSlots; index as i"
+    [style.backgroundColor]="
+      swatch ? 'rgba(' + swatch.r + ',' + swatch.g + ',' + swatch.b + ',' + swatch.a + ')' : ''
+    "
+    (contextmenu)="openMenu($event, i)"
+    (click)="selectColor(swatch)"
+  ></div>
+</div>
+
+<div
+  *ngIf="menuOpen"
+  class="ctx-menu"
+  [style.left.px]="menuX"
+  [style.top.px]="menuY"
+  (click)="$event.stopPropagation()"
+>
+  <button (click)="saveHere()">Set</button>
+  <button (click)="clearHere()">Clear</button>
+</div>
 
 <div class="tool-picker">
   <button
     *ngFor="let tool of tools"
-    [class.selected]="tool.id === activeTool"
+    [class.selected]="(activeTool$ | async) === tool.id"
     (click)="selectTool(tool.id)"
   >
     <fa-icon [icon]="tool.icon"></fa-icon>
@@ -17,7 +42,7 @@
   <div class="size-container" *ngFor="let size of sizes" (click)="selectSize(size)">
     <div
       class="size-circle"
-      [class.selected]="size === strokeSize"
+      [class.selected]="size === (strokeSize$ | async)"
       [style.width.px]="size / 5"
       [style.height.px]="size / 5"
     ></div>
@@ -30,7 +55,7 @@
   <input
     type="number"
     class="size-input"
-    [value]="strokeSize"
+    [value]="strokeSize$ | async"
     (change)="selectSize($any($event.target).valueAsNumber)"
   />
 </div>

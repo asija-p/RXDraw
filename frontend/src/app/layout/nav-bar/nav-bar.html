@@ -6,8 +6,13 @@
     </a>
 
     <div class="nav-links">
-      <a routerLink="/home">HOME </a>
-      <a routerLink="/drawing-editor">STUDIO</a>
+      <a routerLink="/home" class="nav-link">HOME </a>
+      <a routerLink="/drawing-editor" class="nav-link">STUDIO</a>
+    </div>
+
+    <div class="auth-actions">
+      <a routerLink="/login" class="nav-link">LOGIN</a>
+      <button matButton="filled" class="register-btn" (click)="openAuth()">REGISTER</button>
     </div>
   </div>
 </nav>

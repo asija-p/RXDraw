@@ -42,12 +42,7 @@
   font-size: 1.6rem;
   line-height: 1;
   letter-spacing: 0.2px;
-}
-
-.nav-links a {
-  color: #fff;
-  text-decoration: none;
-  font-weight: 500;
+  margin-right: 30px;
 }
 
 .nav-links {
@@ -56,13 +51,31 @@
   gap: 1.3rem;
 }
 
-.nav-links a:visited,
-.nav-links a:active {
+.auth-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.3rem;
+  margin-left: auto;
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 5px;
+}
+.nav-link:visited,
+.nav-link:active {
   color: #fff;
   text-decoration: underline;
 }
-
-.nav-links a:hover {
+.nav-link:hover {
   opacity: 0.85;
   text-decoration: underline;
+}
+
+.register-btn {
+  font-size: 1rem;
 }

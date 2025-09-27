@@ -12,7 +12,13 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class NavBar {
   readonly dialog = inject(MatDialog);
-  openAuth(): void {
-    this.dialog.open(AuthDialog);
+  openRegister(): void {
+    const ref = this.dialog.open(AuthDialog);
+    ref.componentInstance.mode = 'register';
+  }
+
+  openLogin(): void {
+    const ref = this.dialog.open(AuthDialog);
+    ref.componentInstance.mode = 'login';
   }
 }

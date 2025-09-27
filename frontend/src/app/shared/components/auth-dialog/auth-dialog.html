@@ -1,7 +1,6 @@
 <button mat-icon-button><mat-icon fontIcon="close"></mat-icon></button>
-<h2 mat-dialog-title>Login Form</h2>
+<h2 mat-dialog-title>{{ mode === 'register' ? 'Create account' : 'Log in' }}</h2>
 <mat-dialog-content>
-  <h3>Please enter your username and password</h3>
   <p>
     <mat-form-field>
       <mat-label>Username</mat-label>
@@ -16,7 +15,16 @@
       <mat-icon matSuffix fontIcon="key"></mat-icon>
     </mat-form-field>
   </p>
+  <p>
+    <mat-form-field *ngIf="mode === 'register'" class="full">
+      <mat-label>Confirm password</mat-label>
+      <input matInput placeholder="Password" />
+      <mat-icon matSuffix fontIcon="key"></mat-icon>
+    </mat-form-field>
+  </p>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-raised-button>Login</button>
+  <button matButton="filled">
+    {{ mode === 'register' ? 'Sign up' : 'Log in' }}
+  </button>
 </mat-dialog-actions>

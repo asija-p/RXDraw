@@ -1,17 +1,46 @@
-import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
 import { DrawingsService } from './drawings.service';
+import { CreateDrawingDto, UpdateDrawingDto } from './models/drawing.dto';
 
 @Controller('drawings')
 export class DrawingsController {
   constructor(private drawingService: DrawingsService) {}
 
   @Get()
-  public getDrawings() {
-    return this.drawingService.getAll();
+  getAll(
+    @Query('userId') userId?: string,
+    @Query('folderId') folderId?: string,
+  ) {
+    return this.drawingService.getAll(userId, folderId);
   }
 
   @Get(':id')
-  public getDrawing(@Param('id') id: string) {
+  getById(@Param('id') id: string) {
     return this.drawingService.getById(id);
+  }
+
+  @Post()
+  create(@Body() dto: CreateDrawingDto) {
+    return this.drawingService.create(dto);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateDrawingDto) {
+    return this.drawingService.update(id, dto);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.drawingService.delete(id);
   }
 }

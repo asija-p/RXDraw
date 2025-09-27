@@ -15,22 +15,22 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
 
   @Get()
-  public getUsers() {
+  public get() {
     return this.usersService.getAll();
   }
 
   @Post()
-  public addUser(@Body() dto: UserDto) {
+  public add(@Body() dto: UserDto) {
     return this.usersService.create(dto);
   }
 
   @Delete(':id')
-  public deleteUser(@Param('id') id: string) {
+  public delete(@Param('id') id: string) {
     return this.usersService.delete(id);
   }
 
   @Put(':id')
-  public updateUser(@Param('id') id: string, @Body() dto: UserDto) {
+  public update(@Param('id') id: string, @Body() dto: UserDto) {
     return this.usersService.update(id, dto);
   }
 }

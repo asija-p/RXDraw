@@ -1,4 +1,9 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection, isDevMode } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+  isDevMode,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -13,6 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideStore(),
     provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
-    provideEffects()
-]
+    provideEffects(),
+  ],
 };

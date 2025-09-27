@@ -1,4 +1,5 @@
-import { Drawing } from 'src/drawings/entities/drawing.entity';
+import { Drawing } from 'src/drawings/models/drawing.entity';
+import { Folder } from 'src/folders/models/folder.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,12 +12,15 @@ import {
 
 @Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Index({ unique: true })
   @Column({ length: 120 })
   name: string;
+
+  @OneToMany(() => Folder, (d) => d.user)
+  folders: Folder[];
 
   @OneToMany(() => Drawing, (d) => d.user)
   drawings: Drawing[];

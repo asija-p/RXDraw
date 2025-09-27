@@ -6,11 +6,16 @@ import { DrawingsModule } from './drawings/drawings.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'typeorm.config';
 import { UsersModule } from './users/users.module';
-import { UsersControllerController } from './user/users-controller/users-controller.controller';
+import { FoldersModule } from './folders/folders.module';
 
 @Module({
-  imports: [DrawingsModule, TypeOrmModule.forRoot(typeOrmConfig), UsersModule],
-  controllers: [AppController, UsersControllerController],
+  imports: [
+    DrawingsModule,
+    TypeOrmModule.forRoot(typeOrmConfig),
+    UsersModule,
+    FoldersModule,
+  ],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

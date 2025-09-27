@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Drawing } from './drawing.entity';
 
 @Entity('layers')
@@ -18,9 +24,10 @@ export class Layer {
   @Column({ type: 'float', default: 1 })
   opacity: number; // 0..1
 
+  @Index(['drawing', 'zIndex'], { unique: true })
   @Column('int')
   zIndex: number;
 
-  @Column({ type: 'text' })
-  canvasData: string; // base64
+  @Column({ type: 'text', nullable: true })
+  bitmapUrl?: string; // url to cloudinary
 }

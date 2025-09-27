@@ -1,4 +1,7 @@
-import { Drawing } from 'src/drawings/entities/drawing.entity';
+import { Drawing } from 'src/drawings/models/drawing.entity';
+import { Layer } from 'src/drawings/models/layer.entity';
+import { Folder } from 'src/folders/models/folder.entity';
+import { User } from 'src/users/models/user.entity';
 import { ConnectionOptions } from 'typeorm';
 
 export const typeOrmConfig: ConnectionOptions = {
@@ -7,6 +10,7 @@ export const typeOrmConfig: ConnectionOptions = {
   port: 5432,
   username: 'postgres',
   password: 'pop123',
-  entities: [Drawing],
+  entities: [Drawing, Folder, User, Layer],
   synchronize: true,
+  database: 'rxdraw',
 };

@@ -5,10 +5,11 @@ import { StrokeEditor } from './components/stroke-editor/stroke-editor';
 import { Navigator } from './components/navigator/navigator';
 import { LayersNavigator } from './components/layers-navigator/layers-navigator';
 import { Layers } from './components/layers/layers';
+import { NavBar } from './layout/nav-bar/nav-bar';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterModule],
+  imports: [RouterOutlet, RouterModule, NavBar],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })

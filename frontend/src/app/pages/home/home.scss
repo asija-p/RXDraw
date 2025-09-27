@@ -1,0 +1,32 @@
+.hero {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: 2rem;
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  margin-bottom: 10px;
+  color: var(--white);
+}
+
+.hero h2 {
+  font-size: clamp(1.1rem, 2.5vw, 1.75rem);
+  font-weight: 500;
+  color: rgb(218, 218, 218);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.start-btn {
+  font-size: 20px;
+  padding-top: 25px;
+  padding-bottom: 25px;
+}

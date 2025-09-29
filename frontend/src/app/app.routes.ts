@@ -3,15 +3,20 @@ import { Home } from './pages/home/home';
 import { DrawingEditor } from './pages/drawing-editor/drawing-editor';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
+import { Landing } from './pages/landing/landing';
 
 export const routes: Routes = [
   {
-    path: 'home',
-    component: Home,
+    path: '',
+    component: Landing,
   },
   {
     path: 'drawing-editor',
     component: DrawingEditor,
+  },
+  {
+    path: 'home',
+    component: Home,
   },
   {
     path: 'login',
@@ -21,5 +26,5 @@ export const routes: Routes = [
     path: 'register',
     component: Register,
   },
-  { path: '**', redirectTo: 'home' },
+  { path: '**', redirectTo: '' },
 ];

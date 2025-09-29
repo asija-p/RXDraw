@@ -14,7 +14,7 @@ export class FoldersService {
     if (userId) {
       return this.folderRepository.find({
         where: { user: { id: userId } },
-        order: { name: 'ASC' },
+        order: { updatedAt: 'DESC' },
       });
     }
     return this.folderRepository.find({ order: { name: 'ASC' } });
@@ -24,6 +24,7 @@ export class FoldersService {
     const folder = this.folderRepository.create({
       name: dto.name,
       user: { id: dto.userId } as any,
+      icon: dto.icon,
     });
     return await this.folderRepository.save(folder);
   }

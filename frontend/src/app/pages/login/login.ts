@@ -36,7 +36,7 @@ export class Login {
     this.auth.login({ name: this.name, password: this.password }).subscribe({
       next: (res) => {
         localStorage.setItem('token', res.access_token);
-        // navigate negde
+        localStorage.setItem('user', JSON.stringify(res.user));
         this.router.navigateByUrl('/home');
       },
       error: () => alert('Invalid credentials'),

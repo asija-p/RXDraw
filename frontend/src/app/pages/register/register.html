@@ -3,31 +3,43 @@
 <div class="modal">
   <mat-card class="card">
     <h2 mat-dialog-title class="title">Create account</h2>
-    <mat-dialog-content>
-      <p>
+
+    <form (ngSubmit)="submit()">
+      <mat-dialog-content>
         <mat-form-field class="full">
           <mat-label>Username</mat-label>
-          <input matInput placeholder="Username" />
+          <input matInput placeholder="Username" [(ngModel)]="name" name="name" />
           <mat-icon matSuffix fontIcon="person"></mat-icon>
         </mat-form-field>
-      </p>
-      <p>
+
         <mat-form-field class="full">
           <mat-label>Password</mat-label>
-          <input matInput placeholder="Password" />
+          <input
+            matInput
+            type="password"
+            autocomplete="new-password"
+            [(ngModel)]="password"
+            name="password"
+          />
           <mat-icon matSuffix fontIcon="key"></mat-icon>
         </mat-form-field>
-      </p>
-      <p>
+
         <mat-form-field class="full">
           <mat-label>Confirm password</mat-label>
-          <input matInput placeholder="Password" />
+          <input
+            matInput
+            type="password"
+            autocomplete="new-password"
+            [(ngModel)]="confirm"
+            name="confirm"
+          />
           <mat-icon matSuffix fontIcon="key"></mat-icon>
         </mat-form-field>
-      </p>
-    </mat-dialog-content>
-    <mat-dialog-actions class="actions">
-      <button matButton="filled">Sign up</button>
-    </mat-dialog-actions>
+      </mat-dialog-content>
+
+      <mat-dialog-actions class="actions">
+        <button mat-flat-button color="primary" type="submit">Sign up</button>
+      </mat-dialog-actions>
+    </form>
   </mat-card>
 </div>

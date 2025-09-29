@@ -7,6 +7,7 @@ import { provideEffects } from '@ngrx/effects';
 import { HistoryEffects } from './app/store/drawing.effects';
 import { provideRouter } from '@angular/router';
 import { routes } from './app/app.routes';
+import { provideHttpClient } from '@angular/common/http';
 
 bootstrapApplication(App, {
   providers: [
@@ -18,5 +19,6 @@ bootstrapApplication(App, {
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     provideEffects([HistoryEffects]),
     provideRouter(routes),
+    provideHttpClient(),
   ],
 }).catch((err) => console.error(err));

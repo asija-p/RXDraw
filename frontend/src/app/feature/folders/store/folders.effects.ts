@@ -1,0 +1,38 @@
+import { inject, Injectable } from '@angular/core';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import * as FolderActions from './folders.actions';
+import { FolderService } from '../services/folder-service';
+
+@Injectable()
+export class FoldersEffects {
+  constructor(private folderService: FolderService) {}
+
+  private actions$ = inject(Actions);
+
+  loadFolders$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FolderActions.loadFolders),
+      switchMap(() =>
+        this.folderService.getAll().pipe(
+          map((folders) => FolderActions.loadFoldersSuccess({ folders: folders })),
+          catchError(() => of({ type: 'load error' }))
+        )
+      )
+    )
+  );
+  create$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FolderActions.createFolder),
+      switchMap(({ name, icon }) =>
+        this.folderService.add(name, icon).pipe(
+          map((folder) => FolderActions.createFolderSuccess({ folder })),
+          catchError(() =>
+            of(FolderActions.createFolderFailure({ error: 'Could not create folder' }))
+          )
+        )
+      )
+    )
+  );
+}

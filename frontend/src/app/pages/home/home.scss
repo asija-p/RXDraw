@@ -39,7 +39,7 @@
   border-radius: 12px;
   transition: transform 120ms ease, box-shadow 120ms ease;
   width: fit-content;
-  height: fit-content;
+  height: 90px;
 
   cursor: pointer;
 
@@ -49,6 +49,15 @@
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     outline: none;
   }
+}
+
+.folder-add {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 100px;
+  width: 50px !important;
+  height: 90px;
 }
 
 .folder-icon {

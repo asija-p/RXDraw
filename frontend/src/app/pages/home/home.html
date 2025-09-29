@@ -1,20 +1,19 @@
 <h2 class="title">Your folders</h2>
 
-<p *ngIf="loading" class="muted">Loading…</p>
-<p class="form-error" *ngIf="error">{{ error }}</p>
-<p *ngIf="!loading && !folders.length && !error" class="empty">
-  <mat-icon fontIcon="folder_open"></mat-icon>
-  <span>No folders yet.</span>
-</p>
+<ng-container *ngIf="folders$ | async as folders">
+  <div *ngIf="folders.length" class="grid">
+    <mat-card class="folder-card" role="button">
+      <mat-icon class="folder-icon folder-add" fontIcon="add" (click)="addFolder()"></mat-icon>
+    </mat-card>
 
-<div *ngIf="folders.length" class="grid">
-  <mat-card class="folder-card" *ngFor="let f of folders" role="button">
-    <ng-container *ngIf="f.icon; else defaultIcon">
-      <mat-icon class="folder-icon" [fontIcon]="f.icon"></mat-icon>
-    </ng-container>
-    <ng-template #defaultIcon>
-      <mat-icon class="folder-icon" fontIcon="folder"></mat-icon>
-    </ng-template>
-    <div class="name" [title]="f.name">{{ f.name }}</div>
-  </mat-card>
-</div>
+    <mat-card class="folder-card" *ngFor="let f of folders" role="button">
+      <ng-container *ngIf="f.icon; else defaultIcon">
+        <mat-icon class="folder-icon" [fontIcon]="f.icon"></mat-icon>
+      </ng-container>
+      <ng-template #defaultIcon>
+        <mat-icon class="folder-icon" fontIcon="folder"></mat-icon>
+      </ng-template>
+      <div class="name" [title]="f.name">{{ f.name }}</div>
+    </mat-card>
+  </div>
+</ng-container>

@@ -7,10 +7,10 @@ import {
   setStrokeSize,
   setStrokeTool,
   undoHistoryStep,
-} from '../../store/drawing.actions';
+} from '../../../store/drawing.actions';
 import { MatSliderModule } from '@angular/material/slider';
 import { CommonModule, NgFor } from '@angular/common';
-import { Tool, ToolId } from '../../models/tool';
+import { Tool, ToolId } from '../../../models/tool';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faPaintBrush,
@@ -23,7 +23,7 @@ import {
   selectStrokeColor,
   selectStrokeSize,
   selectStrokeTool,
-} from '../../store/drawing.selectors';
+} from '../../../store/drawing.selectors';
 import { Observable, take } from 'rxjs';
 
 @Component({

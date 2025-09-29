@@ -4,9 +4,9 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(100, 100, 100, 0.95);
+  background: var(--purple);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid #686868;
+  border-bottom: 1px solid var(--dark-purple);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 

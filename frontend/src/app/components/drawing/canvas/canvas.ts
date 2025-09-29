@@ -20,11 +20,12 @@ import {
   selectStrokeColor,
   selectStrokeSize,
   selectStrokeTool,
-} from '../../store/drawing.selectors';
-import { Stroke } from '../../models/stroke';
-import { commitHistoryStep, saveLayer } from '../../store/drawing.actions';
+} from '../../../store/drawing.selectors';
+import { Stroke } from '../../../models/stroke';
+
 import { CommonModule } from '@angular/common';
 import { Layers } from '../layers/layers';
+import { commitHistoryStep, saveLayer } from '../../../store/drawing.actions';
 
 @Component({
   selector: 'app-canvas',

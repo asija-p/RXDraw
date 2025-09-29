@@ -6,10 +6,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 
-type Mode = 'login' | 'register';
-
 @Component({
-  selector: 'app-auth-dialog',
+  selector: 'app-modal',
   imports: [
     MatButtonModule,
     MatIconModule,
@@ -18,9 +16,7 @@ type Mode = 'login' | 'register';
     MatDialogModule,
     CommonModule,
   ],
-  templateUrl: './auth-dialog.html',
-  styleUrl: './auth-dialog.scss',
+  templateUrl: './modal.html',
+  styleUrl: './modal.scss',
 })
-export class AuthDialog {
-  @Input() mode: Mode = 'login';
-}
+export class Modal {}

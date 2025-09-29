@@ -1,1 +1,26 @@
-<p>login works!</p>
+<div class="backdrop" routerLink="/home" aria-hidden="true"></div>
+
+<div class="modal">
+  <mat-card class="card">
+    <h2 mat-dialog-title class="title">Log in</h2>
+    <mat-dialog-content>
+      <p>
+        <mat-form-field class="full">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Username" />
+          <mat-icon matSuffix fontIcon="person"></mat-icon>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-form-field class="full">
+          <mat-label>Password</mat-label>
+          <input matInput placeholder="Password" />
+          <mat-icon matSuffix fontIcon="key"></mat-icon>
+        </mat-form-field>
+      </p>
+    </mat-dialog-content>
+    <mat-dialog-actions class="actions">
+      <button matButton="filled">Log in</button>
+    </mat-dialog-actions>
+  </mat-card>
+</div>

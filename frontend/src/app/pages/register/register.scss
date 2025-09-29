@@ -1,0 +1,47 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.modal {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.card {
+  position: relative;
+  width: min(420px, 92vw);
+  padding: 24px 24px 20px;
+  border-radius: 16px;
+}
+
+.title {
+  margin: 8px 0 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.stack {
+  display: grid;
+  gap: 14px;
+}
+.full {
+  width: 100%;
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { StrokeEditor } from '../../components/stroke-editor/stroke-editor';
-import { LayersNavigator } from '../../components/layers-navigator/layers-navigator';
-import { Layers } from '../../components/layers/layers';
-import { Navigator } from '../../components/navigator/navigator';
+import { StrokeEditor } from '../../components/drawing/stroke-editor/stroke-editor';
+import { LayersNavigator } from '../../components/drawing/layers-navigator/layers-navigator';
+import { Layers } from '../../components/drawing/layers/layers';
+import { Navigator } from '../../components/drawing/navigator/navigator';
 
 @Component({
   selector: 'app-drawing-editor',

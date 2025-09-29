@@ -1,1 +1,30 @@
-<p>design-folder works!</p>
+<mat-card class="card">
+  <h2 mat-dialog-title class="title">Create folder</h2>
+
+  <form (ngSubmit)="submit()">
+    <mat-dialog-content>
+      <mat-form-field class="full">
+        <mat-label>Folder name</mat-label>
+        <input matInput placeholder="Folder name" [(ngModel)]="name" name="name" />
+      </mat-form-field>
+
+      <div class="icons" role="listbox" aria-label="Choose icon">
+        <button
+          type="button"
+          class="icon"
+          *ngFor="let i of icons"
+          [class.selected]="icon === i"
+          (click)="icon = i"
+          [attr.aria-selected]="icon === i"
+          role="option"
+        >
+          <mat-icon [fontIcon]="i"></mat-icon>
+        </button>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions class="actions">
+      <button matButton="filled" type="submit">Create</button>
+    </mat-dialog-actions>
+  </form>
+</mat-card>

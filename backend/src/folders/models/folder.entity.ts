@@ -6,12 +6,14 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/users/models/user.entity';
 import { Drawing } from 'src/drawings/models/drawing.entity';
 
 @Entity('folders')
+@Unique('UQ_folder_user_name', ['user', 'name'])
 export class Folder {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -19,7 +21,6 @@ export class Folder {
   @ManyToOne(() => User, (u) => u.folders, { onDelete: 'CASCADE' })
   user: User;
 
-  @Index(['user', 'name'], { unique: true })
   @Column({ length: 120 })
   name: string;
 

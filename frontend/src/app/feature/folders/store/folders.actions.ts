@@ -1,7 +1,7 @@
 import { createAction, props } from '@ngrx/store';
 import { Folder } from '../models/folder';
 
-export const loadFolders = createAction('[Folders] Load Folders');
+export const loadFolders = createAction('[Folders] Load Folders', props<{ userId: string }>());
 export const loadFoldersSuccess = createAction(
   '[Folders] Load Folders Success',
   props<{ folders: Folder[] }>()
@@ -10,6 +10,7 @@ export const loadFoldersFailure = createAction(
   '[Folders] Load Folders Failure',
   props<{ error: string }>()
 );
+
 export const createFolder = createAction(
   '[Folders] Create Folder',
   props<{ name: string; icon?: string }>()
@@ -20,5 +21,15 @@ export const createFolderSuccess = createAction(
 );
 export const createFolderFailure = createAction(
   '[Folders] Create Folder Failure',
+  props<{ error: string }>()
+);
+
+export const deleteFolder = createAction('[Folders] Delete Folder', props<{ folderId: string }>());
+export const deleteFolderSuccess = createAction(
+  '[Folders] Delete Folder Success',
+  props<{ folderId: string }>()
+);
+export const deleteFolderFailure = createAction(
+  '[Folders] Delete Folder Failure',
   props<{ error: string }>()
 );

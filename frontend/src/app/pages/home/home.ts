@@ -10,26 +10,33 @@ import { createFolder, loadFolders } from '../../feature/folders/store/folders.a
 import { Store } from '@ngrx/store';
 import { selectFoldersList } from '../../feature/folders/store/folders.selectors';
 import { Observable, of } from 'rxjs';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DesignFolder } from '../../components/folders/design-folder/design-folder';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MatButtonModule, CommonModule, MatCardModule, MatIconModule],
+  imports: [MatButtonModule, CommonModule, MatCardModule, MatIconModule, MatDialogModule],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
 export class Home {
   folders$: Observable<Folder[]> = of([]);
+  readonly dialog = inject(MatDialog);
 
   constructor(private store: Store) {
     this.folders$ = this.store.select(selectFoldersList);
   }
 
   ngOnInit() {
-    this.store.dispatch(loadFolders());
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const userId = user?.id ?? '';
+    //console.log(userId);
+    //console.log('lol');
+    this.store.dispatch(loadFolders({ userId }));
   }
 
   addFolder() {
-    this.store.dispatch(createFolder({ name: 'novi3', icon: 'palette' }));
+    this.dialog.open(DesignFolder);
   }
 }

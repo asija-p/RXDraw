@@ -37,6 +37,7 @@ export class Login {
       next: (res) => {
         localStorage.setItem('token', res.access_token);
         localStorage.setItem('user', JSON.stringify(res.user));
+        localStorage.setItem('userId', res.user.id);
         this.router.navigateByUrl('/home');
       },
       error: () => alert('Invalid credentials'),

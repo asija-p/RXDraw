@@ -17,7 +17,7 @@ export class FoldersService {
         order: { updatedAt: 'DESC' },
       });
     }
-    return this.folderRepository.find({ order: { name: 'ASC' } });
+    //return this.folderRepository.find({ order: { name: 'ASC' } });
   }
 
   public async create(dto: CreateFolderDto) {

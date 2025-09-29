@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from 'typeorm.config';
 import { UsersModule } from './users/users.module';
 import { FoldersModule } from './folders/folders.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { FoldersModule } from './folders/folders.module';
     TypeOrmModule.forRoot(typeOrmConfig),
     UsersModule,
     FoldersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -19,6 +19,9 @@ export class User {
   @Column({ length: 120 })
   name: string;
 
+  @Column({ name: 'password_hash', select: false })
+  passwordHash: string;
+
   @OneToMany(() => Folder, (d) => d.user)
   folders: Folder[];
 

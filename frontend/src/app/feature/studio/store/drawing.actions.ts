@@ -3,6 +3,7 @@ import { ToolId } from '../models/tool';
 import { Layer } from '../models/layer';
 import { Update } from '@ngrx/entity';
 import { HistoryStep } from '../models/history-step';
+import { Drawing } from '../../../shared/models/drawing';
 
 export const setStrokeColor = createAction(
   '[Stroke] Set Color',
@@ -43,9 +44,4 @@ export const saveLayer = createAction(
 export const reverseLayer = createAction(
   '[Layers] Reverse Layer',
   props<{ layerId: string; canvasData: string }>()
-);
-
-export const setCanvasDimensions = createAction(
-  '[Canvas] Set Canvas Dimensions',
-  props<{ height: number; width: number }>()
 );

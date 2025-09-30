@@ -13,3 +13,19 @@ export const loadDrawingsFailure = createAction(
   '[Drawings] Load Drawings Failure',
   props<{ error: string }>()
 );
+export const setDrawingDimensions = createAction(
+  '[Drawing] Set Drawing Dimensions',
+  props<{ height: number; width: number }>()
+);
+export const saveDrawingRequested = createAction(
+  '[Studio] Save Drawing Requested',
+  props<{ name: string; folderId: string | null }>()
+);
+export const saveDrawingSuccess = createAction(
+  '[Studio] Save Drawing Success',
+  props<{ drawing: Drawing }>()
+);
+export const saveDrawingFailure = createAction(
+  '[Studio] Save Drawing Failure',
+  props<{ error: unknown }>()
+);

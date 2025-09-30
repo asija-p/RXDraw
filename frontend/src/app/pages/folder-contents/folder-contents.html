@@ -1,1 +1,33 @@
-<p>folder-contents works!</p>
+<ng-container *ngIf="drawings$ | async as drawings; else loading">
+  <ng-container *ngIf="drawings.length; else empty">
+    <div class="grid">
+      <a
+        class="card"
+        *ngFor="let d of drawings; trackBy: trackById"
+        [routerLink]="['/drawing-editor', d.id]"
+        title="Open {{ d.name }}"
+      >
+        <div class="thumb">
+          <img
+            [src]="d.thumbnailUrl || 'assets/placeholder-thumb.png'"
+            [alt]="d.name"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="meta">
+          <div class="name">{{ d.name }}</div>
+          <div class="sub">{{ d.width }}×{{ d.height }} • {{ d.updatedAt }}</div>
+        </div>
+      </a>
+    </div>
+  </ng-container>
+</ng-container>
+
+<ng-template #loading>
+  <div class="state">Loading drawings…</div>
+</ng-template>
+
+<ng-template #empty>
+  <div class="state">No drawings here yet.</div>
+</ng-template>

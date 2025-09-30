@@ -2,16 +2,15 @@ import { Component, Input } from '@angular/core';
 import { combineLatest, filter, map, Observable, Subscription, take, takeLast } from 'rxjs';
 import { Layer } from '../../../feature/studio/models/layer';
 import { Store } from '@ngrx/store';
-import {
-  selectActiveLayerId,
-  selectCanvasHeight,
-  selectCanvasWidth,
-  selectLayers,
-} from '../../../feature/studio/store/drawing.selectors';
+import { selectActiveLayerId, selectLayers } from '../../../feature/studio/store/drawing.selectors';
 import { CommonModule } from '@angular/common';
 import { Canvas } from '../canvas/canvas';
 import { reverseLayer } from '../../../feature/studio/store/drawing.actions';
 import { ofType } from '@ngrx/effects';
+import {
+  selectDrawingHeight,
+  selectDrawingWidth,
+} from '../../../feature/drawings/store/drawings.selectors';
 
 @Component({
   selector: 'app-layers',
@@ -29,8 +28,8 @@ export class Layers {
   constructor(private store: Store) {
     this.layers$ = this.store.select(selectLayers);
     this.selectedId$ = this.store.select(selectActiveLayerId);
-    this.width$ = this.store.select(selectCanvasWidth);
-    this.height$ = this.store.select(selectCanvasHeight);
+    this.width$ = this.store.select(selectDrawingWidth);
+    this.height$ = this.store.select(selectDrawingHeight);
     this.vm$ = combineLatest({
       layers: this.layers$,
       selectedId: this.selectedId$,

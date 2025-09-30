@@ -1,7 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { withLatestFrom, map, filter, concatMap, take } from 'rxjs/operators';
+import { Action, Store } from '@ngrx/store';
+import {
+  withLatestFrom,
+  map,
+  filter,
+  concatMap,
+  take,
+  switchMap,
+  catchError,
+} from 'rxjs/operators';
 import {
   addLayer,
   commitHistoryStep,
@@ -15,11 +23,17 @@ import {
 } from './drawing.actions';
 import { selectCursor, selectLayerEntities, selectLayers, selectSteps } from './drawing.selectors';
 import { HistoryStep } from '../models/history-step';
+import { CreateDrawingDto } from '../../drawings/models/create-drawing.dto';
+import { DrawingsService } from '../../drawings/services/drawings-service';
+import { from, Observable, of } from 'rxjs';
+import { composeThumbSimple } from '../../../shared/utils/thumbnail.util';
 
 @Injectable()
 export class HistoryEffects {
   private actions$ = inject(Actions);
   private store = inject(Store);
+
+  constructor(private api: DrawingsService) {}
 
   applyOnUndo$ = createEffect(() =>
     this.actions$.pipe(

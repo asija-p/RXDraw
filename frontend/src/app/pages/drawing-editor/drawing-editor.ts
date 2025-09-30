@@ -10,8 +10,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SettingsDrawing } from '../../components/drawing/settings-drawing/settings-drawing';
 import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { selectIsCanvasReady } from '../../feature/studio/store/drawing.selectors';
 import { CommonModule } from '@angular/common';
+import { selectIsDrawingReady } from '../../feature/drawings/store/drawings.selectors';
 
 @Component({
   selector: 'app-drawing-editor',
@@ -32,7 +32,7 @@ import { CommonModule } from '@angular/common';
 export class DrawingEditor {
   isCanvasReady$: Observable<boolean>;
   constructor(private store: Store) {
-    this.isCanvasReady$ = this.store.select(selectIsCanvasReady);
+    this.isCanvasReady$ = this.store.select(selectIsDrawingReady);
   }
 
   submit() {}

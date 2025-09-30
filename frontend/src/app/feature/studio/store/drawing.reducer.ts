@@ -8,7 +8,6 @@ import {
   reverseLayer,
   saveLayer,
   setActiveLayer,
-  setCanvasDimensions,
   setLayerOpacity,
   setLayerVisibility,
   setStrokeColor,
@@ -151,19 +150,4 @@ export const layersReducer = createReducer(
   on(reverseLayer, (state, { layerId, canvasData }) =>
     adapter.updateOne({ id: layerId, changes: { canvasData } }, state)
   )
-);
-
-export interface CanvasState {
-  height: number;
-  width: number;
-}
-
-export const initialCanvasState: CanvasState = {
-  height: 0,
-  width: 0,
-};
-
-export const canvasReducer = createReducer(
-  initialCanvasState,
-  on(setCanvasDimensions, (state, { height, width }) => ({ ...state, height, width }))
 );

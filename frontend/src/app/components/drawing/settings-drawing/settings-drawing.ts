@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { setCanvasDimensions } from '../../../feature/studio/store/drawing.actions';
 import { CdkMenuModule } from '@angular/cdk/menu';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +9,7 @@ import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { setDrawingDimensions } from '../../../feature/drawings/store/drawings.actions';
 
 @Component({
   selector: 'app-settings-drawing',
@@ -33,8 +33,6 @@ export class SettingsDrawing {
   height: number = 0;
 
   submit() {
-    this.store.dispatch(setCanvasDimensions({ height: this.height, width: this.width }));
+    this.store.dispatch(setDrawingDimensions({ height: this.height, width: this.width }));
   }
-
-  cancel() {}
 }

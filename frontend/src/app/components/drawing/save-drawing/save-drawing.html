@@ -1,5 +1,5 @@
 <mat-card class="card">
-  <h2 mat-dialog-title class="title">Name drawing</h2>
+  <h2 mat-dialog-title class="title">Save drawing</h2>
 
   <form (ngSubmit)="submit()">
     <mat-dialog-content>
@@ -7,10 +7,22 @@
         <mat-label>Name</mat-label>
         <input matInput [(ngModel)]="name" name="name" />
       </mat-form-field>
+
+      <div class="folders">
+        <div class="label">Save to folder</div>
+        <mat-radio-group [(ngModel)]="folderId" name="folderId" class="folder-group">
+          <mat-radio-button *ngFor="let f of folders$ | async" [value]="f.id">
+            {{ f.name }}
+          </mat-radio-button>
+        </mat-radio-group>
+        <button matButton="outlined" class="btn-new-folder" (click)="createNewFolder($event)">
+          New folder
+        </button>
+      </div>
     </mat-dialog-content>
 
     <mat-dialog-actions class="actions">
-      <button matButton="tonal" (click)="cancel()">Cancel</button>
+      <button matButton="tonal" type="button" (click)="cancel()">Cancel</button>
       <button matButton="filled" type="submit">Create</button>
     </mat-dialog-actions>
   </form>

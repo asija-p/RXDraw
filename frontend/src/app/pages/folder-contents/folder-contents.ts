@@ -5,17 +5,20 @@ import { loadDrawings } from '../../feature/drawings/store/drawings.actions';
 import { selectOpenedFolderId } from '../../feature/folders/store/folders.selectors';
 import { filter, firstValueFrom, Observable, take, takeLast } from 'rxjs';
 import { Drawing } from '../../shared/models/drawing';
+import { Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-folder-contents',
-  imports: [],
+  imports: [RouterLink, CommonModule],
   templateUrl: './folder-contents.html',
   styleUrl: './folder-contents.scss',
 })
 export class FolderContents {
-  private drawings$: Observable<Drawing[]>;
+  drawings$: Observable<Drawing[]>;
+  trackById = (_: number, d: Drawing) => d.id;
 
-  constructor(private store: Store) {
+  constructor(private store: Store, private router: Router) {
     this.drawings$ = this.store.select(selectDrawingsList);
   }
 

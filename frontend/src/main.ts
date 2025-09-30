@@ -5,7 +5,6 @@ import {
   layersReducer,
   historyReducer,
   strokeReducer,
-  canvasReducer,
 } from './app/feature/studio/store/drawing.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
@@ -16,7 +15,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { foldersReducer } from './app/feature/folders/store/folders.reducer';
 import { FoldersEffects } from './app/feature/folders/store/folders.effects';
 import { DrawingsEffects } from './app/feature/drawings/store/drawings.effects';
-import { drawingsReducer } from './app/feature/drawings/store/drawings.reducer';
+import { drawingReducer, drawingsReducer } from './app/feature/drawings/store/drawings.reducer';
 
 bootstrapApplication(App, {
   providers: [
@@ -26,7 +25,7 @@ bootstrapApplication(App, {
       layers: layersReducer,
       folders: foldersReducer,
       drawings: drawingsReducer,
-      canvas: canvasReducer,
+      drawing: drawingReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects]),

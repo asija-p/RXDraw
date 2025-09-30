@@ -18,7 +18,6 @@ import { Observable, of } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DesignFolder } from '../../components/folders/design-folder/design-folder';
 import { CdkMenuModule } from '@angular/cdk/menu';
-import { RouterLink, RouterLinkActive } from '@angular/router'; // ⬅️ add this
 
 @Component({
   selector: 'app-home',
@@ -30,7 +29,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router'; // ⬅️ add th
     MatIconModule,
     MatDialogModule,
     CdkMenuModule,
-    RouterLink,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',

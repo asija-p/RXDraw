@@ -4,7 +4,7 @@ import { selectDrawingsList } from '../../feature/drawings/store/drawings.select
 import { loadDrawings } from '../../feature/drawings/store/drawings.actions';
 import { selectOpenedFolderId } from '../../feature/folders/store/folders.selectors';
 import { filter, firstValueFrom, Observable, take, takeLast } from 'rxjs';
-import { Drawing } from '../../feature/drawings/models/drawing';
+import { Drawing } from '../../shared/models/drawing';
 
 @Component({
   selector: 'app-folder-contents',

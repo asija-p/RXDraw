@@ -1,19 +1,20 @@
-<div class="stack" [style.width.px]="width" [style.height.px]="height">
-  <app-canvas
-    *ngFor="let l of layers$ | async; trackBy: trackById"
-    [width]="width"
-    [height]="height"
-    [layerId]="l.id"
-    [visible]="l.visible"
-    [opacity]="l.opacity"
-    [zIndex]="l.zIndex"
-    [canvasData]="l.canvasData"
-    [active]="l.id === (selectedLayerId$ | async)"
-    [style.display]="l.visible ? 'block' : 'none'"
-    [style.opacity]="l.opacity"
-    [style.zIndex]="l.zIndex"
-    [style.pointer-events]="l.id === (selectedLayerId$ | async) ? 'auto' : 'none'"
-  >
+<ng-container *ngIf="vm$ | async as vm">
+  <div class="stack" [style.width.px]="vm.w" [style.height.px]="vm.h">
+    <app-canvas
+      *ngFor="let l of vm.layers; trackBy: trackById"
+      [width]="vm.w"
+      [height]="vm.h"
+      [layerId]="l.id"
+      [visible]="l.visible"
+      [opacity]="l.opacity"
+      [zIndex]="l.zIndex"
+      [canvasData]="l.canvasData"
+      [active]="l.id === vm.selectedId"
+      [style.display]="l.visible ? 'block' : 'none'"
+      [style.opacity]="l.opacity"
+      [style.zIndex]="l.zIndex"
+      [style.pointer-events]="l.id === vm.selectedId ? 'auto' : 'none'"
     >
-  </app-canvas>
-</div>
+    </app-canvas>
+  </div>
+</ng-container>

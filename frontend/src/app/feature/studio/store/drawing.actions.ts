@@ -44,3 +44,8 @@ export const reverseLayer = createAction(
   '[Layers] Reverse Layer',
   props<{ layerId: string; canvasData: string }>()
 );
+
+export const setCanvasDimensions = createAction(
+  '[Canvas] Set Canvas Dimensions',
+  props<{ height: number; width: number }>()
+);

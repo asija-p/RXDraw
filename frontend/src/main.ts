@@ -5,6 +5,7 @@ import {
   layersReducer,
   historyReducer,
   strokeReducer,
+  canvasReducer,
 } from './app/feature/studio/store/drawing.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
@@ -25,6 +26,7 @@ bootstrapApplication(App, {
       layers: layersReducer,
       folders: foldersReducer,
       drawings: drawingsReducer,
+      canvas: canvasReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects]),

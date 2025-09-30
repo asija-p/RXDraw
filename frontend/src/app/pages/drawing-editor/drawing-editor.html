@@ -1,14 +1,23 @@
 <div class="app-layout">
-  <aside class="stroke-editor">
-    <app-stroke-editor></app-stroke-editor>
-  </aside>
+  <app-editor-toolbar></app-editor-toolbar>
+  <div class="drawing-board">
+    <aside class="stroke-editor">
+      <app-stroke-editor></app-stroke-editor>
+    </aside>
 
-  <main class="canvas-area">
-    <app-layers></app-layers>
-  </main>
+    <main class="canvas-area">
+      <ng-container *ngIf="isCanvasReady$ | async; else setup">
+        <app-layers></app-layers>
+      </ng-container>
 
-  <aside class="manager">
-    <app-navigator></app-navigator>
-    <app-layers-navigator></app-layers-navigator>
-  </aside>
+      <ng-template #setup>
+        <app-settings-drawing></app-settings-drawing>
+      </ng-template>
+    </main>
+
+    <aside class="manager">
+      <app-navigator></app-navigator>
+      <app-layers-navigator></app-layers-navigator>
+    </aside>
+  </div>
 </div>

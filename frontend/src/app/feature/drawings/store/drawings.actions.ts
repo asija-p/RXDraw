@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Drawing } from '../models/drawing';
+import { Drawing } from '../../../shared/models/drawing';
 
 export const loadDrawings = createAction(
   '[Drawings] Load Drawings',

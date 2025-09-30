@@ -1,6 +1,6 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
-import { Drawing } from '../models/drawing';
+import { Drawing } from '../../../shared/models/drawing';
 import { loadDrawingsSuccess } from './drawings.actions';
 
 export interface DrawingsState extends EntityState<Drawing> {}

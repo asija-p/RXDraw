@@ -1,13 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { StrokeEditor } from '../../components/drawing/stroke-editor/stroke-editor';
 import { LayersNavigator } from '../../components/drawing/layers-navigator/layers-navigator';
 import { Layers } from '../../components/drawing/layers/layers';
 import { Navigator } from '../../components/drawing/navigator/navigator';
+import { EditorToolbar } from '../../components/drawing/editor-toolbar/editor-toolbar';
+
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { SettingsDrawing } from '../../components/drawing/settings-drawing/settings-drawing';
+import { Observable } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { selectIsCanvasReady } from '../../feature/studio/store/drawing.selectors';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-drawing-editor',
-  imports: [StrokeEditor, LayersNavigator, Layers, Navigator],
+  imports: [
+    StrokeEditor,
+    LayersNavigator,
+    Navigator,
+    EditorToolbar,
+    SettingsDrawing,
+    MatDialogModule,
+    Layers,
+    CommonModule,
+  ],
   templateUrl: './drawing-editor.html',
   styleUrl: './drawing-editor.scss',
+  standalone: true,
 })
-export class DrawingEditor {}
+export class DrawingEditor {
+  isCanvasReady$: Observable<boolean>;
+  constructor(private store: Store) {
+    this.isCanvasReady$ = this.store.select(selectIsCanvasReady);
+  }
+
+  submit() {}
+
+  cancel() {}
+}

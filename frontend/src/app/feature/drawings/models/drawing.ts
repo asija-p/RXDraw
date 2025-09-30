@@ -1,4 +1,4 @@
-import { Layer } from './layer';
+import { Layer } from '../../studio/models/layer';
 
 export interface Drawing {
   id: string;

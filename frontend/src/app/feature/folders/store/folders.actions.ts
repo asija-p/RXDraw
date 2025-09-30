@@ -33,3 +33,5 @@ export const deleteFolderFailure = createAction(
   '[Folders] Delete Folder Failure',
   props<{ error: string }>()
 );
+
+export const openFolder = createAction('[Folders] Open Folder', props<{ folderId: string }>());

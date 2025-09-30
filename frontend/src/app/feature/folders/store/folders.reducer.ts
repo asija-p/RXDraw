@@ -8,21 +8,25 @@ import {
   deleteFolderFailure,
   deleteFolderSuccess,
   loadFoldersSuccess,
+  openFolder,
 } from './folders.actions';
 
-export interface FoldersState extends EntityState<Folder> {}
+export interface FoldersState extends EntityState<Folder> {
+  openedFolderId: string | null;
+}
 
 const adapter = createEntityAdapter<Folder>();
 
-export const initialState: FoldersState = adapter.getInitialState({});
+export const initialState: FoldersState = adapter.getInitialState({
+  openedFolderId: null,
+});
 
 export const foldersReducer = createReducer(
   initialState,
   on(loadFoldersSuccess, (state, { folders }) => adapter.setAll(folders, state)),
   on(createFolderSuccess, (state, { folder }) => adapter.addOne(folder, state)),
   on(deleteFolderSuccess, (state, { folderId }) => adapter.removeOne(folderId, state)),
-  on(deleteFolderFailure, (state, { error }) => ({
-    ...state,
-    error,
-  }))
+  on(openFolder, (state, { folderId }) => {
+    return { ...state, openedFolderId: folderId };
+  })
 );

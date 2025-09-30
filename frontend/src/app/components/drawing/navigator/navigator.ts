@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectLayers } from '../../../feature/drawing/store/drawing.selectors';
+import { selectLayers } from '../../../feature/studio/store/drawing.selectors';
 import { Observable } from 'rxjs';
-import { Layer } from '../../../feature/drawing/models/layer';
+import { Layer } from '../../../feature/studio/models/layer';
 import { CommonModule } from '@angular/common';
 
 @Component({

@@ -4,6 +4,7 @@ import { DrawingEditor } from './pages/drawing-editor/drawing-editor';
 import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Landing } from './pages/landing/landing';
+import { FolderContents } from './pages/folder-contents/folder-contents';
 
 export const routes: Routes = [
   {
@@ -25,6 +26,10 @@ export const routes: Routes = [
   {
     path: 'register',
     component: Register,
+  },
+  {
+    path: ':id',
+    component: FolderContents,
   },
   { path: '**', redirectTo: '' },
 ];

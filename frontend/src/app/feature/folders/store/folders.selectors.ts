@@ -10,3 +10,8 @@ export const selectFoldersList = createSelector(selectFoldersState, (state) =>
     .filter((folder) => folder != null)
     .map((folder) => <Folder>folder)
 );
+
+export const selectOpenedFolderId = createSelector(
+  selectFoldersState,
+  (state) => state.openedFolderId
+);

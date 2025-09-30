@@ -15,7 +15,7 @@ import {
   selectActiveLayer,
   selectActiveLayerId,
   selectLayers,
-} from '../../../feature/drawing/store/drawing.selectors';
+} from '../../../feature/studio/store/drawing.selectors';
 import {
   addLayer,
   setActiveLayer,
@@ -24,8 +24,8 @@ import {
   setLayerOpacity,
   reorderLayers,
   commitHistoryStep,
-} from '../../../feature/drawing/store/drawing.actions';
-import { Layer } from '../../../feature/drawing/models/layer';
+} from '../../../feature/studio/store/drawing.actions';
+import { Layer } from '../../../feature/studio/models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule, NgIf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

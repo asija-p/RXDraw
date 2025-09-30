@@ -1,14 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { filter, map, Observable, Subscription, take, takeLast } from 'rxjs';
-import { Layer } from '../../../feature/drawing/models/layer';
+import { Layer } from '../../../feature/studio/models/layer';
 import { Store } from '@ngrx/store';
-import {
-  selectActiveLayerId,
-  selectLayers,
-} from '../../../feature/drawing/store/drawing.selectors';
+import { selectActiveLayerId, selectLayers } from '../../../feature/studio/store/drawing.selectors';
 import { CommonModule } from '@angular/common';
 import { Canvas } from '../canvas/canvas';
-import { reverseLayer } from '../../../feature/drawing/store/drawing.actions';
+import { reverseLayer } from '../../../feature/studio/store/drawing.actions';
 import { ofType } from '@ngrx/effects';
 
 @Component({

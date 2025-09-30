@@ -5,7 +5,12 @@
     <mat-icon class="folder-icon folder-add" fontIcon="add"></mat-icon>
   </mat-card>
 
-  <mat-card class="folder-card" *ngFor="let f of (folders$ | async) || []" role="button">
+  <mat-card
+    class="folder-card"
+    *ngFor="let f of folders$ | async"
+    role="button"
+    (click)="openFolder(f.id)"
+  >
     <ng-container *ngIf="f.icon; else defaultIcon">
       <mat-icon class="folder-icon" [fontIcon]="f.icon"></mat-icon>
     </ng-container>

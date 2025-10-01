@@ -12,6 +12,8 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 import { selectIsDrawingReady } from '../../feature/drawings/store/drawings.selectors';
+import { ActivatedRoute } from '@angular/router';
+import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
 
 @Component({
   selector: 'app-drawing-editor',
@@ -31,8 +33,13 @@ import { selectIsDrawingReady } from '../../feature/drawings/store/drawings.sele
 })
 export class DrawingEditor {
   isCanvasReady$: Observable<boolean>;
-  constructor(private store: Store) {
+  constructor(private store: Store, private route: ActivatedRoute) {
     this.isCanvasReady$ = this.store.select(selectIsDrawingReady);
+  }
+
+  ngOnInit() {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) this.store.dispatch(openDrawingRequested({ id }));
   }
 
   submit() {}

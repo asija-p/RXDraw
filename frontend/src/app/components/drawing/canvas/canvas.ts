@@ -25,7 +25,8 @@ import { Stroke } from '../../../feature/studio/models/stroke';
 
 import { CommonModule } from '@angular/common';
 import { Layers } from '../layers/layers';
-import { commitHistoryStep, saveLayer } from '../../../feature/studio/store/drawing.actions';
+import { commitHistoryStep } from '../../../feature/studio/store/drawing.actions';
+import { saveLayer } from '../../../feature/layers/store/layers.actions';
 
 @Component({
   selector: 'app-canvas',

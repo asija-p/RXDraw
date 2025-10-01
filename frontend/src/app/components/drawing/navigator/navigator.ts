@@ -1,9 +1,9 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectLayers } from '../../../feature/studio/store/drawing.selectors';
 import { Observable } from 'rxjs';
 import { Layer } from '../../../feature/studio/models/layer';
 import { CommonModule } from '@angular/common';
+import { selectLayers } from '../../../feature/layers/store/layers.selectors';
 
 @Component({
   selector: 'app-navigator',

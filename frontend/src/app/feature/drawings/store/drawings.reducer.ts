@@ -1,7 +1,7 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { Drawing } from '../../../shared/models/drawing';
-import { loadDrawingsSuccess, setDrawingDimensions } from './drawings.actions';
+import { loadDrawingsSuccess, setDrawingDimensions, setDrawingName } from './drawings.actions';
 
 export interface DrawingsState extends EntityState<Drawing> {}
 
@@ -28,5 +28,6 @@ export const initialDrawingState: DrawingState = {
 
 export const drawingReducer = createReducer(
   initialDrawingState,
-  on(setDrawingDimensions, (state, { height, width }) => ({ ...state, height, width }))
+  on(setDrawingDimensions, (state, { height, width }) => ({ ...state, height, width })),
+  on(setDrawingName, (s, { name }) => ({ ...s, name }))
 );

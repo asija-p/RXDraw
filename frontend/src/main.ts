@@ -1,11 +1,7 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { App } from './app/app';
-import {
-  layersReducer,
-  historyReducer,
-  strokeReducer,
-} from './app/feature/studio/store/drawing.reducer';
+import { historyReducer, strokeReducer } from './app/feature/studio/store/drawing.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
 import { HistoryEffects } from './app/feature/studio/store/drawing.effects';
@@ -16,6 +12,7 @@ import { foldersReducer } from './app/feature/folders/store/folders.reducer';
 import { FoldersEffects } from './app/feature/folders/store/folders.effects';
 import { DrawingsEffects } from './app/feature/drawings/store/drawings.effects';
 import { drawingReducer, drawingsReducer } from './app/feature/drawings/store/drawings.reducer';
+import { layersReducer } from './app/feature/layers/store/layers.reducer';
 
 bootstrapApplication(App, {
   providers: [

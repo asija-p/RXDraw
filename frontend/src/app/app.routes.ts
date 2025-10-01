@@ -31,5 +31,9 @@ export const routes: Routes = [
     path: ':id',
     component: FolderContents,
   },
+  {
+    path: 'drawing-editor/:id',
+    component: DrawingEditor,
+  },
   { path: '**', redirectTo: '' },
 ];

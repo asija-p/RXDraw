@@ -10,30 +10,22 @@ import {
   switchMap,
   catchError,
 } from 'rxjs/operators';
-import {
-  addLayer,
-  commitHistoryStep,
-  redoHistoryStep,
-  removeLayer,
-  reorderLayers,
-  reverseLayer,
-  saveLayer,
-  setLayerOpacity,
-  undoHistoryStep,
-} from './drawing.actions';
-import { selectCursor, selectLayerEntities, selectLayers, selectSteps } from './drawing.selectors';
+import { commitHistoryStep, redoHistoryStep, undoHistoryStep } from './drawing.actions';
+import { selectCursor, selectSteps } from './drawing.selectors';
 import { HistoryStep } from '../models/history-step';
 import { CreateDrawingDto } from '../../drawings/models/create-drawing.dto';
 import { DrawingsService } from '../../drawings/services/drawings-service';
 import { from, Observable, of } from 'rxjs';
 import { composeThumbSimple } from '../../../shared/utils/thumbnail.util';
+import { LayersService } from '../../layers/services/layers-service';
+import { addLayer, removeLayer, reverseLayer } from '../../layers/store/layers.actions';
 
 @Injectable()
 export class HistoryEffects {
   private actions$ = inject(Actions);
   private store = inject(Store);
 
-  constructor(private api: DrawingsService) {}
+  constructor(private drawingService: DrawingsService, private layerService: LayersService) {}
 
   applyOnUndo$ = createEffect(() =>
     this.actions$.pipe(

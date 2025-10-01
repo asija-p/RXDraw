@@ -4,7 +4,7 @@ export class CreateLayerDto {
   zIndex: number;
   visible?: boolean;
   opacity?: number;
-  bitmapUrl?: string;
+  canvasData?: string;
 }
 
 export class UpdateLayerDto {
@@ -12,5 +12,5 @@ export class UpdateLayerDto {
   visible?: boolean;
   opacity?: number;
   zIndex?: number;
-  bitmapUrl?: string | null;
+  canvasData?: string | null;
 }

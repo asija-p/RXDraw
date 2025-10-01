@@ -21,4 +21,8 @@ export class DrawingsService {
   create(dto: CreateDrawingDto) {
     return this.httpClient.post<Drawing>(`${environment.api}drawings`, dto);
   }
+
+  getById(id: string) {
+    return this.httpClient.get<Drawing>(`${environment.api}drawings/${id}`);
+  }
 }

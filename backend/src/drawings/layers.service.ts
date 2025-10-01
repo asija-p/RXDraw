@@ -23,7 +23,7 @@ export class LayersService {
         zIndex: true,
         visible: true,
         opacity: true,
-        bitmapUrl: true,
+        canvasData: true,
       },
     });
   }
@@ -43,7 +43,7 @@ export class LayersService {
       zIndex: dto.zIndex,
       visible: dto.visible ?? true,
       opacity: dto.opacity ?? 1,
-      bitmapUrl: dto.bitmapUrl ?? undefined,
+      canvasData: dto.canvasData ?? undefined,
       drawing: { id: dto.drawingId } as any,
     });
     return await this.layersRepository.save(layer);
@@ -55,7 +55,7 @@ export class LayersService {
       visible: dto.visible,
       opacity: dto.opacity,
       zIndex: dto.zIndex,
-      bitmapUrl: dto.bitmapUrl === null ? null : (dto.bitmapUrl ?? undefined),
+      bitmapUrl: dto.canvasData === null ? null : (dto.canvasData ?? undefined),
     };
     await this.layersRepository.update(id, patch);
     return this.getById(id);

@@ -11,26 +11,23 @@ import {
   tap,
   zip,
 } from 'rxjs';
-import {
-  selectActiveLayer,
-  selectActiveLayerId,
-  selectLayers,
-} from '../../../feature/studio/store/drawing.selectors';
-import {
-  addLayer,
-  setActiveLayer,
-  removeLayer,
-  setLayerVisibility,
-  setLayerOpacity,
-  reorderLayers,
-  commitHistoryStep,
-} from '../../../feature/studio/store/drawing.actions';
+import {} from '../../../feature/studio/store/drawing.selectors';
+import { commitHistoryStep } from '../../../feature/studio/store/drawing.actions';
 import { Layer } from '../../../feature/studio/models/layer';
 import { v4 as uuid } from 'uuid';
 import { CommonModule, NgIf } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faEyeSlash, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
+import { selectActiveLayer, selectLayers } from '../../../feature/layers/store/layers.selectors';
+import {
+  addLayer,
+  removeLayer,
+  reorderLayers,
+  setActiveLayer,
+  setLayerOpacity,
+  setLayerVisibility,
+} from '../../../feature/layers/store/layers.actions';
 
 @Component({
   selector: 'app-layers-navigator',

@@ -1,5 +1,5 @@
 import { createSelector, createFeatureSelector } from '@ngrx/store';
-import { adapter, HistoryState, LayersState, StrokeState } from './drawing.reducer';
+import { HistoryState, StrokeState } from './drawing.reducer';
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { layer } from '@fortawesome/fontawesome-svg-core';
 import { Layer } from '../models/layer';
@@ -12,18 +12,3 @@ export const selectStrokeTool = createSelector(selectStrokeState, (state) => sta
 export const selectHistoryState = createFeatureSelector<HistoryState>('history');
 export const selectSteps = createSelector(selectHistoryState, (s) => s.steps);
 export const selectCursor = createSelector(selectHistoryState, (s) => s.cursor);
-
-export const selectLayersState = createFeatureSelector<LayersState>('layers');
-export const selectLayers = createSelector(selectLayersState, (layers) =>
-  layers.ids
-    .map((id) => layers.entities[id])
-    .filter((layers) => layers != null)
-    .map((layer) => <Layer>layer)
-);
-export const selectLayerEntities = createSelector(selectLayersState, (s) => s.entities);
-export const selectActiveLayerId = createSelector(selectLayersState, (s) => s.selectedLayerId);
-export const selectActiveLayer = createSelector(
-  selectLayersState,
-  selectActiveLayerId,
-  (layers, id) => layers.entities[id!]
-);

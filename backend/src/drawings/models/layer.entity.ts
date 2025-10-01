@@ -29,5 +29,5 @@ export class Layer {
   zIndex: number;
 
   @Column({ type: 'text', nullable: true })
-  bitmapUrl?: string; // url to cloudinary
+  canvasData?: string; // url to cloudinary
 }

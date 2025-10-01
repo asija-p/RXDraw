@@ -13,28 +13,33 @@ export const loadDrawingsFailure = createAction(
   '[Drawings] Load Drawings Failure',
   props<{ error: string }>()
 );
+export const clearDrawings = createAction('[Drawings] Clear Drawings');
 export const setDrawingDimensions = createAction(
   '[Drawing] Set Drawing Dimensions',
   props<{ height: number; width: number }>()
 );
 export const saveDrawingRequested = createAction(
-  '[Studio] Save Drawing Requested',
+  '[Drawing] Save Drawing Requested',
   props<{ name: string; folderId: string | null }>()
 );
 export const saveDrawingSuccess = createAction(
-  '[Studio] Save Drawing Success',
+  '[Drawing] Save Drawing Success',
   props<{ drawing: Drawing }>()
 );
 export const saveDrawingFailure = createAction(
-  '[Studio] Save Drawing Failure',
+  '[Drawing] Save Drawing Failure',
   props<{ error: unknown }>()
 );
 export const setDrawingName = createAction('[Studio] Set Drawing Name', props<{ name: string }>());
 export const openDrawingRequested = createAction(
-  '[Studio] Open Drawing Requested',
+  '[Drawing] Open Drawing Requested',
   props<{ id: string }>()
 );
 export const openDrawingFailure = createAction(
-  '[Studio] Open Drawing Failure',
+  '[Drawing] Open Drawing Failure',
   props<{ error: unknown }>()
+);
+export const openDrawingSuccess = createAction(
+  '[Drawing] Open Drawing Success',
+  props<{ openedDrawingId: string }>()
 );

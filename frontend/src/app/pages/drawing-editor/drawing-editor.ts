@@ -8,12 +8,15 @@ import { EditorToolbar } from '../../components/drawing/editor-toolbar/editor-to
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { SettingsDrawing } from '../../components/drawing/settings-drawing/settings-drawing';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
-import { selectIsDrawingReady } from '../../feature/drawings/store/drawings.selectors';
+import {
+  selectOpenedDrawingId,
+  selectIsDrawingReady,
+} from '../../feature/drawings/store/drawings.selectors';
 import { ActivatedRoute } from '@angular/router';
-import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
+import { clearDrawings, openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
 
 @Component({
   selector: 'app-drawing-editor',
@@ -33,13 +36,19 @@ import { openDrawingRequested } from '../../feature/drawings/store/drawings.acti
 })
 export class DrawingEditor {
   isCanvasReady$: Observable<boolean>;
+  drawingId$: Observable<string | null>;
+  drawingId: string | null = '';
+
   constructor(private store: Store, private route: ActivatedRoute) {
     this.isCanvasReady$ = this.store.select(selectIsDrawingReady);
+    this.drawingId$ = this.store.select(selectOpenedDrawingId);
   }
 
-  ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.store.dispatch(openDrawingRequested({ id }));
+  async ngOnInit() {
+    const id = await firstValueFrom(this.store.select(selectOpenedDrawingId).pipe(take(1)));
+    if (id) {
+      this.store.dispatch(openDrawingRequested({ id }));
+    }
   }
 
   submit() {}

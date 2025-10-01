@@ -3,11 +3,14 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { forkJoin, from, Observable, of } from 'rxjs';
 import { DrawingsService } from '../services/drawings-service';
-import * as DrawingsActions from './drawings.actions';
 import { Action, Store } from '@ngrx/store';
 import {
+  loadDrawings,
+  loadDrawingsFailure,
+  loadDrawingsSuccess,
   openDrawingFailure,
   openDrawingRequested,
+  openDrawingSuccess,
   saveDrawingFailure,
   saveDrawingRequested,
   saveDrawingSuccess,
@@ -21,6 +24,7 @@ import { LayersService } from '../../layers/services/layers-service';
 import { CreateLayerDto } from '../../layers/models/create-layer.dto';
 import { selectLayers } from '../../layers/store/layers.selectors';
 import { loadLayers } from '../../layers/store/layers.actions';
+import { Drawing } from '../../../shared/models/drawing';
 
 @Injectable()
 export class DrawingsEffects {
@@ -31,11 +35,11 @@ export class DrawingsEffects {
 
   loadDrawings$ = createEffect(() =>
     this.actions$.pipe(
-      ofType(DrawingsActions.loadDrawings),
+      ofType(loadDrawings),
       switchMap(({ userId, folderId }) =>
         this.drawingsService.getAll(userId, folderId).pipe(
-          map((drawings) => DrawingsActions.loadDrawingsSuccess({ drawings: drawings })),
-          catchError(() => of({ type: 'load error' }))
+          map((drawings) => loadDrawingsSuccess({ drawings })),
+          catchError((err) => of(loadDrawingsFailure({ error: String(err?.message ?? err) })))
         )
       )
     )
@@ -113,10 +117,11 @@ export class DrawingsEffects {
       ofType(openDrawingRequested),
       switchMap(({ id }) =>
         this.drawingsService.getById(id).pipe(
-          mergeMap((d: any) => [
+          mergeMap((d: Drawing) => [
+            openDrawingSuccess({ openedDrawingId: id }), // 👈 set openedDrawingId via reducer
             setDrawingName({ name: d.name }),
             setDrawingDimensions({ width: d.width, height: d.height }),
-            loadLayers({ drawingId: id }),
+            loadLayers({ drawingId: String(d.id) }),
           ]),
           catchError((error) => of(openDrawingFailure({ error })))
         )

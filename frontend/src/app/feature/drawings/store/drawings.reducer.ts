@@ -1,17 +1,47 @@
 import { createEntityAdapter, EntityState } from '@ngrx/entity';
 import { createReducer, on } from '@ngrx/store';
 import { Drawing } from '../../../shared/models/drawing';
-import { loadDrawingsSuccess, setDrawingDimensions, setDrawingName } from './drawings.actions';
+import {
+  clearDrawings,
+  loadDrawings,
+  loadDrawingsFailure,
+  loadDrawingsSuccess,
+  openDrawingFailure,
+  openDrawingSuccess,
+  setDrawingDimensions,
+  setDrawingName,
+} from './drawings.actions';
 
-export interface DrawingsState extends EntityState<Drawing> {}
+export interface DrawingsState extends EntityState<Drawing> {
+  openedDrawingId: string | null;
+  loading: boolean;
+  error: string | null;
+}
 
 const adapter = createEntityAdapter<Drawing>();
 
-export const initialState: DrawingsState = adapter.getInitialState({});
+export const initialState: DrawingsState = adapter.getInitialState({
+  openedDrawingId: null,
+  loading: false,
+  error: null,
+});
 
 export const drawingsReducer = createReducer(
   initialState,
-  on(loadDrawingsSuccess, (state, { drawings }) => adapter.setAll(drawings, state))
+  on(loadDrawings, (s) => ({ ...s, loading: true, error: null })),
+  on(clearDrawings, (s) => adapter.setAll([], { ...s, loading: true })),
+  on(loadDrawingsSuccess, (s, { drawings }) => {
+    const next = adapter.setAll(drawings, s);
+    return { ...next, loading: false };
+  }),
+  on(loadDrawingsFailure, (s, { error }) => ({ ...s, loading: false, error })),
+  on(openDrawingSuccess, (state, { openedDrawingId }) => {
+    return {
+      ...state,
+      openedDrawingId,
+    };
+  }),
+  on(openDrawingFailure, (state) => ({ ...state, openedDrawingId: null }))
 );
 
 export interface DrawingState {

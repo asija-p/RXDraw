@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectDrawingsList } from '../../feature/drawings/store/drawings.selectors';
-import { loadDrawings } from '../../feature/drawings/store/drawings.actions';
+import {
+  selectDrawingsList,
+  selectDrawingsLoading,
+} from '../../feature/drawings/store/drawings.selectors';
+import { clearDrawings, loadDrawings } from '../../feature/drawings/store/drawings.actions';
 import { selectOpenedFolderId } from '../../feature/folders/store/folders.selectors';
 import { filter, firstValueFrom, Observable, take, takeLast } from 'rxjs';
 import { Drawing } from '../../shared/models/drawing';
@@ -16,10 +19,12 @@ import { CommonModule } from '@angular/common';
 })
 export class FolderContents {
   drawings$: Observable<Drawing[]>;
+  loading$: Observable<Boolean>;
   trackById = (_: number, d: Drawing) => d.id;
 
   constructor(private store: Store, private router: Router) {
     this.drawings$ = this.store.select(selectDrawingsList);
+    this.loading$ = this.store.select(selectDrawingsLoading);
   }
 
   async ngOnInit() {
@@ -34,5 +39,9 @@ export class FolderContents {
     );
 
     this.store.dispatch(loadDrawings({ userId, folderId }));
+  }
+
+  ngOnDestroy() {
+    this.store.dispatch(clearDrawings());
   }
 }

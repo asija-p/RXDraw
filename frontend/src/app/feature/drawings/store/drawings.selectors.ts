@@ -3,13 +3,14 @@ import { DrawingsState, DrawingState } from './drawings.reducer';
 import { Drawing } from '../../../shared/models/drawing';
 
 export const selectDrawingsState = createFeatureSelector<DrawingsState>('drawings');
-
+export const selectDrawingsLoading = createSelector(selectDrawingsState, (s) => s.loading);
 export const selectDrawingsList = createSelector(selectDrawingsState, (state) =>
   state.ids
     .map((id) => state.entities[id])
     .filter((drawing) => drawing != null)
     .map((drawing) => <Drawing>drawing)
 );
+export const selectOpenedDrawingId = createSelector(selectDrawingsState, (s) => s.openedDrawingId);
 
 export const selectDrawingState = createFeatureSelector<DrawingState>('drawing');
 export const selectDrawingHeight = createSelector(selectDrawingState, (s) => s.height);

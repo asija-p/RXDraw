@@ -3,6 +3,7 @@ import { Layer } from '../../studio/models/layer';
 import { createReducer, on } from '@ngrx/store';
 import {
   addLayer,
+  clearLayers,
   loadLayersSuccess,
   removeLayer,
   reorderLayers,
@@ -96,5 +97,6 @@ export const layersReducer = createReducer(
   on(reverseLayer, (state, { layerId, canvasData }) =>
     adapter.updateOne({ id: layerId, changes: { canvasData } }, state)
   ),
-  on(loadLayersSuccess, (state, { layers }) => adapter.setAll(layers, state))
+  on(loadLayersSuccess, (state, { layers }) => adapter.setAll(layers, state)),
+  on(clearLayers, (s) => adapter.setAll([], { ...s }))
 );

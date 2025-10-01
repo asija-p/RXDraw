@@ -6,7 +6,7 @@ import { catchError, map, of, switchMap } from 'rxjs';
 import { loadLayers, loadLayersFailure, loadLayersSuccess } from './layers.actions';
 
 @Injectable()
-export class Layersffects {
+export class LayersEffects {
   constructor(private layersService: LayersService) {}
 
   private actions$ = inject(Actions);

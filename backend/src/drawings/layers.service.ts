@@ -55,7 +55,8 @@ export class LayersService {
       visible: dto.visible,
       opacity: dto.opacity,
       zIndex: dto.zIndex,
-      bitmapUrl: dto.canvasData === null ? null : (dto.canvasData ?? undefined),
+      canvasData:
+        dto.canvasData === null ? null : (dto.canvasData ?? undefined),
     };
     await this.layersRepository.update(id, patch);
     return this.getById(id);

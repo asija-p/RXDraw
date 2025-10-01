@@ -91,7 +91,7 @@ export class DrawingsEffects {
                   zIndex: l.zIndex,
                   visible: l.visible,
                   opacity: l.opacity,
-                  bitmapUrl: l.canvasData,
+                  canvasData: l.canvasData,
                   drawingId: drawing.id,
                 }));
 
@@ -118,7 +118,7 @@ export class DrawingsEffects {
       switchMap(({ id }) =>
         this.drawingsService.getById(id).pipe(
           mergeMap((d: Drawing) => [
-            openDrawingSuccess({ openedDrawingId: id }), // 👈 set openedDrawingId via reducer
+            openDrawingSuccess({ openedDrawingId: id }),
             setDrawingName({ name: d.name }),
             setDrawingDimensions({ width: d.width, height: d.height }),
             loadLayers({ drawingId: String(d.id) }),

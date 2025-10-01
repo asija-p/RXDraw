@@ -28,6 +28,8 @@ export class FolderContents {
   }
 
   async ngOnInit() {
+    this.store.dispatch(clearDrawings());
+
     const user = JSON.parse(localStorage.getItem('user') || 'null');
     const userId: string = user?.id ?? '';
 
@@ -39,9 +41,5 @@ export class FolderContents {
     );
 
     this.store.dispatch(loadDrawings({ userId, folderId }));
-  }
-
-  ngOnDestroy() {
-    this.store.dispatch(clearDrawings());
   }
 }

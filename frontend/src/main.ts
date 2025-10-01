@@ -13,6 +13,7 @@ import { FoldersEffects } from './app/feature/folders/store/folders.effects';
 import { DrawingsEffects } from './app/feature/drawings/store/drawings.effects';
 import { drawingReducer, drawingsReducer } from './app/feature/drawings/store/drawings.reducer';
 import { layersReducer } from './app/feature/layers/store/layers.reducer';
+import { LayersEffects } from './app/feature/layers/store/layers.effects';
 
 bootstrapApplication(App, {
   providers: [
@@ -25,7 +26,7 @@ bootstrapApplication(App, {
       drawing: drawingReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
-    provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects]),
+    provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects, LayersEffects]),
     provideRouter(routes),
     provideHttpClient(),
   ],

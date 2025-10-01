@@ -10,7 +10,7 @@ export const loadLayersFailure = createAction(
   '[Layers] Load Layers Failure',
   props<{ error: string }>()
 );
-
+export const clearLayers = createAction('[Layers] Clear Layers');
 export const addLayer = createAction('[Layers] Add Layer', props<{ layer: Layer }>());
 export const removeLayer = createAction('[Layers] Remove Layer', props<{ layerId: string }>());
 export const setActiveLayer = createAction(

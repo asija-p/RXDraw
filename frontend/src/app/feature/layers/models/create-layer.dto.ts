@@ -3,6 +3,6 @@ export interface CreateLayerDto {
   zIndex: number;
   visible?: boolean;
   opacity?: number;
-  bitmapUrl?: string;
+  canvasData?: string;
   drawingId: string;
 }

@@ -4,10 +4,12 @@ import {
   Index,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { Drawing } from './drawing.entity';
 
 @Entity('layers')
+@Unique('UQ_layer_drawing_zindex', ['drawing', 'zIndex']) // unique per drawing
 export class Layer {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -24,10 +26,9 @@ export class Layer {
   @Column({ type: 'float', default: 1 })
   opacity: number; // 0..1
 
-  @Index(['drawing', 'zIndex'], { unique: true })
   @Column('int')
   zIndex: number;
 
   @Column({ type: 'text', nullable: true })
-  canvasData?: string; // url to cloudinary
+  canvasData?: string;
 }

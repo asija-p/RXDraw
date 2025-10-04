@@ -14,6 +14,8 @@ import {
 } from './auth.actions';
 import { User } from '../models/user';
 import { Router } from '@angular/router';
+import { ROOT_EFFECTS_INIT } from '@ngrx/effects';
+import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class AuthEffects {
@@ -69,6 +71,47 @@ export class AuthEffects {
         tap(() => {
           this.router.navigateByUrl('/'); // side-effect samo
         })
+      ),
+    { dispatch: false }
+  );
+
+  // --- Persist auth on successful login ---
+  persistOnLogin$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(loginSuccess),
+        tap(({ user, accessToken }) => {
+          localStorage.setItem('auth', JSON.stringify({ user, accessToken }));
+        })
+      ),
+    { dispatch: false }
+  );
+
+  // --- Rehydrate auth on app start/refresh ---
+  initFromStorage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(ROOT_EFFECTS_INIT),
+      map(() => {
+        const raw = localStorage.getItem('auth');
+        if (!raw) return { type: '[Auth] Noop' as const };
+        try {
+          const { user, accessToken } = JSON.parse(raw) as { user: User; accessToken: string };
+          return loginSuccess({ user, accessToken });
+        } catch {
+          localStorage.removeItem('auth');
+          return { type: '[Auth] Noop' as const };
+        }
+      }),
+      filter((a): a is ReturnType<typeof loginSuccess> => a.type !== '[Auth] Noop')
+    )
+  );
+
+  // --- Clear storage on logout (and you already navigate) ---
+  clearOnLogout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(logout),
+        tap(() => localStorage.removeItem('auth'))
       ),
     { dispatch: false }
   );

@@ -75,7 +75,6 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  // --- Persist auth on successful login ---
   persistOnLogin$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -87,7 +86,6 @@ export class AuthEffects {
     { dispatch: false }
   );
 
-  // --- Rehydrate auth on app start/refresh ---
   initFromStorage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(ROOT_EFFECTS_INIT),
@@ -106,7 +104,6 @@ export class AuthEffects {
     )
   );
 
-  // --- Clear storage on logout (and you already navigate) ---
   clearOnLogout$ = createEffect(
     () =>
       this.actions$.pipe(

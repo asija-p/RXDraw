@@ -5,6 +5,7 @@ import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Landing } from './pages/landing/landing';
 import { FolderContents } from './pages/folder-contents/folder-contents';
+import { authGuard } from './core/auth/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -14,10 +15,12 @@ export const routes: Routes = [
   {
     path: 'drawing-editor',
     component: DrawingEditor,
+    canActivate: [authGuard],
   },
   {
     path: 'home',
     component: Home,
+    canActivate: [authGuard],
   },
   {
     path: 'login',
@@ -34,6 +37,7 @@ export const routes: Routes = [
   {
     path: 'drawing-editor/:id',
     component: DrawingEditor,
+    canActivate: [authGuard],
   },
   { path: '**', redirectTo: '' },
 ];

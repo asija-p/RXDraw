@@ -61,4 +61,15 @@ export class AuthEffects {
       ),
     { dispatch: false }
   );
+
+  logout$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(logout),
+        tap(() => {
+          this.router.navigateByUrl('/'); // side-effect samo
+        })
+      ),
+    { dispatch: false }
+  );
 }

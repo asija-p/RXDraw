@@ -10,9 +10,14 @@
       <a routerLink="/drawing-editor" class="nav-link">STUDIO</a>
     </div>
 
-    <div class="auth-actions">
+    <div class="auth-actions" *ngIf="!(isAuthed$ | async)">
       <a routerLink="/login" class="nav-link">LOGIN</a>
-      <button routerLink="/register" matButton="filled" class="register-btn">REGISTER</button>
+      <button routerLink="/register" matButton="filled">REGISTER</button>
+    </div>
+
+    <div class="auth-actions" *ngIf="isAuthed$ | async">
+      <span class="nav-link">Hi, {{ (user$ | async)?.name }}</span>
+      <button type="button" matButton="filled" (click)="logOut()">LOGOUT</button>
     </div>
   </div>
 </nav>

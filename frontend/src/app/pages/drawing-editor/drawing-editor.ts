@@ -16,7 +16,10 @@ import {
   selectOpenedDrawingId,
 } from '../../feature/drawings/store/drawings.selectors';
 import { ActivatedRoute } from '@angular/router';
-import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
+import {
+  openDrawingRequested,
+  setDrawingDimensions,
+} from '../../feature/drawings/store/drawings.actions';
 import { clearLayers } from '../../feature/layers/store/layers.actions';
 
 @Component({
@@ -46,6 +49,7 @@ export class DrawingEditor {
 
   ngOnInit() {
     this.store.dispatch(clearLayers());
+    this.store.dispatch(setDrawingDimensions({ width: 0, height: 0 }));
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) this.store.dispatch(openDrawingRequested({ id }));

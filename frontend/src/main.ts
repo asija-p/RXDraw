@@ -14,6 +14,8 @@ import { DrawingsEffects } from './app/feature/drawings/store/drawings.effects';
 import { drawingReducer, drawingsReducer } from './app/feature/drawings/store/drawings.reducer';
 import { layersReducer } from './app/feature/layers/store/layers.reducer';
 import { LayersEffects } from './app/feature/layers/store/layers.effects';
+import { authReducer } from './app/core/auth/store/auth.reducer';
+import { AuthEffects } from './app/core/auth/store/auth.effects';
 
 bootstrapApplication(App, {
   providers: [
@@ -24,9 +26,10 @@ bootstrapApplication(App, {
       folders: foldersReducer,
       drawings: drawingsReducer,
       drawing: drawingReducer,
+      auth: authReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
-    provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects, LayersEffects]),
+    provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects, LayersEffects, AuthEffects]),
     provideRouter(routes),
     provideHttpClient(),
   ],

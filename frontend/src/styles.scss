@@ -111,11 +111,13 @@ button:disabled {
 }
 
 .modal {
-  position: absolute;
+  position: fixed;
   inset: 0;
   display: grid;
   place-items: center;
   padding: 24px;
+  pointer-events: none;
+  z-index: 900;
 }
 
 .card {
@@ -123,6 +125,8 @@ button:disabled {
   width: min(420px, 92vw);
   padding: 24px 24px 20px;
   border-radius: 16px;
+
+  pointer-events: auto;
 }
 
 .title {

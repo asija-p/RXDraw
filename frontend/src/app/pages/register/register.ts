@@ -7,8 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
-import { AuthApi } from '../../api/auth.api';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
+import { registerRequested } from '../../core/auth/store/auth.actions';
 
 @Component({
   selector: 'app-register',
@@ -26,8 +27,7 @@ import { Router } from '@angular/router';
   styleUrl: './register.scss',
 })
 export class Register {
-  private auth = inject(AuthApi);
-  private router = inject(Router);
+  constructor(private store: Store) {}
 
   name = '';
   password = '';
@@ -43,21 +43,6 @@ export class Register {
       return;
     }
 
-    this.auth.register({ name: this.name, password: this.password }).subscribe({
-      next: () => {
-        this.auth.login({ name: this.name, password: this.password }).subscribe({
-          next: (res) => {
-            localStorage.setItem('token', res.access_token);
-            this.router.navigateByUrl('/home');
-          },
-          error: () => {
-            this.router.navigateByUrl('/login');
-          },
-        });
-      },
-      error: (err) => {
-        alert('Could not register. The username may be taken.');
-      },
-    });
+    this.store.dispatch(registerRequested({ name: this.name, password: this.password }));
   }
 }

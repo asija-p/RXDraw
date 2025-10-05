@@ -14,10 +14,11 @@ import {
 } from '../../feature/folders/store/folders.actions';
 import { Store } from '@ngrx/store';
 import { selectFoldersList } from '../../feature/folders/store/folders.selectors';
-import { Observable, of } from 'rxjs';
+import { filter, Observable, of, take } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DesignFolder } from '../../components/folders/design-folder/design-folder';
 import { CdkMenuModule } from '@angular/cdk/menu';
+import { selectUserId } from '../../core/auth/store/auth.selectors';
 
 @Component({
   selector: 'app-home',
@@ -35,18 +36,25 @@ import { CdkMenuModule } from '@angular/cdk/menu';
 })
 export class Home {
   folders$: Observable<Folder[]> = of([]);
+  userId$: Observable<string | undefined>;
   readonly dialog = inject(MatDialog);
 
   constructor(private store: Store, private router: Router) {
     this.folders$ = this.store.select(selectFoldersList);
+    this.userId$ = this.store.select(selectUserId);
   }
 
   ngOnInit() {
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
-    const userId = user?.id ?? '';
-    //console.log(userId);
-    //console.log('lol');
-    this.store.dispatch(loadFolders({ userId }));
+    this.store
+      .select(selectUserId)
+      .pipe(
+        filter((id): id is string => !!id),
+        take(1)
+      )
+      .subscribe((userId) => {
+        console.log(userId);
+        this.store.dispatch(loadFolders({ userId: '30f396c6-e9ea-4bfd-92b4-06d4d7992495' }));
+      });
   }
 
   addFolder() {

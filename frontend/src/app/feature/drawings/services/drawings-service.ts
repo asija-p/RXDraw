@@ -15,14 +15,14 @@ export class DrawingsService {
     if (userId) params = params.set('userId', userId);
     if (folderId) params = params.set('folderId', folderId);
 
-    return this.httpClient.get<Drawing[]>(`${environment.api}drawings`, { params });
+    return this.httpClient.get<Drawing[]>(`${environment.api}/drawings`, { params });
   }
 
   create(dto: CreateDrawingDto) {
-    return this.httpClient.post<Drawing>(`${environment.api}drawings`, dto);
+    return this.httpClient.post<Drawing>(`${environment.api}/drawings`, dto);
   }
 
   getById(id: string) {
-    return this.httpClient.get<Drawing>(`${environment.api}drawings/${id}`);
+    return this.httpClient.get<Drawing>(`${environment.api}/drawings/${id}`);
   }
 }

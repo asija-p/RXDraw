@@ -16,6 +16,7 @@ import { User } from '../models/user';
 import { Router } from '@angular/router';
 import { ROOT_EFFECTS_INIT } from '@ngrx/effects';
 import { filter } from 'rxjs/operators';
+import { isJwtExpired } from '../utils/jwt.utils';
 
 @Injectable()
 export class AuthEffects {
@@ -92,8 +93,13 @@ export class AuthEffects {
       map(() => {
         const raw = localStorage.getItem('auth');
         if (!raw) return { type: '[Auth] Noop' as const };
+
         try {
           const { user, accessToken } = JSON.parse(raw) as { user: User; accessToken: string };
+          if (!accessToken || isJwtExpired(accessToken)) {
+            localStorage.removeItem('auth');
+            return { type: '[Auth] Noop' as const };
+          }
           return loginSuccess({ user, accessToken });
         } catch {
           localStorage.removeItem('auth');

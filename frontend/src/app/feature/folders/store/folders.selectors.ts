@@ -15,3 +15,12 @@ export const selectOpenedFolderId = createSelector(
   selectFoldersState,
   (state) => state.openedFolderId
 );
+
+export const selectOpenedFolder = createSelector(
+  selectFoldersState,
+  selectOpenedFolderId,
+  (folders, id) => folders.entities[id!]
+);
+
+export const selectFolderById = (id: string) =>
+  createSelector(selectFoldersState, (folders) => folders.entities[id!] ?? undefined);

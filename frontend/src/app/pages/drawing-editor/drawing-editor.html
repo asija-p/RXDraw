@@ -6,13 +6,8 @@
     </aside>
 
     <main class="canvas-area">
-      <ng-container *ngIf="isCanvasReady$ | async; else setup">
-        <app-layers></app-layers>
-      </ng-container>
-
-      <ng-template #setup>
-        <app-settings-drawing></app-settings-drawing>
-      </ng-template>
+      <!-- Always render layers; dialog will pop if not ready -->
+      <app-layers></app-layers>
     </main>
 
     <aside class="manager">

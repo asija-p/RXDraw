@@ -1,16 +1,19 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
+import { catchError, filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
 import { of } from 'rxjs';
 import * as FolderActions from './folders.actions';
 import { FolderService } from '../services/folder-service';
 import { deleteFolderFailure, deleteFolderSuccess } from './folders.actions';
+import { Store } from '@ngrx/store';
+import { selectUserId } from '../../../core/auth/store/auth.selectors';
 
 @Injectable()
 export class FoldersEffects {
   constructor(private folderService: FolderService) {}
 
   private actions$ = inject(Actions);
+  private store = inject(Store);
 
   loadFolders$ = createEffect(() =>
     this.actions$.pipe(
@@ -23,11 +26,14 @@ export class FoldersEffects {
       )
     )
   );
+
   create$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FolderActions.createFolder),
-      switchMap(({ name, icon }) =>
-        this.folderService.add(name, icon).pipe(
+      withLatestFrom(this.store.select(selectUserId)),
+      filter(([, userId]) => !!userId),
+      switchMap(([{ name, icon }, userId]) =>
+        this.folderService.add(userId as string, name, icon).pipe(
           map((folder) => FolderActions.createFolderSuccess({ folder })),
           catchError(() =>
             of(FolderActions.createFolderFailure({ error: 'Could not create folder' }))
@@ -36,6 +42,7 @@ export class FoldersEffects {
       )
     )
   );
+
   deleteFolder$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FolderActions.deleteFolder),

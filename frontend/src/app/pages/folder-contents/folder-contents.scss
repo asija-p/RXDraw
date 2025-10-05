@@ -50,6 +50,9 @@
   padding: 24px;
   text-align: center;
   color: #6b7280;
+  margin: 20px;
+  align-self: center;
+  justify-self: center;
 }
 
 .grid-wrap {
@@ -63,4 +66,11 @@
   place-items: center;
   backdrop-filter: blur(1px);
   pointer-events: none;
+}
+
+.title {
+  color: var(--white);
+  margin: 20px;
+  align-self: center;
+  justify-self: center;
 }

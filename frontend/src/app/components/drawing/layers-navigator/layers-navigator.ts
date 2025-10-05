@@ -87,7 +87,6 @@ export class LayersNavigator {
         step: { op: 'createLayer', layerId: id, layer: newLayer },
       })
     );
-    this.store.dispatch(setActiveLayer({ selectedLayerId: newLayer.id }));
   }
 
   removeSelected() {

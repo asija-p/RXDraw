@@ -1,14 +1,10 @@
 <div class="navigator">
-  <ng-container *ngIf="layers$ | async as layers">
-    <img
-      *ngFor="let l of layers; trackBy: trackById"
-      class="nav-layer"
-      [src]="l.canvasData"
-      alt=""
-      decoding="sync"
-      [style.opacity]="l.opacity"
-      [style.display]="l.visible ? 'block' : 'none'"
-      [style.zIndex]="l.zIndex"
-    />
-  </ng-container>
+  <img
+    *ngFor="let l of layers$ | async; trackBy: trackById"
+    class="nav-layer"
+    [src]="l.canvasData"
+    [style.opacity]="l.opacity"
+    [style.display]="l.visible ? 'block' : 'none'"
+    [style.zIndex]="l.zIndex"
+  />
 </div>

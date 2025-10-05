@@ -12,13 +12,13 @@ export class LayersService {
   constructor(private http: HttpClient) {}
 
   create(dto: CreateLayerDto): Observable<Layer> {
-    return this.http.post<Layer>(environment.api + `layers`, dto);
+    return this.http.post<Layer>(environment.api + `/layers`, dto);
   }
 
   getAll(drawingId?: string) {
     let params = new HttpParams();
     if (drawingId) params = params.set('drawingId', drawingId);
 
-    return this.http.get<Layer[]>(`${environment.api}layers`, { params });
+    return this.http.get<Layer[]>(`${environment.api}/layers`, { params });
   }
 }

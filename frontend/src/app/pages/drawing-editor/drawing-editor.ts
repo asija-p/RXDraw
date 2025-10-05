@@ -1,14 +1,14 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { StrokeEditor } from '../../components/drawing/stroke-editor/stroke-editor';
 import { LayersNavigator } from '../../components/drawing/layers-navigator/layers-navigator';
 import { Layers } from '../../components/drawing/layers/layers';
 import { Navigator } from '../../components/drawing/navigator/navigator';
 import { EditorToolbar } from '../../components/drawing/editor-toolbar/editor-toolbar';
 
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SettingsDrawing } from '../../components/drawing/settings-drawing/settings-drawing';
-import { Observable } from 'rxjs';
+
+import { Observable, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 import {
@@ -16,10 +16,7 @@ import {
   selectOpenedDrawingId,
 } from '../../feature/drawings/store/drawings.selectors';
 import { ActivatedRoute } from '@angular/router';
-import {
-  openDrawingRequested,
-  setDrawingDimensions,
-} from '../../feature/drawings/store/drawings.actions';
+import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
 import { clearLayers } from '../../feature/layers/store/layers.actions';
 
 @Component({
@@ -29,7 +26,6 @@ import { clearLayers } from '../../feature/layers/store/layers.actions';
     LayersNavigator,
     Navigator,
     EditorToolbar,
-    SettingsDrawing,
     MatDialogModule,
     Layers,
     CommonModule,
@@ -39,23 +35,27 @@ import { clearLayers } from '../../feature/layers/store/layers.actions';
   standalone: true,
 })
 export class DrawingEditor {
-  isCanvasReady$: Observable<boolean>;
-  drawingId$: Observable<string | null>;
-
-  constructor(private store: Store, private route: ActivatedRoute) {
-    this.isCanvasReady$ = this.store.select(selectIsDrawingReady);
-    this.drawingId$ = this.store.select(selectOpenedDrawingId);
-  }
+  private settingsRef?: MatDialogRef<SettingsDrawing>;
+  constructor(private store: Store, private route: ActivatedRoute, private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.store.dispatch(clearLayers());
-    this.store.dispatch(setDrawingDimensions({ width: 0, height: 0 }));
-
     const id = this.route.snapshot.paramMap.get('id');
-    if (id) this.store.dispatch(openDrawingRequested({ id }));
+
+    if (id) {
+      this.store.dispatch(openDrawingRequested({ id }));
+    } else {
+      this.openSettings();
+    }
   }
 
-  submit() {}
+  ngOnDestroy() {
+    this.settingsRef?.close();
+    this.settingsRef = undefined;
+  }
 
-  cancel() {}
+  private openSettings() {
+    if (this.settingsRef) return;
+
+    this.settingsRef = this.dialog.open(SettingsDrawing);
+  }
 }

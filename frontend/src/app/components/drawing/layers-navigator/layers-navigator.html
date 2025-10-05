@@ -43,8 +43,8 @@
     >
       <span class="drag-handle" cdkDragHandle aria-label="Drag layer">⋮⋮</span>
 
-      <div class="thumb" [style.opacity]="l.opacity">
-        <img [src]="l.canvasData" class="thumb-img" />
+      <div class="thumb">
+        <img [src]="l.canvasData" class="thumb-img" [style.opacity]="l.opacity" alt="" />
       </div>
 
       <span class="name">{{ l.name }}</span>

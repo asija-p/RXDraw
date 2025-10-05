@@ -14,9 +14,6 @@ import {
   setLayerVisibility,
 } from './layers.actions';
 
-const WHITE_PIXEL =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wIAAgMBApYbW4sAAAAASUVORK5CYII=';
-
 export interface LayersState extends EntityState<Layer> {
   selectedLayerId: string | null;
 }
@@ -25,28 +22,16 @@ export const adapter = createEntityAdapter<Layer>({
   sortComparer: (a, b) => b.zIndex - a.zIndex,
 });
 
-//change
-
-const backgroundLayer: Layer = {
-  id: '0',
-  name: 'Background',
-  visible: true,
-  opacity: 1,
-  zIndex: 0,
-  canvasData: WHITE_PIXEL,
-};
-
-const base = adapter.getInitialState<LayersState>({
-  selectedLayerId: '0',
+export const initialLayersState: LayersState = adapter.getInitialState({
+  selectedLayerId: null,
 });
-
-export const initialLayersState: LayersState = adapter.addOne(backgroundLayer, base);
-
-//change
 
 export const layersReducer = createReducer(
   initialLayersState,
-  on(addLayer, (state, { layer }) => adapter.addOne(layer, state)),
+  on(addLayer, (state, { layer }) => {
+    const s1 = adapter.addOne(layer, state);
+    return { ...s1, selectedLayerId: layer.id };
+  }),
   on(setActiveLayer, (state, { selectedLayerId }) => {
     return {
       ...state,

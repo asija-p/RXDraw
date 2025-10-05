@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
-import { forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
+import { firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { DrawingsService } from '../services/drawings-service';
 import { Action, Store } from '@ngrx/store';
 import {
@@ -25,6 +25,7 @@ import { CreateLayerDto } from '../../layers/models/create-layer.dto';
 import { selectLayers } from '../../layers/store/layers.selectors';
 import { loadLayers } from '../../layers/store/layers.actions';
 import { Drawing } from '../../../shared/models/drawing';
+import { selectUserId } from '../../../core/auth/store/auth.selectors';
 
 @Injectable()
 export class DrawingsEffects {
@@ -49,14 +50,13 @@ export class DrawingsEffects {
     this.actions$.pipe(
       ofType(saveDrawingRequested),
       withLatestFrom(
+        this.store.select(selectUserId),
         this.store.select(selectDrawingWidth),
         this.store.select(selectDrawingHeight),
         this.store.select(selectLayers)
       ),
-      switchMap(([{ name, folderId }, width, height, layers]) => {
-        const user = JSON.parse(localStorage.getItem('user') || 'null');
-        const userId: string | undefined = user?.id ?? localStorage.getItem('userId') ?? undefined;
-
+      switchMap(([{ name, folderId }, userId, width, height, layers]) => {
+        // validate required inputs
         if (!userId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
           return of(saveDrawingFailure({ error: 'Missing userId/width/height' }));
         }
@@ -69,16 +69,16 @@ export class DrawingsEffects {
         }));
 
         const thumb$ = layersForThumb.length
-          ? from(composeThumbSimple(layersForThumb, width, height, 256))
+          ? from(composeThumbSimple(layersForThumb, width!, height!, 256))
           : of<string | undefined>(undefined);
 
         return thumb$.pipe(
           switchMap((thumbnailUrl) => {
             const dto: CreateDrawingDto = {
               name,
-              width,
-              height,
-              userId,
+              width: width!,
+              height: height!,
+              userId: userId as string,
               colors: [],
               folderId: folderId ?? undefined,
               thumbnailUrl: thumbnailUrl ?? undefined,
@@ -95,16 +95,16 @@ export class DrawingsEffects {
                   drawingId: drawing.id,
                 }));
 
-                if (!layerDtos.length) {
-                  return of(saveDrawingSuccess({ drawing }));
-                }
-
-                return forkJoin(layerDtos.map((d) => this.layersService.create(d))).pipe(
-                  map(() => saveDrawingSuccess({ drawing })),
-                  catchError((error) => of(saveDrawingFailure({ error })))
-                );
+                return layerDtos.length
+                  ? forkJoin(layerDtos.map((d) => this.layersService.create(d))).pipe(
+                      map(() => saveDrawingSuccess({ drawing })),
+                      catchError((err) =>
+                        of(saveDrawingFailure({ error: err?.message ?? 'Save failed' }))
+                      )
+                    )
+                  : of(saveDrawingSuccess({ drawing }));
               }),
-              catchError((error) => of(saveDrawingFailure({ error })))
+              catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Save failed' })))
             );
           })
         );

@@ -1,6 +1,8 @@
 <nav class="toolbar" role="navigation" aria-label="Main">
   <div class="toolbar-content">
-    <button (click)="save()">Save as</button>
+    <button type="button" (click)="undoClick.emit()">Undo</button>
+    <button type="button" (click)="redoClick.emit()">Redo</button>
+    <button type="button" (click)="save()">Save as</button>
   </div>
 
   <div class="controls">

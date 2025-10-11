@@ -8,7 +8,18 @@ import { EditorToolbar } from '../../components/drawing/editor-toolbar/editor-to
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { SettingsDrawing } from '../../components/drawing/settings-drawing/settings-drawing';
 
-import { fromEvent, map, Observable, take, tap, withLatestFrom } from 'rxjs';
+import {
+  filter,
+  fromEvent,
+  map,
+  merge,
+  Observable,
+  Subscription,
+  take,
+  tap,
+  throttleTime,
+  withLatestFrom,
+} from 'rxjs';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
 import {
@@ -19,7 +30,11 @@ import { ActivatedRoute } from '@angular/router';
 import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
 import { clearLayers } from '../../feature/layers/store/layers.actions';
 import { selectCameraState } from '../../feature/studio/store/drawing.selectors';
-import { cameraSet } from '../../feature/studio/store/drawing.actions';
+import {
+  cameraSet,
+  redoHistoryStep,
+  undoHistoryStep,
+} from '../../feature/studio/store/drawing.actions';
 
 const ZMIN = 0.25;
 const ZMAX = 8;
@@ -44,7 +59,9 @@ const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(mi
 })
 export class DrawingEditor {
   private settingsRef?: MatDialogRef<SettingsDrawing>;
+  private subs = new Subscription();
   @ViewChild('canvasArea', { read: ElementRef }) private canvasAreaRef!: ElementRef<HTMLElement>;
+  @ViewChild(EditorToolbar) private toolbar!: EditorToolbar;
 
   constructor(private store: Store, private route: ActivatedRoute, private dialog: MatDialog) {}
 
@@ -60,6 +77,7 @@ export class DrawingEditor {
 
   ngAfterViewInit() {
     this.setupZoom();
+    this.setupUndoRedoMerge();
   }
 
   ngOnDestroy() {
@@ -70,45 +88,63 @@ export class DrawingEditor {
   private setupZoom() {
     const el = this.canvasAreaRef.nativeElement;
 
-    const wheel$ = fromEvent<WheelEvent>(el, 'wheel', { passive: false }).pipe(
-      tap((ev) => {
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+    this.subs.add(
+      fromEvent<WheelEvent>(el, 'wheel', { passive: false }).subscribe((ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-      }),
-      map((ev) => {
-        const rect = el.getBoundingClientRect();
 
+        const rect = el.getBoundingClientRect();
         const mouseX = ev.clientX - rect.left;
         const mouseY = ev.clientY - rect.top;
+        const deltaY = ev.deltaY;
 
-        return {
-          ev,
-          mouseX,
-          mouseY,
-          deltaY: ev.deltaY,
-        };
+        this.store
+          .select(selectCameraState)
+          .pipe(take(1))
+          .subscribe((cam) => {
+            const oldZoom = cam.zoom;
+            const newZoom = clamp(oldZoom * Math.exp(-deltaY * ZOOM_SENSITIVITY), ZMIN, ZMAX);
+            const applied = newZoom / oldZoom;
+
+            const panX = mouseX - (mouseX - cam.panX) * applied;
+            const panY = mouseY - (mouseY - cam.panY) * applied;
+
+            this.store.dispatch(cameraSet({ zoom: newZoom, panX, panY }));
+          });
       })
     );
+  }
 
-    const zoomAtCursor$ = wheel$.pipe(
-      withLatestFrom(this.store.select(selectCameraState)),
-      map(([e, cam]) => {
-        const { mouseX, mouseY, deltaY } = e;
-        const oldZoom = cam.zoom;
-        const factor = Math.exp(-deltaY * ZOOM_SENSITIVITY);
-        const newZoom = clamp(oldZoom * factor, ZMIN, ZMAX);
-        const appliedFactor = newZoom / oldZoom;
-
-        const newPanX = mouseX - (mouseX - cam.panX) * appliedFactor;
-        const newPanY = mouseY - (mouseY - cam.panY) * appliedFactor;
-
-        return { zoom: newZoom, panX: newPanX, panY: newPanY };
-      })
+  private setupUndoRedoMerge() {
+    const key$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+      filter((ev) => {
+        const t = ev.target as HTMLElement | null;
+        const tag = (t?.tagName || '').toLowerCase();
+        const typing = tag === 'input' || tag === 'textarea' || t?.isContentEditable;
+        return !typing && (ev.ctrlKey || ev.metaKey);
+      }),
+      map((ev) => {
+        const k = ev.key.toLowerCase();
+        if (k === 'z' && !ev.shiftKey) return 'undo';
+        if (k === 'y' || (k === 'z' && ev.shiftKey)) return 'redo';
+        return null;
+      }),
+      filter((x): x is 'undo' | 'redo' => x !== null)
     );
 
-    zoomAtCursor$.subscribe(({ zoom, panX, panY }) => {
-      this.store.dispatch(cameraSet({ zoom, panX, panY }));
-    });
+    const toolbarUndo$ = this.toolbar.undoClick.pipe(map(() => 'undo' as const));
+    const toolbarRedo$ = this.toolbar.redoClick.pipe(map(() => 'redo' as const));
+
+    const intent$ = merge(key$, toolbarUndo$, toolbarRedo$);
+
+    this.subs.add(
+      intent$.subscribe((intent) => {
+        if (intent === 'undo') this.store.dispatch(undoHistoryStep());
+        else this.store.dispatch(redoHistoryStep());
+      })
+    );
   }
 
   private openSettings() {

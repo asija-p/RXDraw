@@ -67,14 +67,6 @@ export class StrokeEditor {
     this.store.dispatch(setStrokeTool({ tool: toolId }));
   }
 
-  undo() {
-    this.store.dispatch(undoHistoryStep());
-  }
-
-  redo() {
-    this.store.dispatch(redoHistoryStep());
-  }
-
   menuOpen = false;
   menuX = 0;
   menuY = 0;

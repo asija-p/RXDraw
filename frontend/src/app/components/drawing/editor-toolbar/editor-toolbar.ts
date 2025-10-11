@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { selectOpenedFolderId } from '../../../feature/folders/store/folders.selectors';
@@ -7,7 +7,11 @@ import { DrawingsService } from '../../../feature/drawings/services/drawings-ser
 import { MatDialog } from '@angular/material/dialog';
 import { SaveDrawing } from '../save-drawing/save-drawing';
 import { selectZoom } from '../../../feature/studio/store/drawing.selectors';
-import { cameraSet } from '../../../feature/studio/store/drawing.actions';
+import {
+  cameraSet,
+  redoHistoryStep,
+  undoHistoryStep,
+} from '../../../feature/studio/store/drawing.actions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,6 +23,8 @@ import { FormsModule } from '@angular/forms';
 })
 export class EditorToolbar {
   readonly dialog = inject(MatDialog);
+  @Output() undoClick = new EventEmitter<void>();
+  @Output() redoClick = new EventEmitter<void>();
   zoom$: any;
 
   constructor(private store: Store, private drawings: DrawingsService) {

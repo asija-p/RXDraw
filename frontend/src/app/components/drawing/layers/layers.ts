@@ -3,11 +3,14 @@ import {
   combineLatest,
   filter,
   firstValueFrom,
+  fromEvent,
   map,
   Observable,
   Subscription,
   take,
   takeLast,
+  tap,
+  withLatestFrom,
 } from 'rxjs';
 import { Layer } from '../../../feature/studio/models/layer';
 import { Store } from '@ngrx/store';
@@ -19,7 +22,11 @@ import {
   selectDrawingWidth,
 } from '../../../feature/drawings/store/drawings.selectors';
 import { selectActiveLayerId, selectLayers } from '../../../feature/layers/store/layers.selectors';
-import { selectTransform } from '../../../feature/studio/store/drawing.selectors';
+import {
+  selectCameraState,
+  selectTransform,
+} from '../../../feature/studio/store/drawing.selectors';
+import { cameraSet } from '../../../feature/studio/store/drawing.actions';
 
 @Component({
   selector: 'app-layers',
@@ -29,15 +36,19 @@ import { selectTransform } from '../../../feature/studio/store/drawing.selectors
 })
 export class Layers {
   transform$;
+  camera$;
   private sub = new Subscription();
   layers$;
   selectedId$;
   width$;
   height$;
   vm$;
+  @ViewChild('canvasArea', { read: ElementRef }) private canvasAreaRef!: ElementRef<HTMLElement>;
+
   trackById = (_: number, l: { id: string }) => l.id;
   constructor(private store: Store) {
     this.transform$ = this.store.select(selectTransform);
+    this.camera$ = this.store.select(selectCameraState);
 
     this.layers$ = this.store.select(selectLayers);
     this.selectedId$ = this.store.select(selectActiveLayerId);
@@ -57,9 +68,5 @@ export class Layers {
         h: h as number,
       }))
     );
-  }
-
-  ngOnDestroy() {
-    this.sub.unsubscribe();
   }
 }

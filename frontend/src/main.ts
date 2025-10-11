@@ -1,7 +1,11 @@
 import { bootstrapApplication } from '@angular/platform-browser';
 import { provideStore } from '@ngrx/store';
 import { App } from './app/app';
-import { historyReducer, strokeReducer } from './app/feature/studio/store/drawing.reducer';
+import {
+  cameraReducer,
+  historyReducer,
+  strokeReducer,
+} from './app/feature/studio/store/drawing.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { provideEffects } from '@ngrx/effects';
 import { HistoryEffects } from './app/feature/studio/store/drawing.effects';
@@ -27,6 +31,7 @@ bootstrapApplication(App, {
       drawings: drawingsReducer,
       drawing: drawingReducer,
       auth: authReducer,
+      camera: cameraReducer,
     }),
     provideStoreDevtools({ maxAge: 25, logOnly: false }),
     provideEffects([HistoryEffects, FoldersEffects, DrawingsEffects, LayersEffects, AuthEffects]),

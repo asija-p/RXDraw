@@ -1,5 +1,7 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+  cameraReset,
+  cameraSet,
   commitHistoryStep,
   redoHistoryStep,
   setStrokeColor,
@@ -55,4 +57,30 @@ export const historyReducer = createReducer(
   }),
   on(undoHistoryStep, (s) => (s.cursor >= 0 ? { ...s, cursor: s.cursor - 1 } : s)),
   on(redoHistoryStep, (s) => (s.cursor < s.steps.length - 1 ? { ...s, cursor: s.cursor + 1 } : s))
+);
+
+export interface CameraState {
+  zoom: number;
+  panX: number;
+  panY: number;
+}
+
+export const initialCameraState: CameraState = {
+  zoom: 1,
+  panX: 0,
+  panY: 0,
+};
+
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+const ZMIN = 0.25;
+const ZMAX = 8;
+
+export const cameraReducer = createReducer(
+  initialCameraState,
+  on(cameraSet, (state, { zoom, panX, panY }) => ({
+    zoom: zoom !== undefined ? clamp(zoom, ZMIN, ZMAX) : state.zoom,
+    panX: panX ?? state.panX,
+    panY: panY ?? state.panY,
+  })),
+  on(cameraReset, () => initialCameraState)
 );

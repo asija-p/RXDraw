@@ -18,3 +18,9 @@ export const commitHistoryStep = createAction(
 );
 export const undoHistoryStep = createAction('[Canvas] Undo Step');
 export const redoHistoryStep = createAction('[Canvas] Redo Step');
+
+export const cameraSet = createAction(
+  '[Studio] Camera Set',
+  props<{ zoom?: number; panX?: number; panY?: number }>()
+);
+export const cameraReset = createAction('[Studio] Camera Reset');

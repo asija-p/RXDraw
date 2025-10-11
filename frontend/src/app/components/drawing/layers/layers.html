@@ -1,5 +1,10 @@
 <ng-container *ngIf="vm$ | async as vm">
-  <div class="stack" [style.width.px]="vm.w" [style.height.px]="vm.h">
+  <div
+    class="stack"
+    [style.width.px]="vm.w"
+    [style.height.px]="vm.h"
+    [style.transform]="transform$ | async"
+  >
     <app-canvas
       *ngFor="let l of vm.layers; trackBy: trackById"
       [width]="vm.w"

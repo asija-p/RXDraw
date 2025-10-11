@@ -1,5 +1,14 @@
-import { Component, Input } from '@angular/core';
-import { combineLatest, filter, map, Observable, Subscription, take, takeLast } from 'rxjs';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {
+  combineLatest,
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  Subscription,
+  take,
+  takeLast,
+} from 'rxjs';
 import { Layer } from '../../../feature/studio/models/layer';
 import { Store } from '@ngrx/store';
 import { CommonModule } from '@angular/common';
@@ -10,6 +19,7 @@ import {
   selectDrawingWidth,
 } from '../../../feature/drawings/store/drawings.selectors';
 import { selectActiveLayerId, selectLayers } from '../../../feature/layers/store/layers.selectors';
+import { selectTransform } from '../../../feature/studio/store/drawing.selectors';
 
 @Component({
   selector: 'app-layers',
@@ -18,6 +28,8 @@ import { selectActiveLayerId, selectLayers } from '../../../feature/layers/store
   styleUrl: './layers.scss',
 })
 export class Layers {
+  transform$;
+  private sub = new Subscription();
   layers$;
   selectedId$;
   width$;
@@ -25,6 +37,8 @@ export class Layers {
   vm$;
   trackById = (_: number, l: { id: string }) => l.id;
   constructor(private store: Store) {
+    this.transform$ = this.store.select(selectTransform);
+
     this.layers$ = this.store.select(selectLayers);
     this.selectedId$ = this.store.select(selectActiveLayerId);
     this.width$ = this.store.select(selectDrawingWidth);
@@ -43,5 +57,9 @@ export class Layers {
         h: h as number,
       }))
     );
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 }

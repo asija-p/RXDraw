@@ -1,10 +1,16 @@
-.stack {
-  position: relative;
-  overflow: hidden;
-}
-
 app-canvas {
   position: absolute;
   inset: 0;
   display: block;
+}
+
+.stack {
+  align-self: center;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.layer-canvas {
+  position: absolute;
+  inset: 0;
 }

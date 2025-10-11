@@ -1,9 +1,29 @@
 .app-layout {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
 }
 
 .drawing-board {
   display: flex;
   flex-direction: row;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: 50px;
+}
+
+.canvas-area {
+  position: relative;
+  overflow: hidden;
+  contain: layout paint size;
+  flex: 1 1 0%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.stroke-editor,
+.manager {
+  flex: 0 0 350px;
+  min-height: 0;
+  overflow: auto;
 }

@@ -49,7 +49,6 @@ export class Layers {
   constructor(private store: Store) {
     this.transform$ = this.store.select(selectTransform);
     this.camera$ = this.store.select(selectCameraState);
-
     this.layers$ = this.store.select(selectLayers);
     this.selectedId$ = this.store.select(selectActiveLayerId);
     this.width$ = this.store.select(selectDrawingWidth);
@@ -59,13 +58,17 @@ export class Layers {
       selectedId: this.selectedId$,
       w: this.width$,
       h: this.height$,
+      camera: this.camera$,
     }).pipe(
       filter(({ w, h }) => w != null && h != null),
-      map(({ layers, selectedId, w, h }) => ({
+      map(({ layers, selectedId, w, h, camera }) => ({
         layers,
         selectedId,
         w: w as number,
         h: h as number,
+        zoom: camera.zoom,
+        panX: camera.panX,
+        panY: camera.panY,
       }))
     );
   }

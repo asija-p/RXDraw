@@ -45,6 +45,9 @@ export class Canvas implements AfterViewInit {
   @Input() zIndex = 0;
   @Input() canvasData: string = '';
   @Input() active = false;
+  @Input() zoom = 1;
+  @Input() panX = 0;
+  @Input() panY = 0;
 
   private cx?: CanvasRenderingContext2D;
   private isDrawing = false;
@@ -192,19 +195,24 @@ export class Canvas implements AfterViewInit {
   }
 
   private getPos(ev: MouseEvent | TouchEvent, rect: DOMRect) {
+    const getXY = (clientX: number, clientY: number) => {
+      const dx = clientX - rect.left;
+      const dy = clientY - rect.top;
+      const x = dx / this.zoom;
+      const y = dy / this.zoom;
+
+      return { x, y };
+    };
+
     if (ev instanceof MouseEvent) {
-      return {
-        x: ev.clientX - rect.left,
-        y: ev.clientY - rect.top,
-        pressure: (ev as any).pressure ?? 1,
-      };
+      const p = (ev as any).pressure ?? 1;
+      const { x, y } = getXY(ev.clientX, ev.clientY);
+      return { x, y, pressure: p };
     } else {
-      const touch = ev.changedTouches[0];
-      return {
-        x: touch.clientX - rect.left,
-        y: touch.clientY - rect.top,
-        pressure: touch.force ?? 1,
-      };
+      const t = ev.changedTouches[0];
+      const p = t.force ?? 1;
+      const { x, y } = getXY(t.clientX, t.clientY);
+      return { x, y, pressure: p };
     }
   }
 

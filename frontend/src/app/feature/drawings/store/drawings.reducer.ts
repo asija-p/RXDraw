@@ -8,6 +8,8 @@ import {
   loadDrawingsSuccess,
   openDrawingFailure,
   openDrawingSuccess,
+  saveCurrentFailure,
+  saveCurrentSuccess,
   saveDrawingProgress,
   setDrawingDimensions,
   setDrawingName,
@@ -45,7 +47,9 @@ export const drawingsReducer = createReducer(
     };
   }),
   on(openDrawingFailure, (state) => ({ ...state, openedDrawingId: null })),
-  on(saveDrawingProgress, (s, { message }) => ({ ...s, progress: message }))
+  on(saveDrawingProgress, (s, { message }) => ({ ...s, progress: message })),
+  on(saveCurrentSuccess, (s) => ({ ...s, progress: null })),
+  on(saveCurrentFailure, (s, { error }) => ({ ...s, progress: null, error: String(error) }))
 );
 
 export interface DrawingState {

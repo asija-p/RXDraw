@@ -16,3 +16,7 @@ export const selectActiveLayer = createSelector(
   selectActiveLayerId,
   (layers, id) => layers.entities[id!]
 );
+export const selectMaxZIndex = createSelector(selectLayers, (ls) =>
+  ls.length ? Math.max(...ls.map((l) => l.zIndex)) : -1
+);
+export const selectNextZIndex = createSelector(selectMaxZIndex, (m) => m + 1);

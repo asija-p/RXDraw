@@ -3,11 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Drawing } from './models/drawing.entity';
 import { CreateDrawingDto, UpdateDrawingDto } from './models/drawing.dto';
+import { Layer } from './models/layer.entity';
+import { SaveDto, SaveLayerDto } from './models/save.dto';
 
 @Injectable()
 export class DrawingsService {
   constructor(
     @InjectRepository(Drawing) private drawingRepository: Repository<Drawing>,
+    @InjectRepository(Layer) private layersRepository: Repository<Layer>,
   ) {}
 
   public getAll(userId?: string, folderId?: string) {
@@ -70,6 +73,83 @@ export class DrawingsService {
 
     await this.drawingRepository.update(id, patch);
     return this.getById(id);
+  }
+
+  public async save(id: string, dto: SaveDto) {
+    const drawingPatch: any = {
+      name: dto.name,
+      width: dto.width,
+      height: dto.height,
+      thumbnailUrl: dto.thumbnailUrl ?? undefined,
+      colors: dto.colors ?? undefined,
+    };
+
+    if (dto.folderId === null) {
+      drawingPatch.folder = null;
+    } else if (dto.folderId) {
+      drawingPatch.folder = { id: dto.folderId } as any;
+    }
+
+    await this.drawingRepository.update(id, drawingPatch);
+
+    if (dto.layers && dto.layers.length > 0) {
+      await this.updateLayers(id, dto.layers);
+    }
+
+    return this.getById(id);
+  }
+
+  private async updateLayers(drawingId: string, layerDtos: SaveLayerDto[]) {
+    const existingLayers = await this.layersRepository.find({
+      where: { drawing: { id: drawingId } },
+    });
+
+    const existingById = new Map(existingLayers.map((l) => [l.id, l]));
+
+    const layersToUpdate: Layer[] = [];
+    const layersToCreate: Layer[] = [];
+    const keptIds = new Set<string>();
+
+    for (const dto of layerDtos) {
+      const found = dto.id ? existingById.get(dto.id) : undefined;
+
+      if (found) {
+        found.name = dto.name;
+        found.zIndex = dto.zIndex;
+        found.visible = dto.visible ?? true;
+        found.opacity = dto.opacity ?? 1;
+        // allow explicit null to clear, undefined = keep
+        found.canvasData =
+          dto.canvasData === null ? null : (dto.canvasData ?? found.canvasData);
+        layersToUpdate.push(found);
+        keptIds.add(found.id);
+      } else {
+        // Either no id or id not in DB → create
+        const newLayer = this.layersRepository.create({
+          drawing: { id: drawingId } as any,
+          name: dto.name,
+          zIndex: dto.zIndex,
+          visible: dto.visible ?? true,
+          opacity: dto.opacity ?? 1,
+          canvasData: dto.canvasData ?? undefined,
+        });
+        layersToCreate.push(newLayer);
+      }
+    }
+
+    const layersToDelete = existingLayers.filter((l) => !keptIds.has(l.id));
+
+    await Promise.all([
+      layersToUpdate.length
+        ? this.layersRepository.save(layersToUpdate)
+        : Promise.resolve(),
+      layersToCreate.length
+        ? this.layersRepository.save(layersToCreate)
+        : Promise.resolve(),
+      layersToDelete.length
+        ? this.layersRepository.remove(layersToDelete)
+        : Promise.resolve(),
+    ]);
   }
 
   public delete(id: string) {

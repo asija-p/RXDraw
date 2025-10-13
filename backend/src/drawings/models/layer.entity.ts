@@ -30,5 +30,5 @@ export class Layer {
   zIndex: number;
 
   @Column({ type: 'text', nullable: true })
-  canvasData?: string;
+  canvasData: string | null;
 }

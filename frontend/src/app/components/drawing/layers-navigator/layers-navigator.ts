@@ -70,22 +70,22 @@ export class LayersNavigator {
   }
 
   addNewLayer() {
-    const id = String(this.zIndex);
+    const nextZ = this.layers.length > 0 ? Math.max(...this.layers.map((l) => l.zIndex)) + 1 : 0;
+
+    const id = crypto.randomUUID();
 
     const newLayer: Layer = {
-      id: id, // or uuid()
-      name: `Layer ${this.zIndex}`,
+      id,
+      name: `Layer ${nextZ}`,
       visible: true,
       opacity: 1,
-      zIndex: this.zIndex,
+      zIndex: nextZ,
       canvasData: this.blankCanvas(),
     };
-    this.zIndex++;
+
     this.store.dispatch(addLayer({ layer: newLayer }));
     this.store.dispatch(
-      commitHistoryStep({
-        step: { op: 'createLayer', layerId: id, layer: newLayer },
-      })
+      commitHistoryStep({ step: { op: 'createLayer', layerId: id, layer: newLayer } })
     );
   }
 

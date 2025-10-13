@@ -8,9 +8,10 @@ export class CreateLayerDto {
 }
 
 export class UpdateLayerDto {
-  name?: string;
+  id?: string;
+  name!: string;
+  zIndex!: number;
   visible?: boolean;
   opacity?: number;
-  zIndex?: number;
   canvasData?: string | null;
 }

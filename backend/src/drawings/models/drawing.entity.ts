@@ -28,7 +28,7 @@ export class Drawing {
   height: number;
 
   @Column({ type: 'text', nullable: true })
-  thumbnailUrl?: string;
+  thumbnailUrl: string | null;
 
   @ManyToOne(() => User, (u) => u.drawings, { onDelete: 'CASCADE' })
   user: User;

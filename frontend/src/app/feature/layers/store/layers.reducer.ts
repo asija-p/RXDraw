@@ -82,6 +82,10 @@ export const layersReducer = createReducer(
   on(reverseLayer, (state, { layerId, canvasData }) =>
     adapter.updateOne({ id: layerId, changes: { canvasData } }, state)
   ),
-  on(loadLayersSuccess, (state, { layers }) => adapter.setAll(layers, state)),
+  on(loadLayersSuccess, (state, { layers }) => {
+    const s1 = adapter.setAll(layers, state);
+    const top = layers.find((l) => l.zIndex === 0) ?? null;
+    return { ...s1, selectedLayerId: top?.id ?? null };
+  }),
   on(clearLayers, (s) => adapter.setAll([], { ...s }))
 );

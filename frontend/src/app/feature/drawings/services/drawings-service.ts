@@ -2,7 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Drawing } from '../../../shared/models/drawing';
 import { environment } from '../../../../environments/environments';
+import { SaveDto } from '../models/save.dto';
 import { CreateDrawingDto } from '../models/create-drawing.dto';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +26,9 @@ export class DrawingsService {
 
   getById(id: string) {
     return this.httpClient.get<Drawing>(`${environment.api}/drawings/${id}`);
+  }
+
+  save(id: string, dto: SaveDto) {
+    return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}/save`, dto);
   }
 }

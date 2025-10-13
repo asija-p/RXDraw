@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { DrawingsService } from './drawings.service';
 import { CreateDrawingDto, UpdateDrawingDto } from './models/drawing.dto';
+import { SaveDto } from './models/save.dto';
 
 @Controller('drawings')
 export class DrawingsController {
@@ -37,6 +38,11 @@ export class DrawingsController {
   @Put(':id')
   update(@Param('id') id: string, @Body() dto: UpdateDrawingDto) {
     return this.drawingService.update(id, dto);
+  }
+
+  @Put(':id/save')
+  save(@Param('id') id: string, @Body() dto: SaveDto) {
+    return this.drawingService.save(id, dto);
   }
 
   @Delete(':id')

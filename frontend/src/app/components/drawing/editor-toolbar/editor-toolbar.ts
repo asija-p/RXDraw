@@ -2,7 +2,6 @@ import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { selectOpenedFolderId } from '../../../feature/folders/store/folders.selectors';
-import { CreateDrawingDto } from '../../../feature/drawings/models/create-drawing.dto';
 import { DrawingsService } from '../../../feature/drawings/services/drawings-service';
 import { MatDialog } from '@angular/material/dialog';
 import { SaveDrawing } from '../save-drawing/save-drawing';
@@ -15,6 +14,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { selectDrawingsProgress } from '../../../feature/drawings/store/drawings.selectors';
+import {
+  saveCurrentRequested,
+  saveDrawingRequested,
+} from '../../../feature/drawings/store/drawings.actions';
 
 @Component({
   selector: 'app-editor-toolbar',
@@ -34,8 +37,12 @@ export class EditorToolbar {
     this.progress$ = this.store.select(selectDrawingsProgress);
   }
 
-  async save() {
+  async saveAs() {
     this.dialog.open(SaveDrawing);
+  }
+
+  async save() {
+    this.store.dispatch(saveCurrentRequested());
   }
 
   onZoomSlider(value: number) {

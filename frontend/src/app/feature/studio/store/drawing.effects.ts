@@ -13,7 +13,6 @@ import {
 import { commitHistoryStep, redoHistoryStep, undoHistoryStep } from './drawing.actions';
 import { selectCursor, selectSteps } from './drawing.selectors';
 import { HistoryStep } from '../models/history-step';
-import { CreateDrawingDto } from '../../drawings/models/create-drawing.dto';
 import { DrawingsService } from '../../drawings/services/drawings-service';
 import { from, Observable, of } from 'rxjs';
 import { composeThumbSimple } from '../../../shared/utils/thumbnail.util';

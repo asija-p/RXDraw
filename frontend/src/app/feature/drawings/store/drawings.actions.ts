@@ -18,6 +18,7 @@ export const setDrawingDimensions = createAction(
   '[Drawing] Set Drawing Dimensions',
   props<{ height: number; width: number }>()
 );
+export const setDrawingName = createAction('[Drawing] Set Drawing Name', props<{ name: string }>());
 export const saveDrawingRequested = createAction(
   '[Drawing] Save Drawing Requested',
   props<{ name: string; folderId: string | null }>()
@@ -34,7 +35,15 @@ export const saveDrawingProgress = createAction(
   '[Drawing] Save Drawing Progress',
   props<{ message: string }>()
 );
-export const setDrawingName = createAction('[Studio] Set Drawing Name', props<{ name: string }>());
+export const saveCurrentRequested = createAction('[Drawing] Save Requested');
+export const saveCurrentSuccess = createAction(
+  '[Drawing] Save Success',
+  props<{ drawing: Drawing }>()
+);
+export const saveCurrentFailure = createAction(
+  '[Drawing] Save Failure',
+  props<{ error: unknown }>()
+);
 export const openDrawingRequested = createAction(
   '[Drawing] Open Drawing Requested',
   props<{ id: string }>()

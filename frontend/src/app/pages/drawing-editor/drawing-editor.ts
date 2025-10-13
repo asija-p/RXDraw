@@ -149,6 +149,8 @@ export class DrawingEditor {
 
   private openSettings() {
     if (this.settingsRef) return;
-    this.settingsRef = this.dialog.open(SettingsDrawing);
+    this.settingsRef = this.dialog.open(SettingsDrawing, {
+      disableClose: true,
+    });
   }
 }

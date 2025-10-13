@@ -8,6 +8,7 @@ import {
   loadDrawingsSuccess,
   openDrawingFailure,
   openDrawingSuccess,
+  saveDrawingProgress,
   setDrawingDimensions,
   setDrawingName,
 } from './drawings.actions';
@@ -16,6 +17,7 @@ export interface DrawingsState extends EntityState<Drawing> {
   openedDrawingId: string | null;
   loading: boolean;
   error: string | null;
+  progress: string | null;
 }
 
 const adapter = createEntityAdapter<Drawing>();
@@ -24,6 +26,7 @@ export const initialState: DrawingsState = adapter.getInitialState({
   openedDrawingId: null,
   loading: false,
   error: null,
+  progress: null,
 });
 
 export const drawingsReducer = createReducer(
@@ -41,7 +44,8 @@ export const drawingsReducer = createReducer(
       openedDrawingId,
     };
   }),
-  on(openDrawingFailure, (state) => ({ ...state, openedDrawingId: null }))
+  on(openDrawingFailure, (state) => ({ ...state, openedDrawingId: null })),
+  on(saveDrawingProgress, (s, { message }) => ({ ...s, progress: message }))
 );
 
 export interface DrawingState {

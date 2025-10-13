@@ -1,6 +1,15 @@
 import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { catchError, filter, map, mergeMap, switchMap, withLatestFrom } from 'rxjs/operators';
+import {
+  catchError,
+  delay,
+  filter,
+  map,
+  mergeMap,
+  switchMap,
+  tap,
+  withLatestFrom,
+} from 'rxjs/operators';
 import { firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { DrawingsService } from '../services/drawings-service';
 import { Action, Store } from '@ngrx/store';
@@ -12,6 +21,7 @@ import {
   openDrawingRequested,
   openDrawingSuccess,
   saveDrawingFailure,
+  saveDrawingProgress,
   saveDrawingRequested,
   saveDrawingSuccess,
   setDrawingDimensions,
@@ -23,7 +33,7 @@ import { CreateDrawingDto } from '../models/create-drawing.dto';
 import { LayersService } from '../../layers/services/layers-service';
 import { CreateLayerDto } from '../../layers/models/create-layer.dto';
 import { selectLayers } from '../../layers/store/layers.selectors';
-import { loadLayers } from '../../layers/store/layers.actions';
+import { loadLayers, saveLayersRequested } from '../../layers/store/layers.actions';
 import { Drawing } from '../../../shared/models/drawing';
 import { selectUserId } from '../../../core/auth/store/auth.selectors';
 
@@ -46,7 +56,7 @@ export class DrawingsEffects {
     )
   );
 
-  saveDrawing$ = createEffect(() =>
+  save$ = createEffect(() =>
     this.actions$.pipe(
       ofType(saveDrawingRequested),
       withLatestFrom(
@@ -56,10 +66,11 @@ export class DrawingsEffects {
         this.store.select(selectLayers)
       ),
       switchMap(([{ name, folderId }, userId, width, height, layers]) => {
-        // validate required inputs
         if (!userId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
           return of(saveDrawingFailure({ error: 'Missing userId/width/height' }));
         }
+
+        this.store.dispatch(saveDrawingProgress({ message: 'Saving…' }));
 
         const layersForThumb = (layers ?? []).map((l: any) => ({
           canvasData: l.canvasData as string,
@@ -68,11 +79,22 @@ export class DrawingsEffects {
           zIndex: l.zIndex,
         }));
 
-        const thumb$ = layersForThumb.length
-          ? from(composeThumbSimple(layersForThumb, width!, height!, 256))
-          : of<string | undefined>(undefined);
+        const thumbPromise = new Promise<string | undefined>(async (resolve, reject) => {
+          try {
+            const thumb = layersForThumb.length
+              ? await composeThumbSimple(layersForThumb, width!, height!, 256)
+              : undefined;
 
-        return thumb$.pipe(
+            setTimeout(() => {
+              this.store.dispatch(saveDrawingProgress({ message: 'Created thumbnail…' }));
+              resolve(thumb);
+            }, 500);
+          } catch (err) {
+            reject(err);
+          }
+        });
+
+        return from(thumbPromise).pipe(
           switchMap((thumbnailUrl) => {
             const dto: CreateDrawingDto = {
               name,
@@ -86,27 +108,20 @@ export class DrawingsEffects {
 
             return this.drawingsService.create(dto).pipe(
               switchMap((drawing) => {
-                const layerDtos: CreateLayerDto[] = (layers ?? []).map((l: any) => ({
-                  name: l.name ?? 'Layer',
-                  zIndex: l.zIndex,
-                  visible: l.visible,
-                  opacity: l.opacity,
-                  canvasData: l.canvasData,
-                  drawingId: drawing.id,
-                }));
+                this.store.dispatch(saveLayersRequested({ drawingId: String(drawing.id) }));
 
-                return layerDtos.length
-                  ? forkJoin(layerDtos.map((d) => this.layersService.create(d))).pipe(
-                      map(() => saveDrawingSuccess({ drawing })),
-                      catchError((err) =>
-                        of(saveDrawingFailure({ error: err?.message ?? 'Save failed' }))
-                      )
-                    )
-                  : of(saveDrawingSuccess({ drawing }));
+                return of(drawing).pipe(
+                  delay(500),
+                  tap(() =>
+                    this.store.dispatch(saveDrawingProgress({ message: 'Drawing saved!' }))
+                  ),
+                  map((done) => saveDrawingSuccess({ drawing: done }))
+                );
               }),
               catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Save failed' })))
             );
-          })
+          }),
+          catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Thumbnail failed' })))
         );
       })
     )

@@ -14,6 +14,7 @@ import {
 } from '../../../feature/studio/store/drawing.actions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { selectDrawingsProgress } from '../../../feature/drawings/store/drawings.selectors';
 
 @Component({
   selector: 'app-editor-toolbar',
@@ -26,9 +27,11 @@ export class EditorToolbar {
   @Output() undoClick = new EventEmitter<void>();
   @Output() redoClick = new EventEmitter<void>();
   zoom$: any;
+  progress$: any;
 
   constructor(private store: Store, private drawings: DrawingsService) {
     this.zoom$ = this.store.select(selectZoom);
+    this.progress$ = this.store.select(selectDrawingsProgress);
   }
 
   async save() {

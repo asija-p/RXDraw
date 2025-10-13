@@ -19,3 +19,4 @@ export const selectIsDrawingReady = createSelector(
   selectDrawingState,
   (s) => (s.width ?? 0) > 0 && (s.height ?? 0) > 0
 );
+export const selectDrawingsProgress = createSelector(selectDrawingsState, (s) => s.progress);

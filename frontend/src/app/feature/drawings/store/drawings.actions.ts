@@ -30,6 +30,10 @@ export const saveDrawingFailure = createAction(
   '[Drawing] Save Drawing Failure',
   props<{ error: unknown }>()
 );
+export const saveDrawingProgress = createAction(
+  '[Drawing] Save Drawing Progress',
+  props<{ message: string }>()
+);
 export const setDrawingName = createAction('[Studio] Set Drawing Name', props<{ name: string }>());
 export const openDrawingRequested = createAction(
   '[Drawing] Open Drawing Requested',

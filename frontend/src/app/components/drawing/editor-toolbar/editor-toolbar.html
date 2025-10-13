@@ -5,6 +5,8 @@
     <button type="button" (click)="save()">Save as</button>
   </div>
 
+  <h5 *ngIf="progress$ | async as msg">PROGESS : {{ msg }}</h5>
+
   <div class="controls">
     <input
       type="range"

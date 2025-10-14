@@ -27,7 +27,10 @@ import {
   selectOpenedDrawingId,
 } from '../../feature/drawings/store/drawings.selectors';
 import { ActivatedRoute } from '@angular/router';
-import { openDrawingRequested } from '../../feature/drawings/store/drawings.actions';
+import {
+  openDrawingRequested,
+  saveDrawingRequested,
+} from '../../feature/drawings/store/drawings.actions';
 import { clearLayers } from '../../feature/layers/store/layers.actions';
 import { selectCameraState } from '../../feature/studio/store/drawing.selectors';
 import {
@@ -35,6 +38,7 @@ import {
   redoHistoryStep,
   undoHistoryStep,
 } from '../../feature/studio/store/drawing.actions';
+import { SaveDrawing } from '../../components/drawing/save-drawing/save-drawing';
 
 const ZMIN = 0.25;
 const ZMAX = 8;
@@ -78,6 +82,7 @@ export class DrawingEditor {
   ngAfterViewInit() {
     this.setupZoom();
     this.setupUndoRedoMerge();
+    this.setupSaveMerge();
   }
 
   ngOnDestroy() {
@@ -143,6 +148,55 @@ export class DrawingEditor {
       intent$.subscribe((intent) => {
         if (intent === 'undo') this.store.dispatch(undoHistoryStep());
         else this.store.dispatch(redoHistoryStep());
+      })
+    );
+  }
+  private setupSaveMerge() {
+    const key$ = fromEvent<KeyboardEvent>(window, 'keydown').pipe(
+      filter((ev) => {
+        const t = ev.target as HTMLElement | null;
+        const tag = (t?.tagName || '').toLowerCase();
+        const typing = tag === 'input' || tag === 'textarea' || t?.isContentEditable;
+        return !typing && (ev.ctrlKey || ev.metaKey);
+      }),
+      map((ev) => {
+        const k = ev.key.toLowerCase();
+        if (k === 's') {
+          ev.preventDefault();
+          return ev.shiftKey ? 'saveAs' : 'save';
+        }
+        return null;
+      }),
+      filter((x): x is 'save' | 'saveAs' => x !== null)
+    );
+
+    const toolbarSave$ = this.toolbar.saveClick.pipe(map(() => 'save' as const));
+    const toolbarSaveAs$ = this.toolbar.saveAsClick.pipe(map(() => 'saveAs' as const));
+
+    const intent$ = merge(key$, toolbarSave$, toolbarSaveAs$);
+
+    this.subs.add(
+      intent$.subscribe((intent) => {
+        this.store
+          .select(selectOpenedDrawingId)
+          .pipe(take(1))
+          .subscribe((openedId) => {
+            const hasOpened = !!openedId;
+
+            if (intent === 'saveAs') {
+              if (hasOpened) {
+                this.store.dispatch(saveDrawingRequested({}));
+              } else {
+                this.dialog.open(SaveDrawing);
+              }
+              return;
+            }
+            if (hasOpened) {
+              this.store.dispatch(saveDrawingRequested({}));
+            } else {
+              this.dialog.open(SaveDrawing);
+            }
+          });
       })
     );
   }

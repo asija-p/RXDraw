@@ -29,6 +29,8 @@ export class EditorToolbar {
   readonly dialog = inject(MatDialog);
   @Output() undoClick = new EventEmitter<void>();
   @Output() redoClick = new EventEmitter<void>();
+  @Output() saveClick = new EventEmitter<void>();
+  @Output() saveAsClick = new EventEmitter<void>();
   zoom$: any;
   progress$: any;
   openedId$: any;
@@ -39,27 +41,14 @@ export class EditorToolbar {
     this.openedId$ = this.store.select(selectOpenedDrawingId);
   }
 
-  async saveAs() {
-    this.dialog.open(SaveDrawing);
+  saveAs() {
+    this.saveAsClick.emit();
   }
-
   save() {
-    this.openedId$.pipe(take(1)).subscribe((id: any) => {
-      if (!id) return; // only saved drawings can “Save”
-      this.store.dispatch(saveDrawingRequested({})); // plain Save
-    });
+    this.saveClick.emit();
   }
 
   onZoomSlider(value: number) {
     this.store.dispatch(cameraSet({ zoom: Number(value) }));
-  }
-
-  private randomHexColor() {
-    return (
-      '#' +
-      Math.floor(Math.random() * 0xffffff)
-        .toString(16)
-        .padStart(6, '0')
-    );
   }
 }

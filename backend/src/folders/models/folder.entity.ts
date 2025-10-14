@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { User } from 'src/users/models/user.entity';
-import { Drawing } from 'src/drawings/models/drawing.entity';
+import { Drawing } from 'src/drawings/models/entities/drawing.entity';
 
 @Entity('folders')
 @Unique('UQ_folder_user_name', ['user', 'name'])

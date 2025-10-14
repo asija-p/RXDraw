@@ -9,9 +9,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { DrawingsService } from './drawings.service';
-import { CreateDrawingDto, UpdateDrawingDto } from './models/drawing.dto';
-import { SaveDto } from './models/save.dto';
+import { DrawingsService } from '../services/drawings.service';
+import { CreateDrawingDto, UpdateDrawingDto } from '../models/dtos/drawing.dto';
+import { SaveDto } from '../models/dtos/save.dto';
 
 @Controller('drawings')
 export class DrawingsController {

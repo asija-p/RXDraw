@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
-import { DrawingsController } from './drawings.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Drawing } from './models/drawing.entity';
-import { DrawingsService } from './drawings.service';
-import { LayersService } from './layers.service';
-import { LayersController } from './layers.controller';
-import { Layer } from './models/layer.entity';
-
+import { Drawing } from './models/entities/drawing.entity';
+import { Layer } from './models/entities/layer.entity';
+import { DrawingsController } from './controllers/drawings.controller';
+import { LayersController } from './controllers/layers.controller';
+import { DrawingsService } from './services/drawings.service';
+import { LayersService } from './services/layers.service';
 @Module({
   imports: [TypeOrmModule.forFeature([Drawing, Layer])],
   controllers: [DrawingsController, LayersController],

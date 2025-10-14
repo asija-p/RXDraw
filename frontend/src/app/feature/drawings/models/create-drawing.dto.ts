@@ -3,7 +3,7 @@ export interface CreateDrawingDto {
   width: number;
   height: number;
   userId: string;
-  folderId?: string;
+  folderId?: string | null;
   thumbnailUrl?: string;
   colors?: (string | null)[];
 }

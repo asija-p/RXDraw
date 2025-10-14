@@ -8,8 +8,8 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
-import { LayersService } from './layers.service';
-import { CreateLayerDto, UpdateLayerDto } from './models/layer.dto';
+import { LayersService } from '../services/layers.service';
+import { CreateLayerDto, UpdateLayerDto } from '../models/dtos/layer.dto';
 
 @Controller('layers')
 export class LayersController {

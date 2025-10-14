@@ -3,7 +3,7 @@
     <button type="button" (click)="undoClick.emit()">Undo</button>
     <button type="button" (click)="redoClick.emit()">Redo</button>
     <button type="button" (click)="saveAs()">Save as</button>
-    <button type="button" (click)="save()">Save</button>
+    <button type="button" (click)="save()" [disabled]="!(openedId$ | async)">Save</button>
   </div>
 
   <h5 *ngIf="progress$ | async as msg">{{ msg }}</h5>

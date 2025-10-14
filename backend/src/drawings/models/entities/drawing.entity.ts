@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Layer } from './layer.entity';
 import { User } from 'src/users/models/user.entity';
 import { Folder } from 'src/folders/models/folder.entity';
+import { Layer } from './layer.entity';
 
 @Entity('drawings')
 export class Drawing {
@@ -35,7 +35,7 @@ export class Drawing {
 
   @ManyToOne(() => Folder, (f) => f.drawings, {
     onDelete: 'CASCADE',
-    nullable: true,
+    nullable: false,
   })
   folder?: Folder;
 

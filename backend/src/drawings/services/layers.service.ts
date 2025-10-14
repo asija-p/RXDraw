@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Layer } from './models/layer.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateLayerDto, UpdateLayerDto } from './models/layer.dto';
+import { Layer } from '../models/entities/layer.entity';
+import { CreateLayerDto, UpdateLayerDto } from '../models/dtos/layer.dto';
 
 @Injectable()
 export class LayersService {

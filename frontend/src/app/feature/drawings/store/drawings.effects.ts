@@ -20,9 +20,6 @@ import {
   openDrawingFailure,
   openDrawingRequested,
   openDrawingSuccess,
-  saveCurrentFailure,
-  saveCurrentRequested,
-  saveCurrentSuccess,
   saveDrawingFailure,
   saveDrawingProgress,
   saveDrawingRequested,
@@ -65,92 +62,24 @@ export class DrawingsEffects {
     )
   );
 
-  saveAs$ = createEffect(() =>
+  save$ = createEffect(() =>
     this.actions$.pipe(
       ofType(saveDrawingRequested),
       withLatestFrom(
         this.store.select(selectUserId),
-        this.store.select(selectDrawingWidth),
-        this.store.select(selectDrawingHeight),
-        this.store.select(selectLayers)
-      ),
-      switchMap(([{ name, folderId }, userId, width, height, layers]) => {
-        if (!userId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
-          return of(saveDrawingFailure({ error: 'Missing userId/width/height' }));
-        }
-
-        this.store.dispatch(saveDrawingProgress({ message: 'Saving…' }));
-
-        const layersForThumb = (layers ?? []).map((l: any) => ({
-          canvasData: l.canvasData as string,
-          visible: !!l.visible,
-          opacity: l.opacity,
-          zIndex: l.zIndex,
-        }));
-
-        const thumbPromise = new Promise<string | undefined>(async (resolve, reject) => {
-          try {
-            const thumb = layersForThumb.length
-              ? await composeThumbSimple(layersForThumb, width!, height!, 256)
-              : undefined;
-
-            setTimeout(() => {
-              this.store.dispatch(saveDrawingProgress({ message: 'Created thumbnail…' }));
-              resolve(thumb);
-            }, 500);
-          } catch (err) {
-            reject(err);
-          }
-        });
-
-        return from(thumbPromise).pipe(
-          switchMap((thumbnailUrl) => {
-            const dto: CreateDrawingDto = {
-              name,
-              width: width!,
-              height: height!,
-              userId: userId as string,
-              colors: [],
-              folderId: folderId ?? undefined,
-              thumbnailUrl: thumbnailUrl ?? undefined,
-            };
-
-            return this.drawingsService.create(dto).pipe(
-              switchMap((drawing) => {
-                this.store.dispatch(saveLayersRequested({ drawingId: String(drawing.id) }));
-
-                return of(drawing).pipe(
-                  delay(500),
-                  tap(() =>
-                    this.store.dispatch(saveDrawingProgress({ message: 'Drawing saved!' }))
-                  ),
-                  map((done) => saveDrawingSuccess({ drawing: done }))
-                );
-              }),
-              catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Save failed' })))
-            );
-          }),
-          catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Thumbnail failed' })))
-        );
-      })
-    )
-  );
-
-  save$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(saveCurrentRequested),
-      withLatestFrom(
         this.store.select(selectOpenedDrawingId),
         this.store.select(selectDrawingWidth),
         this.store.select(selectDrawingHeight),
         this.store.select(selectLayers),
-        this.store.select(selectUserId),
         this.store.select(selectDrawingState)
       ),
-      switchMap(([_, openedId, width, height, layers, userId, ds]) => {
-        if (!openedId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
-          return of(saveCurrentFailure({ error: 'Missing openedId/width/height' }));
+      switchMap(([{ name, folderId }, userId, openedId, width, height, layers, drawingState]) => {
+        if (!userId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
+          return of(saveDrawingFailure({ error: 'Missing userId/width/height' }));
         }
+
+        const isNewDrawing = !openedId || name;
+        const drawingName = name || drawingState?.name || 'Untitled';
 
         this.store.dispatch(saveDrawingProgress({ message: 'Saving…' }));
 
@@ -161,16 +90,20 @@ export class DrawingsEffects {
           zIndex: l.zIndex,
         }));
 
+        // Thumbnail promise
         const thumbPromise = new Promise<string | undefined>(async (resolve, reject) => {
           try {
             const thumb = layersForThumb.length
               ? await composeThumbSimple(layersForThumb, width!, height!, 256)
               : undefined;
 
-            setTimeout(() => {
-              this.store.dispatch(saveDrawingProgress({ message: 'Created thumbnail…' }));
-              resolve(thumb);
-            }, 300);
+            setTimeout(
+              () => {
+                this.store.dispatch(saveDrawingProgress({ message: 'Created thumbnail…' }));
+                resolve(thumb);
+              },
+              isNewDrawing ? 500 : 300
+            );
           } catch (err) {
             reject(err);
           }
@@ -178,28 +111,59 @@ export class DrawingsEffects {
 
         return from(thumbPromise).pipe(
           switchMap((thumbnailUrl) => {
-            const dto: SaveDto = {
-              name: ds?.name ?? undefined,
-              width: width!,
-              height: height!,
-              thumbnailUrl: thumbnailUrl ?? undefined,
-              layers: (layers ?? []).map((l: any) => ({
-                id: l.id,
-                name: l.name,
-                zIndex: l.zIndex,
-                visible: l.visible,
-                opacity: l.opacity,
-                canvasData: l.canvasData ?? undefined,
-              })),
-            };
+            if (isNewDrawing) {
+              const createDto: CreateDrawingDto = {
+                name: drawingName,
+                width: width!,
+                height: height!,
+                userId: userId as string,
+                colors: [],
+                folderId: folderId ?? undefined,
+                thumbnailUrl: thumbnailUrl ?? undefined,
+              };
 
-            return this.drawingsService.save(openedId, dto).pipe(
-              tap(() => this.store.dispatch(saveDrawingProgress({ message: 'Saved!' }))),
-              map((drawing) => saveCurrentSuccess({ drawing })),
-              catchError((err) => of(saveCurrentFailure({ error: err?.message ?? 'Save failed' })))
-            );
+              return this.drawingsService.create(createDto).pipe(
+                switchMap((drawing) => {
+                  this.store.dispatch(saveLayersRequested({ drawingId: String(drawing.id) }));
+
+                  return of(drawing).pipe(
+                    delay(500),
+                    tap(() =>
+                      this.store.dispatch(saveDrawingProgress({ message: 'Drawing saved!' }))
+                    ),
+                    map((savedDrawing) => saveDrawingSuccess({ drawing: savedDrawing }))
+                  );
+                }),
+                catchError((err) =>
+                  of(saveDrawingFailure({ error: err?.message ?? 'Create failed' }))
+                )
+              );
+            } else {
+              const saveDto: SaveDto = {
+                name: drawingState?.name ?? undefined,
+                width: width!,
+                height: height!,
+                thumbnailUrl: thumbnailUrl ?? undefined,
+                layers: (layers ?? []).map((l: any) => ({
+                  id: l.id,
+                  name: l.name,
+                  zIndex: l.zIndex,
+                  visible: l.visible,
+                  opacity: l.opacity,
+                  canvasData: l.canvasData ?? undefined,
+                })),
+              };
+
+              return this.drawingsService.save(openedId!, saveDto).pipe(
+                tap(() => this.store.dispatch(saveDrawingProgress({ message: 'Saved!' }))),
+                map((drawing) => saveDrawingSuccess({ drawing })),
+                catchError((err) =>
+                  of(saveDrawingFailure({ error: err?.message ?? 'Save failed' }))
+                )
+              );
+            }
           }),
-          catchError((err) => of(saveCurrentFailure({ error: err?.message ?? 'Thumbnail failed' })))
+          catchError((err) => of(saveDrawingFailure({ error: err?.message ?? 'Thumbnail failed' })))
         );
       })
     )

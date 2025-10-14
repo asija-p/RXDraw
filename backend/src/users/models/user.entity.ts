@@ -1,4 +1,4 @@
-import { Drawing } from 'src/drawings/models/drawing.entity';
+import { Drawing } from 'src/drawings/models/entities/drawing.entity';
 import { Folder } from 'src/folders/models/folder.entity';
 import {
   Column,

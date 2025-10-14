@@ -1,5 +1,5 @@
-import { Drawing } from 'src/drawings/models/drawing.entity';
-import { Layer } from 'src/drawings/models/layer.entity';
+import { Drawing } from 'src/drawings/models/entities/drawing.entity';
+import { Layer } from 'src/drawings/models/entities/layer.entity';
 import { Folder } from 'src/folders/models/folder.entity';
 import { User } from 'src/users/models/user.entity';
 import { ConnectionOptions } from 'typeorm';

@@ -13,11 +13,11 @@ import {
 } from '../../../feature/studio/store/drawing.actions';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { selectDrawingsProgress } from '../../../feature/drawings/store/drawings.selectors';
 import {
-  saveCurrentRequested,
-  saveDrawingRequested,
-} from '../../../feature/drawings/store/drawings.actions';
+  selectDrawingsProgress,
+  selectOpenedDrawingId,
+} from '../../../feature/drawings/store/drawings.selectors';
+import { saveDrawingRequested } from '../../../feature/drawings/store/drawings.actions';
 
 @Component({
   selector: 'app-editor-toolbar',
@@ -31,18 +31,23 @@ export class EditorToolbar {
   @Output() redoClick = new EventEmitter<void>();
   zoom$: any;
   progress$: any;
+  openedId$: any;
 
   constructor(private store: Store, private drawings: DrawingsService) {
     this.zoom$ = this.store.select(selectZoom);
     this.progress$ = this.store.select(selectDrawingsProgress);
+    this.openedId$ = this.store.select(selectOpenedDrawingId);
   }
 
   async saveAs() {
     this.dialog.open(SaveDrawing);
   }
 
-  async save() {
-    this.store.dispatch(saveCurrentRequested());
+  save() {
+    this.openedId$.pipe(take(1)).subscribe((id: any) => {
+      if (!id) return; // only saved drawings can “Save”
+      this.store.dispatch(saveDrawingRequested({})); // plain Save
+    });
   }
 
   onZoomSlider(value: number) {

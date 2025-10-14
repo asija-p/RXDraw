@@ -8,9 +8,8 @@ import {
   loadDrawingsSuccess,
   openDrawingFailure,
   openDrawingSuccess,
-  saveCurrentFailure,
-  saveCurrentSuccess,
   saveDrawingProgress,
+  saveDrawingSuccess,
   setDrawingDimensions,
   setDrawingName,
 } from './drawings.actions';
@@ -48,8 +47,10 @@ export const drawingsReducer = createReducer(
   }),
   on(openDrawingFailure, (state) => ({ ...state, openedDrawingId: null })),
   on(saveDrawingProgress, (s, { message }) => ({ ...s, progress: message })),
-  on(saveCurrentSuccess, (s) => ({ ...s, progress: null })),
-  on(saveCurrentFailure, (s, { error }) => ({ ...s, progress: null, error: String(error) }))
+  on(saveDrawingSuccess, (state, { drawing }) => {
+    const next = adapter.upsertOne(drawing, state);
+    return { ...next, openedDrawingId: String(drawing.id), progress: null };
+  })
 );
 
 export interface DrawingState {

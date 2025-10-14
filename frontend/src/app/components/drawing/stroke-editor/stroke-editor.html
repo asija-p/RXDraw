@@ -1,9 +1,11 @@
-<color-chrome
-  [color]="(strokeColor$ | async) ?? { r: 0, g: 0, b: 0, a: 1 }"
-  (onChangeComplete)="onColorChange($event)"
->
-</color-chrome>
+<div class="chrome-scale">
+  <color-chrome
+    [color]="(strokeColor$ | async) ?? { r: 0, g: 0, b: 0, a: 1 }"
+    (onChangeComplete)="onColorChange($event)"
+  ></color-chrome>
+</div>
 
+<!---
 <div class="palette">
   <div
     class="swatch"
@@ -26,6 +28,7 @@
   <button (click)="saveHere()">Set</button>
   <button (click)="clearHere()">Clear</button>
 </div>
+-->
 
 <div class="tool-picker">
   <button

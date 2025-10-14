@@ -4,12 +4,21 @@
   min-height: 100vh;
 }
 
+.stroke-editor {
+  overflow: hidden;
+}
+
 .drawing-board {
   display: flex;
   flex-direction: row;
   flex: 1 1 auto;
   min-height: 0;
   padding-top: 50px;
+}
+
+.stroke-editor {
+  overflow: auto;
+  min-height: 0;
 }
 
 .canvas-area {
@@ -28,4 +37,16 @@
   min-height: 0;
   overflow: auto;
   pointer-events: auto;
+}
+
+.manager {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.manager app-navigator {
+  flex: 0 0 220px;
+  min-height: 0;
+  overflow: auto;
 }

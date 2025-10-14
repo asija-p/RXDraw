@@ -1,3 +1,8 @@
+:host {
+  max-height: 100vh;
+  display: block;
+}
+
 .size-picker {
   display: flex;
   gap: 1rem;
@@ -35,10 +40,16 @@
 .size-input-picker {
   display: flex;
   gap: 1em;
-
+  margin-top: 10px;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 30px;
+}
+
+.size-picker,
+.palette {
+  max-height: 30vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .tool-picker {
@@ -83,4 +94,14 @@
 }
 .ctx-menu button:hover {
   background: #f2f2f2;
+}
+
+.picker-center {
+  display: flex;
+  justify-content: center;
+}
+
+.chrome-scale {
+  transform: scale(0.9);
+  transform-origin: top center;
 }

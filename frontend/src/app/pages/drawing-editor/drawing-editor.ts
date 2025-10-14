@@ -66,6 +66,8 @@ export class DrawingEditor {
   private subs = new Subscription();
   @ViewChild('canvasArea', { read: ElementRef }) private canvasAreaRef!: ElementRef<HTMLElement>;
   @ViewChild(EditorToolbar) private toolbar!: EditorToolbar;
+  leftOpen = false;
+  rightOpen = false;
 
   constructor(private store: Store, private route: ActivatedRoute, private dialog: MatDialog) {}
 

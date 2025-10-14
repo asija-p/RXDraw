@@ -28,5 +28,8 @@ export const foldersReducer = createReducer(
   on(deleteFolderSuccess, (state, { folderId }) => adapter.removeOne(folderId, state)),
   on(openFolder, (state, { folderId }) => {
     return { ...state, openedFolderId: folderId };
-  })
+  }),
+  on(Actions.updateFolderSuccess, (state, { folder }) =>
+    adapter.updateOne({ id: folder.id, changes: folder }, state)
+  )
 );

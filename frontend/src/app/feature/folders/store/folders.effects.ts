@@ -43,13 +43,27 @@ export class FoldersEffects {
     )
   );
 
-  deleteFolder$ = createEffect(() =>
+  delete$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FolderActions.deleteFolder),
       switchMap(({ folderId }) =>
         this.folderService.delete(folderId).pipe(
           map(() => deleteFolderSuccess({ folderId })),
           catchError((err) => of(deleteFolderFailure({ error: 'Could not delete folder' })))
+        )
+      )
+    )
+  );
+
+  update$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(FolderActions.updateFolder),
+      switchMap(({ id, changes }) =>
+        this.folderService.update(id, changes).pipe(
+          map((folder) => FolderActions.updateFolderSuccess({ folder })),
+          catchError(() =>
+            of(FolderActions.updateFolderFailure({ error: 'Could not update folder' }))
+          )
         )
       )
     )

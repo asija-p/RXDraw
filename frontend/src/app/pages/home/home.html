@@ -11,6 +11,17 @@
     role="button"
     (click)="openFolder(f.id)"
   >
+    <!-- DELETE BUTTON (Font Awesome) -->
+    <button
+      mat-icon-button
+      class="delete-btn"
+      aria-label="Delete folder"
+      (click)="onDelete(f.id); $event.stopPropagation()"
+      title="Delete folder"
+    >
+      <fa-icon [icon]="faTrash"></fa-icon>
+    </button>
+
     <ng-container *ngIf="f.icon; else defaultIcon">
       <mat-icon class="folder-icon" [fontIcon]="f.icon"></mat-icon>
     </ng-container>

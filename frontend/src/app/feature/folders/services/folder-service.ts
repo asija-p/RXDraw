@@ -24,4 +24,8 @@ export class FolderService {
   delete(id: string) {
     return this.httpClient.delete<void>(`${environment.api}/folders/${id}`);
   }
+
+  update(id: string, changes: Partial<Folder>) {
+    return this.httpClient.put<Folder>(`${environment.api}/folders/${id}`, changes);
+  }
 }

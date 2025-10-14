@@ -38,8 +38,9 @@
   padding: 16px;
   border-radius: 12px;
   transition: transform 120ms ease, box-shadow 120ms ease;
-  height: 90px;
-  min-width: 90px;
+  height: 140px;
+  min-width: 140px;
+  position: relative;
 
   cursor: pointer;
 
@@ -61,13 +62,14 @@
 }
 
 .folder-icon {
-  font-size: 28px;
+  margin-top: 10px;
+  font-size: 70px;
   line-height: 1;
   color: var(--accent);
   align-self: center;
   justify-self: center;
-  width: 28px;
-  height: 28px;
+  width: 70px;
+  height: 70px;
 }
 
 .name {
@@ -76,4 +78,26 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.folder-card {
+  position: relative;
+  cursor: pointer;
+
+  .delete-btn {
+    margin-top: 10px;
+    margin-right: 10px;
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    width: 3px;
+    height: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    fa-icon {
+      font-size: 10px;
+    }
+  }
 }

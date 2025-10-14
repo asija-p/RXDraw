@@ -35,3 +35,16 @@ export const deleteFolderFailure = createAction(
 );
 
 export const openFolder = createAction('[Folders] Open Folder', props<{ folderId: string }>());
+
+export const updateFolder = createAction(
+  '[Folders] Update Folder',
+  props<{ id: string; changes: Partial<Folder> }>()
+);
+export const updateFolderSuccess = createAction(
+  '[Folders] Update Folder Success',
+  props<{ folder: Folder }>()
+);
+export const updateFolderFailure = createAction(
+  '[Folders] Update Folder Failure',
+  props<{ error: string }>()
+);

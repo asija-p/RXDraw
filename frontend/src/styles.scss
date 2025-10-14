@@ -149,3 +149,11 @@ button:disabled {
   align-items: center;
   gap: 8px;
 }
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  color: #b71c1c;
+  font-size: 14px;
+  margin-bottom: 15px;
+}

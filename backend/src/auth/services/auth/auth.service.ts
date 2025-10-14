@@ -21,9 +21,11 @@ export class AuthService {
 
   login(user: { id: string; name: string }) {
     const payload = { sub: user.id, name: user.name };
+
     return {
       user,
-      access_token: this.jwt.sign(payload),
+      access_token: this.jwt.sign(payload, { expiresIn: '1h' }),
+      refresh_token: this.jwt.sign(payload, { expiresIn: '7d' }),
     };
   }
 }

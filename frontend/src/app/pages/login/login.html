@@ -1,6 +1,7 @@
 <div class="modal">
   <mat-card class="card">
     <h2 mat-dialog-title class="title">Log in</h2>
+
     <form (ngSubmit)="submit()">
       <mat-dialog-content>
         <mat-form-field class="full">
@@ -11,10 +12,29 @@
 
         <mat-form-field class="full">
           <mat-label>Password</mat-label>
-          <input matInput placeholder="Password" [(ngModel)]="password" name="password" />
-          <mat-icon matSuffix fontIcon="key"></mat-icon>
+          <input
+            matInput
+            placeholder="Password"
+            [(ngModel)]="password"
+            name="password"
+            [type]="showPassword ? 'text' : 'password'"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon [fontIcon]="showPassword ? 'visibility_off' : 'visibility'"></mat-icon>
+          </button>
         </mat-form-field>
       </mat-dialog-content>
+
+      <div class="error" role="alert" *ngIf="error$ | async as error">
+        <span>{{ error }}</span>
+      </div>
+
       <mat-dialog-actions class="actions">
         <button matButton="filled" type="submit">Log in</button>
       </mat-dialog-actions>

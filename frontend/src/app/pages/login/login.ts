@@ -10,6 +10,9 @@ import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { loginRequested } from '../../core/auth/store/auth.actions';
+import { selectAuthError, selectAuthLoading } from '../../core/auth/store/auth.selectors';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -22,15 +25,23 @@ import { loginRequested } from '../../core/auth/store/auth.actions';
     CommonModule,
     MatCardModule,
     FormsModule,
+    MatSlideToggleModule,
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
 export class Login {
-  constructor(private store: Store) {}
+  error$: Observable<string | null>;
+  loading$: Observable<boolean>;
+
+  constructor(private store: Store) {
+    this.error$ = this.store.select(selectAuthError);
+    this.loading$ = this.store.select(selectAuthLoading);
+  }
 
   name = '';
   password = '';
+  showPassword = false;
 
   submit() {
     this.store.dispatch(loginRequested({ name: this.name, password: this.password }));

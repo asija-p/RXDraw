@@ -10,6 +10,8 @@ import { MatCardModule } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { registerRequested } from '../../core/auth/store/auth.actions';
+import { Observable } from 'rxjs';
+import { selectAuthError, selectAuthLoading } from '../../core/auth/store/auth.selectors';
 
 @Component({
   selector: 'app-register',
@@ -27,19 +29,30 @@ import { registerRequested } from '../../core/auth/store/auth.actions';
   styleUrl: './register.scss',
 })
 export class Register {
-  constructor(private store: Store) {}
+  error$: Observable<string | null>;
+  loading$: Observable<boolean>;
+  formError: string | null = null;
+
+  constructor(private store: Store) {
+    this.error$ = this.store.select(selectAuthError);
+    this.loading$ = this.store.select(selectAuthLoading);
+  }
 
   name = '';
   password = '';
   confirm = '';
+  showPassword = false;
+  showConfirmPassword = false;
 
   submit() {
+    this.formError = null;
+
     if (!this.name || !this.password) {
-      alert('Please fill all fields.');
+      this.formError = 'Please fill all fields.';
       return;
     }
     if (this.password !== this.confirm) {
-      alert('Passwords do not match.');
+      this.formError = 'Passwords do not match.';
       return;
     }
 

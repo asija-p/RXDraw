@@ -14,26 +14,50 @@
           <mat-label>Password</mat-label>
           <input
             matInput
-            type="password"
-            autocomplete="new-password"
+            placeholder="Password"
             [(ngModel)]="password"
             name="password"
+            [type]="showPassword ? 'text' : 'password'"
           />
-          <mat-icon matSuffix fontIcon="key"></mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showPassword = !showPassword"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon [fontIcon]="showPassword ? 'visibility_off' : 'visibility'"></mat-icon>
+          </button>
         </mat-form-field>
 
         <mat-form-field class="full">
           <mat-label>Confirm password</mat-label>
           <input
             matInput
-            type="password"
-            autocomplete="new-password"
+            placeholder="Confirm password"
             [(ngModel)]="confirm"
             name="confirm"
+            [type]="showConfirmPassword ? 'text' : 'password'"
           />
-          <mat-icon matSuffix fontIcon="key"></mat-icon>
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="showConfirmPassword = !showConfirmPassword"
+            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+          >
+            <mat-icon [fontIcon]="showConfirmPassword ? 'visibility_off' : 'visibility'"></mat-icon>
+          </button>
         </mat-form-field>
       </mat-dialog-content>
+
+      <div class="error" role="alert" *ngIf="formError as fe">
+        <span>{{ fe }}</span>
+      </div>
+
+      <div class="error" role="alert" *ngIf="error$ | async as error">
+        <span>{{ error }}</span>
+      </div>
 
       <mat-dialog-actions class="actions">
         <button mat-flat-button color="primary" type="submit">Sign up</button>

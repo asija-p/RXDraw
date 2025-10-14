@@ -60,7 +60,7 @@ export class Home {
       )
       .subscribe((userId) => {
         console.log(userId);
-        this.store.dispatch(loadFolders({ userId: '30f396c6-e9ea-4bfd-92b4-06d4d7992495' }));
+        this.store.dispatch(loadFolders());
       });
   }
 

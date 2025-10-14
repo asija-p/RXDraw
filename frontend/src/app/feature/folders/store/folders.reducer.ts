@@ -7,8 +7,10 @@ import {
   createFolderSuccess,
   deleteFolderFailure,
   deleteFolderSuccess,
+  loadFoldersFailure,
   loadFoldersSuccess,
   openFolder,
+  updateFolderSuccess,
 } from './folders.actions';
 
 export interface FoldersState extends EntityState<Folder> {
@@ -24,12 +26,13 @@ export const initialState: FoldersState = adapter.getInitialState({
 export const foldersReducer = createReducer(
   initialState,
   on(loadFoldersSuccess, (state, { folders }) => adapter.setAll(folders, state)),
+  on(loadFoldersFailure, (s, { error }) => ({ ...s, loading: false, error })),
   on(createFolderSuccess, (state, { folder }) => adapter.addOne(folder, state)),
   on(deleteFolderSuccess, (state, { folderId }) => adapter.removeOne(folderId, state)),
   on(openFolder, (state, { folderId }) => {
     return { ...state, openedFolderId: folderId };
   }),
-  on(Actions.updateFolderSuccess, (state, { folder }) =>
+  on(updateFolderSuccess, (state, { folder }) =>
     adapter.updateOne({ id: folder.id, changes: folder }, state)
   )
 );

@@ -12,13 +12,12 @@ import { Store } from '@ngrx/store';
 export class FolderService {
   constructor(private httpClient: HttpClient, private store: Store) {}
 
-  getAll(userId?: string) {
-    const params = userId ? new HttpParams().set('userId', userId) : undefined;
-    return this.httpClient.get<Folder[]>(environment.api + '/folders', { params });
+  getAll() {
+    return this.httpClient.get<Folder[]>(`${environment.api}/folders`);
   }
 
-  add(userId: string, name: string, icon?: string) {
-    return this.httpClient.post<Folder>(`${environment.api}/folders`, { name, userId, icon });
+  add(name: string, icon?: string) {
+    return this.httpClient.post<Folder>(`${environment.api}/folders`, { name, icon });
   }
 
   delete(id: string) {

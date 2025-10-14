@@ -8,45 +8,50 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { DrawingsService } from '../services/drawings.service';
 import { CreateDrawingDto, UpdateDrawingDto } from '../models/dtos/drawing.dto';
 import { SaveDto } from '../models/dtos/save.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('drawings')
 export class DrawingsController {
   constructor(private drawingService: DrawingsService) {}
 
   @Get()
-  getAll(
-    @Query('userId') userId?: string,
-    @Query('folderId') folderId?: string,
-  ) {
-    return this.drawingService.getAll(userId, folderId);
+  getAll(@Req() req: any, @Query('folderId') folderId?: string) {
+    return this.drawingService.getAll(req.user.id, folderId);
   }
 
   @Get(':id')
-  getById(@Param('id') id: string) {
-    return this.drawingService.getById(id);
+  getById(@Req() req: any, @Param('id') id: string) {
+    return this.drawingService.getById(req.user.id, id);
   }
 
   @Post()
-  create(@Body() dto: CreateDrawingDto) {
-    return this.drawingService.create(dto);
+  create(@Req() req: any, @Body() dto: CreateDrawingDto) {
+    return this.drawingService.create({ ...dto, userId: req.user.id });
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateDrawingDto) {
-    return this.drawingService.update(id, dto);
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateDrawingDto,
+  ) {
+    return this.drawingService.update(req.user.id, id, dto);
   }
 
   @Put(':id/save')
-  save(@Param('id') id: string, @Body() dto: SaveDto) {
-    return this.drawingService.save(id, dto);
+  save(@Req() req: any, @Param('id') id: string, @Body() dto: SaveDto) {
+    return this.drawingService.save(req.user.id, id, dto);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.drawingService.delete(id);
+  delete(@Req() req: any, @Param('id') id: string) {
+    return this.drawingService.delete(req.user.id, id);
   }
 }

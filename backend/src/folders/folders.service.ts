@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Folder } from './models/folder.entity';
@@ -10,31 +10,39 @@ export class FoldersService {
     @InjectRepository(Folder) private folderRepository: Repository<Folder>,
   ) {}
 
-  public getAll(userId?: string) {
-    if (userId) {
-      return this.folderRepository.find({
-        where: { user: { id: userId } },
-        order: { updatedAt: 'DESC' },
-      });
-    }
-    //return this.folderRepository.find({ order: { name: 'ASC' } });
+  getAll(userId: string) {
+    return this.folderRepository.find({
+      where: { user: { id: userId } },
+      order: { updatedAt: 'DESC' },
+    });
   }
 
-  public async create(dto: CreateFolderDto) {
+  async create(dto: CreateFolderDto & { userId: string }) {
     const folder = this.folderRepository.create({
       name: dto.name,
-      user: { id: dto.userId } as any,
       icon: dto.icon,
+      user: { id: dto.userId } as any,
     });
-    return await this.folderRepository.save(folder);
+    return this.folderRepository.save(folder);
   }
 
-  public async update(id: string, dto: UpdateFolderDto) {
-    await this.folderRepository.update(id, dto);
-    return this.folderRepository.findOne({ where: { id } });
+  async update(userId: string, id: string, dto: UpdateFolderDto) {
+    const result = await this.folderRepository.update(
+      { id, user: { id: userId } as any },
+      dto,
+    );
+    if (!result.affected) throw new NotFoundException('Folder not found');
+    return this.folderRepository.findOne({
+      where: { id, user: { id: userId } },
+    });
   }
 
-  public delete(id: string) {
-    return this.folderRepository.delete(id);
+  async delete(userId: string, id: string) {
+    const res = await this.folderRepository.delete({
+      id,
+      user: { id: userId } as any,
+    });
+    if (!res.affected) throw new NotFoundException('Folder not found');
+    return { success: true };
   }
 }

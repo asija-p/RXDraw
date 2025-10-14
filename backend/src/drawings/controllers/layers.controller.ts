@@ -7,36 +7,44 @@ import {
   Post,
   Put,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { LayersService } from '../services/layers.service';
 import { CreateLayerDto, UpdateLayerDto } from '../models/dtos/layer.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('layers')
 export class LayersController {
   constructor(private layersService: LayersService) {}
 
   @Get()
-  getAll(@Query('drawingId') drawingId: string) {
-    return this.layersService.getAll(drawingId);
+  getAll(@Req() req: any, @Query('drawingId') drawingId?: string) {
+    return this.layersService.getAll(req.user.id, drawingId);
   }
 
   @Get(':id')
-  get(@Param('id') id: string) {
-    return this.layersService.getById(id);
+  get(@Req() req: any, @Param('id') id: string) {
+    return this.layersService.getById(req.user.id, id);
   }
 
   @Post()
-  create(@Body() dto: CreateLayerDto) {
-    return this.layersService.create(dto);
+  create(@Req() req: any, @Body() dto: CreateLayerDto) {
+    return this.layersService.create(req.user.id, dto);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateLayerDto) {
-    return this.layersService.update(id, dto);
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: UpdateLayerDto,
+  ) {
+    return this.layersService.update(req.user.id, id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.layersService.delete(id);
+  remove(@Req() req: any, @Param('id') id: string) {
+    return this.layersService.delete(req.user.id, id);
   }
 }

@@ -18,10 +18,16 @@ export class FoldersEffects {
   loadFolders$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FolderActions.loadFolders),
-      switchMap(({ userId }) =>
-        this.folderService.getAll(userId).pipe(
-          map((folders) => FolderActions.loadFoldersSuccess({ folders: folders })),
-          catchError(() => of({ type: 'load error' }))
+      switchMap(() =>
+        this.folderService.getAll().pipe(
+          map((folders) => FolderActions.loadFoldersSuccess({ folders })),
+          catchError((err) =>
+            of(
+              FolderActions.loadFoldersFailure({
+                error: err?.error?.message ?? 'Could not load folders',
+              })
+            )
+          )
         )
       )
     )
@@ -30,10 +36,8 @@ export class FoldersEffects {
   create$ = createEffect(() =>
     this.actions$.pipe(
       ofType(FolderActions.createFolder),
-      withLatestFrom(this.store.select(selectUserId)),
-      filter(([, userId]) => !!userId),
-      switchMap(([{ name, icon }, userId]) =>
-        this.folderService.add(userId as string, name, icon).pipe(
+      switchMap(({ name, icon }) =>
+        this.folderService.add(name, icon).pipe(
           map((folder) => FolderActions.createFolderSuccess({ folder })),
           catchError(() =>
             of(FolderActions.createFolderFailure({ error: 'Could not create folder' }))

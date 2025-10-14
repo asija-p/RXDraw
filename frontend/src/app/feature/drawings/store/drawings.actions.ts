@@ -3,7 +3,7 @@ import { Drawing } from '../../../shared/models/drawing';
 
 export const loadDrawings = createAction(
   '[Drawings] Load Drawings',
-  props<{ userId: string; folderId: string }>()
+  props<{ folderId?: string }>()
 );
 export const loadDrawingsSuccess = createAction(
   '[Drawings] Load Drawings Success',

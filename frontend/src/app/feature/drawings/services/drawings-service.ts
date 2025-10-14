@@ -12,12 +12,9 @@ import { Observable } from 'rxjs';
 export class DrawingsService {
   constructor(private httpClient: HttpClient) {}
 
-  getAll(userId?: string, folderId?: string) {
-    let params = new HttpParams();
-    if (userId) params = params.set('userId', userId);
-    if (folderId) params = params.set('folderId', folderId);
-
-    return this.httpClient.get<Drawing[]>(`${environment.api}/drawings`, { params });
+  getAll(folderId?: string) {
+    const options = folderId ? { params: { folderId } } : {};
+    return this.httpClient.get<Drawing[]>(`${environment.api}/drawings`, options);
   }
 
   create(dto: CreateDrawingDto) {
@@ -28,15 +25,15 @@ export class DrawingsService {
     return this.httpClient.get<Drawing>(`${environment.api}/drawings/${id}`);
   }
 
+  update(id: string, changes: Partial<Drawing> & { folderId?: string | null }) {
+    return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}`, changes);
+  }
+
   save(id: string, dto: SaveDto) {
     return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}/save`, dto);
   }
 
-  update(id: string, changes: Partial<Drawing>) {
-    return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}`, changes);
-  }
-
   delete(id: string) {
-    return this.httpClient.delete<void>(`${environment.api}/drawings/${id}`);
+    return this.httpClient.delete(`${environment.api}/drawings/${id}`);
   }
 }

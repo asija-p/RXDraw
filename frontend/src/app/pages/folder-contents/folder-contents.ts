@@ -105,7 +105,7 @@ export class FolderContents {
     );
 
     console.log(userId + ' ' + folderId);
-    this.store.dispatch(loadDrawings({ userId, folderId }));
+    this.store.dispatch(loadDrawings({ folderId }));
   }
 
   onDelete(id: string) {

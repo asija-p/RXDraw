@@ -59,8 +59,8 @@ export class DrawingsEffects {
   loadDrawings$ = createEffect(() =>
     this.actions$.pipe(
       ofType(loadDrawings),
-      switchMap(({ userId, folderId }) =>
-        this.drawingsService.getAll(userId, folderId).pipe(
+      switchMap(({ folderId }) =>
+        this.drawingsService.getAll(folderId).pipe(
           map((drawings) => loadDrawingsSuccess({ drawings })),
           catchError((err) => of(loadDrawingsFailure({ error: String(err?.message ?? err) })))
         )
@@ -72,19 +72,18 @@ export class DrawingsEffects {
     this.actions$.pipe(
       ofType(saveDrawingRequested),
       withLatestFrom(
-        this.store.select(selectUserId),
         this.store.select(selectOpenedDrawingId),
         this.store.select(selectDrawingWidth),
         this.store.select(selectDrawingHeight),
         this.store.select(selectLayers),
         this.store.select(selectDrawingState)
       ),
-      switchMap(([{ name, folderId }, userId, openedId, width, height, layers, drawingState]) => {
-        if (!userId || (width ?? 0) <= 0 || (height ?? 0) <= 0) {
-          return of(saveDrawingFailure({ error: 'Missing userId/width/height' }));
+      switchMap(([{ name, folderId }, openedId, width, height, layers, drawingState]) => {
+        if ((width ?? 0) <= 0 || (height ?? 0) <= 0) {
+          return of(saveDrawingFailure({ error: 'Missing width/height' }));
         }
 
-        const isNewDrawing = !openedId || name;
+        const isNew = !openedId || !!name;
         const drawingName = name || drawingState?.name || 'Untitled';
 
         this.store.dispatch(saveDrawingProgress({ message: 'Saving…' }));
@@ -96,33 +95,30 @@ export class DrawingsEffects {
           zIndex: l.zIndex,
         }));
 
-        // Thumbnail promise
         const thumbPromise = new Promise<string | undefined>(async (resolve, reject) => {
           try {
             const thumb = layersForThumb.length
               ? await composeThumbSimple(layersForThumb, width!, height!, 256)
               : undefined;
-
             setTimeout(
               () => {
                 this.store.dispatch(saveDrawingProgress({ message: 'Created thumbnail…' }));
                 resolve(thumb);
               },
-              isNewDrawing ? 500 : 300
+              isNew ? 500 : 300
             );
-          } catch (err) {
-            reject(err);
+          } catch (e) {
+            reject(e);
           }
         });
 
         return from(thumbPromise).pipe(
           switchMap((thumbnailUrl) => {
-            if (isNewDrawing) {
+            if (isNew) {
               const createDto: CreateDrawingDto = {
                 name: drawingName,
                 width: width!,
                 height: height!,
-                userId: userId as string,
                 colors: [],
                 folderId: folderId ?? undefined,
                 thumbnailUrl: thumbnailUrl ?? undefined,
@@ -131,13 +127,12 @@ export class DrawingsEffects {
               return this.drawingsService.create(createDto).pipe(
                 switchMap((drawing) => {
                   this.store.dispatch(saveLayersRequested({ drawingId: String(drawing.id) }));
-
                   return of(drawing).pipe(
                     delay(500),
                     tap(() =>
                       this.store.dispatch(saveDrawingProgress({ message: 'Drawing saved!' }))
                     ),
-                    map((savedDrawing) => saveDrawingSuccess({ drawing: savedDrawing }))
+                    map((d) => saveDrawingSuccess({ drawing: d }))
                   );
                 }),
                 catchError((err) =>

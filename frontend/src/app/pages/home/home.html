@@ -11,16 +11,27 @@
     role="button"
     (click)="openFolder(f.id)"
   >
-    <!-- DELETE BUTTON (Font Awesome) -->
-    <button
-      mat-icon-button
-      class="delete-btn"
-      aria-label="Delete folder"
-      (click)="onDelete(f.id); $event.stopPropagation()"
-      title="Delete folder"
-    >
-      <fa-icon [icon]="faTrash"></fa-icon>
-    </button>
+    <div class="card-actions">
+      <button
+        mat-icon-button
+        class="icon-btn"
+        aria-label="Rename folder"
+        (click)="startEdit(f); $event.stopPropagation()"
+        title="Rename folder"
+      >
+        <mat-icon fontIcon="edit"></mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        class="icon-btn"
+        aria-label="Delete folder"
+        (click)="onDelete(f.id); $event.stopPropagation()"
+        title="Delete folder"
+      >
+        <fa-icon [icon]="faTrash"></fa-icon>
+      </button>
+    </div>
 
     <ng-container *ngIf="f.icon; else defaultIcon">
       <mat-icon class="folder-icon" [fontIcon]="f.icon"></mat-icon>
@@ -28,6 +39,22 @@
     <ng-template #defaultIcon>
       <mat-icon class="folder-icon" fontIcon="folder"></mat-icon>
     </ng-template>
-    <div class="name" [title]="f.name">{{ f.name }}</div>
+
+    <div class="name" *ngIf="editingId !== f.id; else editNameTpl">
+      {{ f.name }}
+    </div>
+
+    <ng-template #editNameTpl>
+      <input
+        #nameInput
+        class="name-input"
+        [ngModel]="editValue"
+        (ngModelChange)="editValue = $event"
+        (click)="$event.stopPropagation()"
+        (keydown.enter)="commitEdit(f)"
+        (keydown.escape)="cancelEdit()"
+        (blur)="commitEdit(f)"
+      />
+    </ng-template>
   </mat-card>
 </div>

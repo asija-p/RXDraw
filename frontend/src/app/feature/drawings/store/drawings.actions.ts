@@ -19,9 +19,10 @@ export const setDrawingDimensions = createAction(
   props<{ height: number; width: number }>()
 );
 export const setDrawingName = createAction('[Drawing] Set Drawing Name', props<{ name: string }>());
+
 export const saveDrawingRequested = createAction(
   '[Drawing] Save Drawing Requested',
-  props<{ name?: string; folderId?: string | null }>() // Make name optional for save
+  props<{ name?: string; folderId?: string | null }>()
 );
 
 export const saveDrawingSuccess = createAction(

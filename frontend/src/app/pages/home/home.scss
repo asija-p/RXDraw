@@ -8,6 +8,7 @@
 .muted {
   color: #6b7280;
 }
+
 .form-error {
   color: #d32f2f;
 }
@@ -31,6 +32,9 @@
 }
 
 .folder-card {
+  position: relative;
+  cursor: pointer;
+
   display: grid;
   grid-auto-flow: row;
   justify-items: center;
@@ -40,15 +44,54 @@
   transition: transform 120ms ease, box-shadow 120ms ease;
   height: 140px;
   min-width: 140px;
-  position: relative;
-
-  cursor: pointer;
 
   &:hover,
   &:focus-visible {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
     outline: none;
+  }
+
+  .delete-btn {
+    margin-top: 10px;
+    margin-right: 10px;
+    position: absolute;
+    top: 6px;
+    right: 4px;
+    width: 3px;
+    height: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    fa-icon {
+      font-size: 10px;
+    }
+  }
+
+  .card-actions {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    display: flex;
+    gap: 4px;
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .icon-btn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    fa-icon,
+    mat-icon {
+      font-size: 28px;
+    }
   }
 }
 
@@ -78,26 +121,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: text;
 }
 
-.folder-card {
-  position: relative;
-  cursor: pointer;
-
-  .delete-btn {
-    margin-top: 10px;
-    margin-right: 10px;
-    position: absolute;
-    top: 6px;
-    right: 4px;
-    width: 3px;
-    height: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    fa-icon {
-      font-size: 10px;
-    }
-  }
+.name-input {
+  font: inherit;
+  font-weight: 600;
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  text-align: center;
 }

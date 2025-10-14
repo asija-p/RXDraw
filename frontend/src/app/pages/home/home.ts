@@ -23,6 +23,7 @@ import { selectUserId } from '../../core/auth/store/auth.selectors';
 import { MatMenuModule } from '@angular/material/menu';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
@@ -34,6 +35,7 @@ import { faTrash } from '@fortawesome/free-solid-svg-icons';
     MatIconModule,
     MatDialogModule,
     FontAwesomeModule,
+    FormsModule,
   ],
   templateUrl: './home.html',
   styleUrl: './home.scss',
@@ -85,5 +87,29 @@ export class Home {
         updateFolder({ id: folder.id, changes: { name: result.name, icon: result.icon } })
       );
     });
+  }
+
+  editingId: string | null = null;
+  editValue = '';
+
+  startEdit(f: Folder) {
+    this.editingId = f.id;
+    this.editValue = f.name ?? '';
+    setTimeout(() => {
+      const el = document.querySelector<HTMLInputElement>('input.name-input');
+      el?.focus();
+      el?.select();
+    }, 0);
+  }
+
+  commitEdit(f: Folder) {
+    const newName = (this.editValue ?? '').trim();
+    this.editingId = null;
+    if (!newName || newName === f.name) return;
+    this.store.dispatch(updateFolder({ id: f.id, changes: { name: newName } }));
+  }
+
+  cancelEdit() {
+    this.editingId = null;
   }
 }

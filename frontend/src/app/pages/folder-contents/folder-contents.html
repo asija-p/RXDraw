@@ -1,7 +1,22 @@
 <h2 class="title">
   {{ (openedFolder$ | async)?.name || '...' }}
 </h2>
-<div class="grid-wrap" *ngIf="drawings$ | async as drawings">
+
+<div class="search-row">
+  <mat-form-field class="full">
+    <mat-label>Search by name</mat-label>
+    <input
+      matInput
+      type="text"
+      placeholder="Start typing a name…"
+      [(ngModel)]="searchText"
+      (ngModelChange)="onSearchChange($event)"
+    />
+    <mat-icon matSuffix fontIcon="search"></mat-icon>
+  </mat-form-field>
+</div>
+
+<div class="grid-wrap" *ngIf="filteredDrawings$ | async as drawings">
   <div class="grid">
     <a
       class="card"
@@ -60,7 +75,9 @@
     </a>
   </div>
 
-  <h3 class="state" *ngIf="!drawings.length && !(loading$ | async)">No drawings here yet.</h3>
+  <h3 class="state" *ngIf="!drawings.length && !(loading$ | async)">
+    {{ searchText ? 'No matches.' : 'No drawings here yet.' }}
+  </h3>
 
   <div *ngIf="loading$ | async">
     <h3 class="state">Loading drawings…</h3>

@@ -15,7 +15,18 @@ import {
   selectOpenedFolder,
   selectOpenedFolderId,
 } from '../../feature/folders/store/folders.selectors';
-import { combineLatest, filter, firstValueFrom, Observable, take, takeLast } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  firstValueFrom,
+  map,
+  Observable,
+  take,
+  takeLast,
+} from 'rxjs';
 import { Drawing } from '../../shared/models/drawing';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -30,6 +41,8 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-folder-contents',
@@ -42,6 +55,8 @@ import { MatButtonModule } from '@angular/material/button';
     FontAwesomeModule,
     FormsModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './folder-contents.html',
   styleUrl: './folder-contents.scss',
@@ -50,13 +65,28 @@ export class FolderContents {
   drawings$: Observable<Drawing[]>;
   loading$: Observable<boolean>;
   openedFolder$!: Observable<Folder | undefined>;
+
   trackById = (_: number, d: Drawing) => d.id;
-  dialog: any;
   faTrash = faTrash;
+
+  filteredDrawings$!: Observable<Drawing[]>;
+
+  searchText = '';
+  private search$ = new BehaviorSubject<string>('');
 
   constructor(private store: Store, private router: Router, private route: ActivatedRoute) {
     this.drawings$ = this.store.select(selectDrawingsList);
     this.loading$ = this.store.select(selectDrawingsLoading);
+
+    const q$ = this.search$.pipe(
+      debounceTime(120),
+      map((s) => s.trim().toLowerCase()),
+      distinctUntilChanged()
+    );
+
+    this.filteredDrawings$ = combineLatest([this.drawings$, q$]).pipe(
+      map(([list, q]) => (!q ? list : list.filter((d) => (d.name ?? '').toLowerCase().includes(q))))
+    );
   }
 
   async ngOnInit() {
@@ -99,10 +129,14 @@ export class FolderContents {
     const newName = (this.editValue ?? '').trim();
     this.editingId = null;
     if (!newName || newName === d.name) return;
-    this.store.dispatch(updateDrawing({ id: d.id, changes: { name: newName } })); // ✅
+    this.store.dispatch(updateDrawing({ id: d.id, changes: { name: newName } }));
   }
 
   cancelEdit() {
     this.editingId = null;
+  }
+
+  onSearchChange(v: string) {
+    this.search$.next(v ?? '');
   }
 }

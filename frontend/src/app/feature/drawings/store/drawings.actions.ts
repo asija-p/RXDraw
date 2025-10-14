@@ -51,3 +51,24 @@ export const openDrawingSuccess = createAction(
   '[Drawing] Open Drawing Success',
   props<{ openedDrawingId: string }>()
 );
+export const updateDrawing = createAction(
+  '[Drawings] Update Drawing',
+  props<{ id: string; changes: Partial<Drawing> }>()
+);
+export const updateDrawingSuccess = createAction(
+  '[Drawings] Update Drawing Success',
+  props<{ drawing: Drawing }>()
+);
+export const updateDrawingFailure = createAction(
+  '[Drawings] Update Drawing Failure',
+  props<{ error: string }>()
+);
+export const deleteDrawing = createAction('[Drawings] Delete Drawing', props<{ id: string }>());
+export const deleteDrawingSuccess = createAction(
+  '[Drawings] Delete Drawing Success',
+  props<{ id: string }>()
+);
+export const deleteDrawingFailure = createAction(
+  '[Drawings] Delete Drawing Failure',
+  props<{ error: string }>()
+);

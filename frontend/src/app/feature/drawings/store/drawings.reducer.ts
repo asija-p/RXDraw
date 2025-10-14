@@ -3,6 +3,7 @@ import { createReducer, on } from '@ngrx/store';
 import { Drawing } from '../../../shared/models/drawing';
 import {
   clearDrawings,
+  deleteDrawingSuccess,
   loadDrawings,
   loadDrawingsFailure,
   loadDrawingsSuccess,
@@ -12,6 +13,7 @@ import {
   saveDrawingSuccess,
   setDrawingDimensions,
   setDrawingName,
+  updateDrawingSuccess,
 } from './drawings.actions';
 
 export interface DrawingsState extends EntityState<Drawing> {
@@ -50,7 +52,11 @@ export const drawingsReducer = createReducer(
   on(saveDrawingSuccess, (state, { drawing }) => {
     const next = adapter.upsertOne(drawing, state);
     return { ...next, openedDrawingId: String(drawing.id), progress: null };
-  })
+  }),
+  on(updateDrawingSuccess, (s, { drawing }) =>
+    adapter.updateOne({ id: drawing.id, changes: drawing }, s)
+  ),
+  on(deleteDrawingSuccess, (s, { id }) => adapter.removeOne(id, s))
 );
 
 export interface DrawingState {

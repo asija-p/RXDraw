@@ -31,4 +31,12 @@ export class DrawingsService {
   save(id: string, dto: SaveDto) {
     return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}/save`, dto);
   }
+
+  update(id: string, changes: Partial<Drawing>): Observable<Drawing> {
+    return this.httpClient.put<Drawing>(`${environment.api}/drawings/${id}`, changes);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.httpClient.delete<void>(`${environment.api}/drawings/${id}`);
+  }
 }

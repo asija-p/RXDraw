@@ -77,18 +77,6 @@ export class Home {
     this.router.navigate(['/', id]);
   }
 
-  onRename(folder: Folder) {
-    const ref = this.dialog.open(DesignFolder, {
-      data: { mode: 'rename', initial: { name: folder.name, icon: folder.icon } },
-    });
-    ref.afterClosed().subscribe((result?: { name?: string; icon?: string }) => {
-      if (!result || !result.name || result.name === folder.name) return;
-      this.store.dispatch(
-        updateFolder({ id: folder.id, changes: { name: result.name, icon: result.icon } })
-      );
-    });
-  }
-
   editingId: string | null = null;
   editValue = '';
 

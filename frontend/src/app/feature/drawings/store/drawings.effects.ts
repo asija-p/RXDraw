@@ -14,6 +14,9 @@ import { firstValueFrom, forkJoin, from, Observable, of } from 'rxjs';
 import { DrawingsService } from '../services/drawings-service';
 import { Action, Store } from '@ngrx/store';
 import {
+  deleteDrawing,
+  deleteDrawingFailure,
+  deleteDrawingSuccess,
   loadDrawings,
   loadDrawingsFailure,
   loadDrawingsSuccess,
@@ -26,6 +29,9 @@ import {
   saveDrawingSuccess,
   setDrawingDimensions,
   setDrawingName,
+  updateDrawing,
+  updateDrawingFailure,
+  updateDrawingSuccess,
 } from './drawings.actions';
 import {
   selectDrawingHeight,
@@ -181,6 +187,30 @@ export class DrawingsEffects {
             loadLayers({ drawingId: String(d.id) }),
           ]),
           catchError((error) => of(openDrawingFailure({ error })))
+        )
+      )
+    )
+  );
+
+  update$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateDrawing),
+      switchMap(({ id, changes }) =>
+        this.drawingsService.update(id, changes).pipe(
+          map((drawing) => updateDrawingSuccess({ drawing })),
+          catchError(() => of(updateDrawingFailure({ error: 'Could not update drawing' })))
+        )
+      )
+    )
+  );
+
+  delete$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(deleteDrawing),
+      switchMap(({ id }) =>
+        this.drawingsService.delete(id).pipe(
+          map(() => deleteDrawingSuccess({ id })),
+          catchError(() => of(deleteDrawingFailure({ error: 'Could not delete drawing' })))
         )
       )
     )

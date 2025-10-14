@@ -17,9 +17,45 @@
           decoding="async"
         />
       </div>
-      <div class="meta">
-        <div class="name">{{ d.name }}</div>
-        <div class="sub">{{ d.width }}×{{ d.height }} • {{ d.updatedAt }}</div>
+      <div class="bottom">
+        <div class="meta" *ngIf="editingId !== d.id; else editBlock">
+          <div class="name">{{ d.name }}</div>
+          <div class="sub">{{ d.width }}×{{ d.height }} • {{ d.updatedAt }}</div>
+        </div>
+
+        <ng-template #editBlock>
+          <input
+            class="name-input"
+            [ngModel]="editValue"
+            (ngModelChange)="editValue = $event"
+            (keyup.enter)="commitEdit(d)"
+            (keyup.escape)="cancelEdit()"
+            (blur)="commitEdit(d)"
+            placeholder="New name"
+          />
+        </ng-template>
+
+        <div class="card-actions">
+          <button
+            mat-icon-button
+            class="icon-btn"
+            aria-label="Rename drawing"
+            title="Rename drawing"
+            (click)="$event.preventDefault(); $event.stopPropagation(); startEdit(d)"
+          >
+            <mat-icon fontIcon="edit"></mat-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            class="icon-btn"
+            aria-label="Delete drawing"
+            title="Delete drawing"
+            (click)="$event.preventDefault(); $event.stopPropagation(); onDelete(d.id)"
+          >
+            <fa-icon [icon]="faTrash"></fa-icon>
+          </button>
+        </div>
       </div>
     </a>
   </div>

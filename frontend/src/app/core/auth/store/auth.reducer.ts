@@ -1,5 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+  clearAuthError,
   loginFailure,
   loginRequested,
   loginSuccess,
@@ -43,5 +44,7 @@ export const authReducer = createReducer(
   on(registerSuccess, (s) => s),
   on(registerFailure, (s, { error }) => ({ ...s, loading: false, error })),
 
-  on(logout, () => ({ ...initialAuthState }))
+  on(logout, () => ({ ...initialAuthState })),
+
+  on(clearAuthError, (s) => ({ ...s, error: null }))
 );

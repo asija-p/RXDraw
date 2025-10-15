@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { registerRequested } from '../../core/auth/store/auth.actions';
 import { Observable } from 'rxjs';
@@ -24,6 +24,7 @@ import { selectAuthError, selectAuthLoading } from '../../core/auth/store/auth.s
     MatInputModule,
     MatDialogModule,
     MatCardModule,
+    RouterModule,
   ],
   templateUrl: './register.html',
   styleUrl: './register.scss',

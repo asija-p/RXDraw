@@ -28,7 +28,9 @@ import {
 } from '../../feature/drawings/store/drawings.selectors';
 import { ActivatedRoute } from '@angular/router';
 import {
+  clearDrawings,
   openDrawingRequested,
+  resetDrawingState,
   saveDrawingRequested,
 } from '../../feature/drawings/store/drawings.actions';
 import { clearLayers } from '../../feature/layers/store/layers.actions';
@@ -42,9 +44,7 @@ import { SaveDrawing } from '../../components/drawing/save-drawing/save-drawing'
 
 const ZMIN = 0.25;
 const ZMAX = 8;
-const ZOOM_SENSITIVITY = 0.0015; // tweak to taste (smaller = gentler)
-
-const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+const ZOOM_SENSITIVITY = 0.0015;
 
 @Component({
   selector: 'app-drawing-editor',
@@ -90,6 +90,14 @@ export class DrawingEditor {
   ngOnDestroy() {
     this.settingsRef?.close();
     this.settingsRef = undefined;
+
+    this.subs.unsubscribe();
+
+    this.store.dispatch(clearLayers());
+    this.store.dispatch(clearDrawings());
+    this.store.dispatch(resetDrawingState());
+
+    this.store.dispatch(cameraSet({ zoom: 1, panX: 0, panY: 0 }));
   }
 
   private setupZoom() {

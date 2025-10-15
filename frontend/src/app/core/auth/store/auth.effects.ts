@@ -60,7 +60,12 @@ export class AuthEffects {
     () =>
       this.actions$.pipe(
         ofType(loginSuccess),
-        tap(() => this.router.navigate(['/home']))
+        tap(() => {
+          const url = this.router.url;
+          if (url === '/' || url.startsWith('/login') || url.startsWith('/register')) {
+            this.router.navigate(['/home']);
+          }
+        })
       ),
     { dispatch: false }
   );

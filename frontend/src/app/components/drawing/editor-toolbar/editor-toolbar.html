@@ -4,6 +4,7 @@
     <button type="button" (click)="redoClick.emit()">Redo</button>
     <button type="button" (click)="saveAs()">Save as</button>
     <button type="button" (click)="save()" [disabled]="!(openedId$ | async)">Save</button>
+    <button type="button" (click)="new()">New</button>
   </div>
 
   <h5 *ngIf="progress$ | async as msg">{{ msg }}</h5>

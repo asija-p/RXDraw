@@ -72,3 +72,4 @@ export const deleteDrawingFailure = createAction(
   '[Drawings] Delete Drawing Failure',
   props<{ error: string }>()
 );
+export const resetDrawingState = createAction('[Drawing] Reset Drawing State');

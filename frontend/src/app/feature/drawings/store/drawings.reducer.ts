@@ -9,6 +9,7 @@ import {
   loadDrawingsSuccess,
   openDrawingFailure,
   openDrawingSuccess,
+  resetDrawingState,
   saveDrawingProgress,
   saveDrawingSuccess,
   setDrawingDimensions,
@@ -56,7 +57,8 @@ export const drawingsReducer = createReducer(
   on(updateDrawingSuccess, (s, { drawing }) =>
     adapter.updateOne({ id: drawing.id, changes: drawing }, s)
   ),
-  on(deleteDrawingSuccess, (s, { id }) => adapter.removeOne(id, s))
+  on(deleteDrawingSuccess, (s, { id }) => adapter.removeOne(id, s)),
+  on(resetDrawingState, () => initialState)
 );
 
 export interface DrawingState {

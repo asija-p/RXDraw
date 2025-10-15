@@ -22,3 +22,6 @@ export const registerFailure = createAction('[Auth] Register Failure', props<{ e
 
 // Logout
 export const logout = createAction('[Auth] Logout');
+
+//Error
+export const clearAuthError = createAction('[Auth] Clear Error');

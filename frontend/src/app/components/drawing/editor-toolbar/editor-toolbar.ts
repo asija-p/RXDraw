@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { filter, firstValueFrom, take } from 'rxjs';
 import { selectOpenedFolderId } from '../../../feature/folders/store/folders.selectors';
 import { DrawingsService } from '../../../feature/drawings/services/drawings-service';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SaveDrawing } from '../save-drawing/save-drawing';
 import { selectZoom } from '../../../feature/studio/store/drawing.selectors';
 import {
@@ -17,7 +17,13 @@ import {
   selectDrawingsProgress,
   selectOpenedDrawingId,
 } from '../../../feature/drawings/store/drawings.selectors';
-import { saveDrawingRequested } from '../../../feature/drawings/store/drawings.actions';
+import {
+  clearDrawings,
+  resetDrawingState,
+  saveDrawingRequested,
+} from '../../../feature/drawings/store/drawings.actions';
+import { clearLayers } from '../../../feature/layers/store/layers.actions';
+import { SettingsDrawing } from '../settings-drawing/settings-drawing';
 
 @Component({
   selector: 'app-editor-toolbar',
@@ -31,6 +37,7 @@ export class EditorToolbar {
   @Output() redoClick = new EventEmitter<void>();
   @Output() saveClick = new EventEmitter<void>();
   @Output() saveAsClick = new EventEmitter<void>();
+  private settingsRef?: MatDialogRef<SettingsDrawing>;
   zoom$: any;
   progress$: any;
   openedId$: any;
@@ -46,6 +53,17 @@ export class EditorToolbar {
   }
   save() {
     this.saveClick.emit();
+  }
+
+  new() {
+    this.store.dispatch(clearLayers());
+    this.store.dispatch(clearDrawings());
+    this.store.dispatch(resetDrawingState());
+
+    if (this.settingsRef) return;
+    this.settingsRef = this.dialog.open(SettingsDrawing, {
+      disableClose: true,
+    });
   }
 
   onZoomSlider(value: number) {

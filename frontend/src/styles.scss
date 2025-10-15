@@ -157,3 +157,10 @@ button:disabled {
   font-size: 14px;
   margin-bottom: 15px;
 }
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
